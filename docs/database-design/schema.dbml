@@ -1,42 +1,4 @@
-Dumbbell Incline Press bar
-1- 15 * (bar + 5*2)
-2- 10 * (bar + 10*2)
-3- 10 * (bar + 12.5*2)
-
-Flat press dumbell
-1- 10 * (15 * 2)
-2- 10 * (15 * 2)
-3- 10 * (17.5 * 2)
-
-Seated Shoulder Press machine
-
-1- 12 * (15 * 2)
-2- 10 * (17.5 * 2)
-3- 8 * (17.5 * 2)
-
-Lateral Raises dumbell
-
-1- 10 * (7.5 * 2)
-2- 8 * (10 * 2)
-3- 8 * (10 * 2)
-
-Flyes machine
-
-1- 10 * (2.5 * 2)
-2- 7 * (5 * 2)
-3- 5 * (5 * 2)
-
-Tricep Rope Pushdowns
-
-1- 12 * (20)
-2- 10 * (20)
-3- 7 * (25)
-
-Overhead Cable Extensions
-
-1- 8 * (15)
-2- 7 * (15)
-3- 9 * (15)    Table venues {
+Table venues {
   id integer [pk, increment]
   name varchar [not null]
   phone varchar
