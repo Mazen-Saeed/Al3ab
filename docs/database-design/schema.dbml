@@ -1,0 +1,194 @@
+Dumbbell Incline Press bar
+1- 15 * (bar + 5*2)
+2- 10 * (bar + 10*2)
+3- 10 * (bar + 12.5*2)
+
+Flat press dumbell
+1- 10 * (15 * 2)
+2- 10 * (15 * 2)
+3- 10 * (17.5 * 2)
+
+Seated Shoulder Press machine
+
+1- 12 * (15 * 2)
+2- 10 * (17.5 * 2)
+3- 8 * (17.5 * 2)
+
+Lateral Raises dumbell
+
+1- 10 * (7.5 * 2)
+2- 8 * (10 * 2)
+3- 8 * (10 * 2)
+
+Flyes machine
+
+1- 10 * (2.5 * 2)
+2- 7 * (5 * 2)
+3- 5 * (5 * 2)
+
+Tricep Rope Pushdowns
+
+1- 12 * (20)
+2- 10 * (20)
+3- 7 * (25)
+
+Overhead Cable Extensions
+
+1- 8 * (15)
+2- 7 * (15)
+3- 9 * (15)    Table venues {
+  id integer [pk, increment]
+  name varchar [not null]
+  phone varchar
+  address varchar
+  latitude decimal
+  longitude decimal
+  opens_at time
+  closes_at time
+  created_at timestamp
+}
+
+Table staff {
+  id integer [pk, increment]
+  venue_id integer [not null]
+  name varchar [not null]
+  phone varchar [not null]
+  password_hash varchar [not null]
+  role varchar [not null, default: 'staff']
+  created_at timestamp
+
+  indexes {
+    (venue_id, phone) [unique]
+  }
+}
+
+Table units {
+  id integer [pk, increment]
+  venue_id integer [not null]
+  room_id integer [not null]
+  name varchar [not null]
+  status varchar [not null, default: 'active']
+  type_id integer [not null]
+  price_category_id integer [not null]
+}
+
+Table rooms {
+  id integer [pk, increment]
+  venue_id integer [not null]
+  name varchar [not null]
+}
+
+Table price_categories {
+  id integer [pk, increment]
+  venue_id integer [not null]
+  name varchar [not null]
+  single_hourly_price numeric(10,2) [not null]
+  multi_hourly_price numeric(10,2) [not null]
+}
+
+Table types {
+  id integer [pk, increment]
+  name varchar [not null]
+}
+
+Table customers {
+  id integer [pk, increment]
+  venue_id integer [not null]
+  phone varchar [not null]
+  name varchar
+
+  indexes {
+    (venue_id, phone) [unique]
+  }
+}
+
+Table reservations {
+  id integer [pk, increment]
+  venue_id integer [not null]
+  customer_id integer [not null]
+  status varchar [not null, default: 'booked'] 
+  starts_at timestamp
+  ends_at timestamp
+  staff_id integer [not null]
+  created_at timestamp
+}
+
+Table reservations_units {
+  id integer [pk, increment]
+  reservation_id integer [not null]
+  unit_id integer [not null]
+}
+
+Table products {
+  id integer [pk, increment]
+  venue_id integer [not null]
+  name varchar [not null]
+  price numeric(10,2) [not null]
+  stock_quantity integer [not null, default: 0]
+}
+
+Table sessions {
+  id integer [pk, increment]
+  venue_id integer [not null]
+  reservation_id integer
+  customer_id integer
+  status varchar [not null, default: 'active']
+  staff_id integer [not null]
+  created_at timestamp
+}
+
+Table sessions_units {
+  id integer [pk, increment]
+  session_id integer [not null]
+  unit_id integer [not null]
+  started_at timestamp [not null]
+  ended_at timestamp
+  mode varchar [not null]
+  hourly_price numeric(10,2) [not null]
+}
+
+Table sessions_products {
+  id integer [pk, increment]
+  session_id integer [not null]
+  product_id integer [not null]
+  quantity integer [not null, default: 1]
+  unit_price numeric(10,2) [not null]
+  ordered_at timestamp
+}
+
+Table bills {
+  id integer [pk, increment]
+   venue_id integer [not null]
+   session_id integer [not null]
+   total_price numeric(10,2) [not null]
+   discount numeric(10,2) [not null, default: 0]
+   paid_at timestamp
+   staff_id integer [not null]
+   discount_note varchar
+}
+
+
+Ref: units.room_id > rooms.id
+Ref: units.price_category_id > price_categories.id
+Ref: units.type_id > types.id
+Ref: units.venue_id > venues.id
+Ref: rooms.venue_id > venues.id
+Ref: price_categories.venue_id > venues.id
+Ref: reservations.venue_id > venues.id
+Ref: reservations.customer_id > customers.id
+Ref: reservations_units.reservation_id > reservations.id
+Ref: reservations_units.unit_id > units.id
+Ref: customers.venue_id > venues.id
+Ref: sessions.venue_id > venues.id
+Ref: reservations.id - sessions.reservation_id
+Ref: customers.id - sessions.customer_id
+Ref: sessions_units.session_id > sessions.id
+Ref: sessions_units.unit_id > units.id
+Ref: sessions_products.session_id > sessions.id
+Ref: sessions_products.product_id > products.id
+Ref: bills.venue_id > venues.id
+Ref: bills.session_id > sessions.id
+Ref: staff.venue_id > venues.id
+Ref: sessions.staff_id > staff.id
+Ref: bills.staff_id > staff.id
+Ref: reservations.staff_id > staff.id
