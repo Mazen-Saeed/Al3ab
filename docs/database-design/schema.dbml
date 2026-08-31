@@ -1,7 +1,7 @@
 Table venues {
   id integer [pk, increment]
   name varchar [not null]
-  phone varchar
+  phone varchar [not null]
   address varchar
   latitude decimal
   longitude decimal
