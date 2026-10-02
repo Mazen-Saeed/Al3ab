@@ -13,8 +13,58 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appTitle => 'Al3b';
 
   @override
-  String get homeTitle => 'Devices';
+  String get homeTitle => 'Floor';
 
   @override
-  String get counterLabel => 'You have pushed the button this many times:';
+  String get unitFree => 'Free';
+
+  @override
+  String get unitWaitingPayment => 'Waiting for payment';
+
+  @override
+  String get unitMaintenance => 'Maintenance';
+
+  @override
+  String get unitTapToStart => 'Tap to start';
+
+  @override
+  String get modeSingle => 'Single';
+
+  @override
+  String get modeMulti => 'Multi';
+
+  @override
+  String amountEgp(int amount) {
+    return '$amount EGP';
+  }
+
+  @override
+  String reservedAt(String time) {
+    return 'Booked $time';
+  }
+
+  @override
+  String reservedInMinutes(int minutes) {
+    return 'Booked in $minutes minutes';
+  }
+
+  @override
+  String timeMorning(String hour) {
+    return '$hour in the morning';
+  }
+
+  @override
+  String timeNoon(String hour) {
+    return '$hour at noon';
+  }
+
+  @override
+  String timeAfternoon(String hour) {
+    return '$hour in the afternoon';
+  }
+
+  @override
+  String timeNight(String hour) {
+    return '$hour at night';
+  }
 }

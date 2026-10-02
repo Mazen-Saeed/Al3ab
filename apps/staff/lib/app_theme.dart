@@ -33,6 +33,14 @@ final appTheme = ThemeData(
   brightness: Brightness.dark,
   fontFamily: 'Alexandria', // bundled in assets/fonts, declared in pubspec.yaml
   scaffoldBackgroundColor: AppColors.background,
+  // Arabic letters reach far below the line (dots under ي، ب): give every line
+  // extra room, split evenly above and below, so stacked lines never overlap.
+  textTheme: const TextTheme(
+    bodyMedium: TextStyle(
+      height: 1.4,
+      leadingDistribution: TextLeadingDistribution.even,
+    ),
+  ),
   colorScheme: const ColorScheme.dark(
     surface: AppColors.background,
     onSurface: AppColors.text,

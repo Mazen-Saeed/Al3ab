@@ -10,11 +10,61 @@ class AppLocalizationsAr extends AppLocalizations {
   AppLocalizationsAr([String locale = 'ar']) : super(locale);
 
   @override
-  String get appTitle => 'آلعب';
+  String get appTitle => 'ألعب';
 
   @override
-  String get homeTitle => 'الأجهزة';
+  String get homeTitle => 'الصالة';
 
   @override
-  String get counterLabel => 'عدد مرات الضغط على الزر:';
+  String get unitFree => 'فاضي';
+
+  @override
+  String get unitWaitingPayment => 'لسة متدفعش';
+
+  @override
+  String get unitMaintenance => 'صيانة';
+
+  @override
+  String get unitTapToStart => 'دوس عشان نبدأ';
+
+  @override
+  String get modeSingle => 'فردي';
+
+  @override
+  String get modeMulti => 'زوجي';
+
+  @override
+  String amountEgp(int amount) {
+    return '$amount جنيه';
+  }
+
+  @override
+  String reservedAt(String time) {
+    return 'حجز $time';
+  }
+
+  @override
+  String reservedInMinutes(int minutes) {
+    return 'حجز بعد $minutes دقيقة';
+  }
+
+  @override
+  String timeMorning(String hour) {
+    return '$hour الصبح';
+  }
+
+  @override
+  String timeNoon(String hour) {
+    return '$hour الظهر';
+  }
+
+  @override
+  String timeAfternoon(String hour) {
+    return '$hour العصر';
+  }
+
+  @override
+  String timeNight(String hour) {
+    return '$hour بليل';
+  }
 }

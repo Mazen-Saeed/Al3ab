@@ -104,17 +104,89 @@ abstract class AppLocalizations {
   /// **'Al3b'**
   String get appTitle;
 
-  /// Title of the main screen listing the PlayStation devices
+  /// Title of the main screen showing all units (PlayStation, ping pong, billiards)
   ///
   /// In en, this message translates to:
-  /// **'Devices'**
+  /// **'Floor'**
   String get homeTitle;
 
-  /// Temporary demo label, removed when the real device screen is built
+  /// Unit state: nothing running
   ///
   /// In en, this message translates to:
-  /// **'You have pushed the button this many times:'**
-  String get counterLabel;
+  /// **'Free'**
+  String get unitFree;
+
+  /// Unit state: session ended, bill not paid yet
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for payment'**
+  String get unitWaitingPayment;
+
+  /// Unit state: out of use
+  ///
+  /// In en, this message translates to:
+  /// **'Maintenance'**
+  String get unitMaintenance;
+
+  /// Hint on a free unit
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to start'**
+  String get unitTapToStart;
+
+  /// Play mode: one player / normal price
+  ///
+  /// In en, this message translates to:
+  /// **'Single'**
+  String get modeSingle;
+
+  /// Play mode: several players / multi price
+  ///
+  /// In en, this message translates to:
+  /// **'Multi'**
+  String get modeMulti;
+
+  /// Money amount in Egyptian pounds
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} EGP'**
+  String amountEgp(int amount);
+
+  /// Upcoming booking on a unit; time is like "9 at night" (see friendlyTime)
+  ///
+  /// In en, this message translates to:
+  /// **'Booked {time}'**
+  String reservedAt(String time);
+
+  /// Booking starting soon on a running unit
+  ///
+  /// In en, this message translates to:
+  /// **'Booked in {minutes} minutes'**
+  String reservedInMinutes(int minutes);
+
+  /// Friendly time of day, e.g. 9 at night. Hours 5-11
+  ///
+  /// In en, this message translates to:
+  /// **'{hour} in the morning'**
+  String timeMorning(String hour);
+
+  /// Friendly time of day, e.g. 9 at night. Hours 12-15
+  ///
+  /// In en, this message translates to:
+  /// **'{hour} at noon'**
+  String timeNoon(String hour);
+
+  /// Friendly time of day, e.g. 9 at night. Hours 16-17
+  ///
+  /// In en, this message translates to:
+  /// **'{hour} in the afternoon'**
+  String timeAfternoon(String hour);
+
+  /// Friendly time of day, e.g. 9 at night. Hours 18-4
+  ///
+  /// In en, this message translates to:
+  /// **'{hour} at night'**
+  String timeNight(String hour);
 }
 
 class _AppLocalizationsDelegate

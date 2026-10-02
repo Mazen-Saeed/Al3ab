@@ -1,6 +1,18 @@
 {
   "@@locale": "ar",
-  "appTitle": "آلعب",
-  "homeTitle": "الأجهزة",
-  "counterLabel": "عدد مرات الضغط على الزر:"
+  "appTitle": "ألعب",
+  "homeTitle": "الصالة",
+  "unitFree": "فاضي",
+  "unitWaitingPayment": "لسة متدفعش",
+  "unitMaintenance": "صيانة",
+  "unitTapToStart": "دوس عشان نبدأ",
+  "modeSingle": "فردي",
+  "modeMulti": "زوجي",
+  "amountEgp": "{amount} جنيه",
+  "reservedAt": "حجز {time}",
+  "reservedInMinutes": "حجز بعد {minutes} دقيقة",
+  "timeMorning": "{hour} الصبح",
+  "timeNoon": "{hour} الظهر",
+  "timeAfternoon": "{hour} العصر",
+  "timeNight": "{hour} بليل"
 }

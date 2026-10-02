@@ -7,8 +7,9 @@ public class Bill : SyncedEntity
     public Guid VenueId { get; set; }
     public Venue Venue { get; set; } = null!;
 
-    public Guid SessionId { get; set; }
-    public Session Session { get; set; } = null!;
+    // Set when the bill closes a session; null for a quick sale (drinks/snacks without playing).
+    public Guid? SessionId { get; set; }
+    public Session? Session { get; set; }
 
     // Who took the payment.
     public Guid StaffId { get; set; }

@@ -10,7 +10,7 @@ public class PriceCategoryConfiguration : IEntityTypeConfiguration<PriceCategory
     {
         builder.ToTable(t =>
         {
-            t.HasCheckConstraint("ck_price_categories_single", "single_hourly_price >= 0");
+            t.HasCheckConstraint("ck_price_categories_hourly", "hourly_price >= 0");
             t.HasCheckConstraint("ck_price_categories_multi", "multi_hourly_price >= 0");
         });
     }

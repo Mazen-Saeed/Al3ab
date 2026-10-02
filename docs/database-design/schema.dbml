@@ -20,6 +20,7 @@ Table staff {
   name varchar [not null]
   phone varchar [not null, unique]
   password_hash varchar [not null]
+  pin_hash varchar [note: 'short PIN for quick staff switching on the shop device']
   created_at timestamptz [not null]
   updated_at timestamptz [not null]
   updated_by_staff_id uuid [note: 'who made the last change, incl. soft delete']
@@ -66,14 +67,15 @@ Table price_categories {
   id uuid [pk]
   venue_id uuid [not null]
   name varchar [not null]
-  single_hourly_price numeric(10,2) [not null]
-  multi_hourly_price numeric(10,2) [not null]
+  hourly_price numeric(10,2) [not null]
+  multi_hourly_price numeric(10,2) [note: 'null = no multi mode (app does not ask single/multi)']
   updated_at timestamptz [not null]
   updated_by_staff_id uuid [note: 'who made the last change, incl. soft delete']
   deleted_at timestamptz
 }
 
 Table unit_types {
+  // e.g. PS4, PS5, Ping Pong, Billiards
   id uuid [pk]
   name varchar [not null]
 }
@@ -178,7 +180,7 @@ Table sessions_products {
 Table bills {
   id uuid [pk]
   venue_id uuid [not null]
-  session_id uuid [not null]
+  session_id uuid [note: 'null for a quick sale (no session)']
   subtotal numeric(10,2) [not null, note: 'before discount']
   discount numeric(10,2) [not null, default: 0]
   total numeric(10,2) [not null, note: 'after discount = amount actually paid']
@@ -254,6 +256,20 @@ Table devices {
   deleted_at timestamptz
 }
 
+Table bill_items {
+  id uuid [pk]
+  bill_id uuid [not null]
+  product_id uuid [note: 'null for play time']
+  description varchar [not null, note: 'text on the receipt, e.g. Play time PS5-2']
+  quantity integer [not null, default: 1]
+  unit_price numeric(10,2) [not null]
+  total numeric(10,2) [not null, note: 'quantity x unit_price']
+  updated_at timestamptz [not null]
+  updated_by_staff_id uuid
+  deleted_at timestamptz
+  Note: 'Receipt lines, copied at payment time and never changed afterwards'
+}
+
 Ref: units.room_id > rooms.id
 Ref: units.price_category_id > price_categories.id
 Ref: units.unit_type_id > unit_types.id
@@ -294,3 +310,5 @@ Ref: remote_commands.device_id > devices.id
 Ref: devices.staff_id > staff.id
 Ref: devices.venue_id > venues.id
 Ref: venues.shop_device_id > devices.id
+Ref: bill_items.bill_id > bills.id
+Ref: bill_items.product_id > products.id

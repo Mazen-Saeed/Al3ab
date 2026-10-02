@@ -24,6 +24,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<SessionUnit> SessionsUnits => Set<SessionUnit>();
     public DbSet<SessionProduct> SessionsProducts => Set<SessionProduct>();
     public DbSet<Bill> Bills => Set<Bill>();
+    public DbSet<BillItem> BillItems => Set<BillItem>();
     public DbSet<Shift> Shifts => Set<Shift>();
     public DbSet<CashMovement> CashMovements => Set<CashMovement>();
     public DbSet<RemoteCommand> RemoteCommands => Set<RemoteCommand>();

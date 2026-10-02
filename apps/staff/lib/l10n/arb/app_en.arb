@@ -4,12 +4,95 @@
   "@appTitle": {
     "description": "App name, shown in the window title"
   },
-  "homeTitle": "Devices",
+  "homeTitle": "Floor",
   "@homeTitle": {
-    "description": "Title of the main screen listing the PlayStation devices"
+    "description": "Title of the main screen showing all units (PlayStation, ping pong, billiards)"
   },
-  "counterLabel": "You have pushed the button this many times:",
-  "@counterLabel": {
-    "description": "Temporary demo label, removed when the real device screen is built"
+  "unitFree": "Free",
+  "@unitFree": {
+    "description": "Unit state: nothing running"
+  },
+  "unitWaitingPayment": "Waiting for payment",
+  "@unitWaitingPayment": {
+    "description": "Unit state: session ended, bill not paid yet"
+  },
+  "unitMaintenance": "Maintenance",
+  "@unitMaintenance": {
+    "description": "Unit state: out of use"
+  },
+  "unitTapToStart": "Tap to start",
+  "@unitTapToStart": {
+    "description": "Hint on a free unit"
+  },
+  "modeSingle": "Single",
+  "@modeSingle": {
+    "description": "Play mode: one player / normal price"
+  },
+  "modeMulti": "Multi",
+  "@modeMulti": {
+    "description": "Play mode: several players / multi price"
+  },
+  "amountEgp": "{amount} EGP",
+  "@amountEgp": {
+    "description": "Money amount in Egyptian pounds",
+    "placeholders": {
+      "amount": {
+        "type": "int"
+      }
+    }
+  },
+  "reservedAt": "Booked {time}",
+  "@reservedAt": {
+    "description": "Upcoming booking on a unit; time is like \"9 at night\" (see friendlyTime)",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "reservedInMinutes": "Booked in {minutes} minutes",
+  "@reservedInMinutes": {
+    "description": "Booking starting soon on a running unit",
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "timeMorning": "{hour} in the morning",
+  "@timeMorning": {
+    "description": "Friendly time of day, e.g. 9 at night. Hours 5-11",
+    "placeholders": {
+      "hour": {
+        "type": "String"
+      }
+    }
+  },
+  "timeNoon": "{hour} at noon",
+  "@timeNoon": {
+    "description": "Friendly time of day, e.g. 9 at night. Hours 12-15",
+    "placeholders": {
+      "hour": {
+        "type": "String"
+      }
+    }
+  },
+  "timeAfternoon": "{hour} in the afternoon",
+  "@timeAfternoon": {
+    "description": "Friendly time of day, e.g. 9 at night. Hours 16-17",
+    "placeholders": {
+      "hour": {
+        "type": "String"
+      }
+    }
+  },
+  "timeNight": "{hour} at night",
+  "@timeNight": {
+    "description": "Friendly time of day, e.g. 9 at night. Hours 18-4",
+    "placeholders": {
+      "hour": {
+        "type": "String"
+      }
+    }
   }
 }

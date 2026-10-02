@@ -3,6 +3,7 @@ using System;
 using Al3b.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Al3b.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20261002150349_AddBillItemsAndPin")]
+    partial class AddBillItemsAndPin
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -367,12 +370,7 @@ namespace Al3b.Api.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("deleted_at");
 
-                    b.Property<decimal>("HourlyPrice")
-                        .HasPrecision(10, 2)
-                        .HasColumnType("numeric(10,2)")
-                        .HasColumnName("hourly_price");
-
-                    b.Property<decimal?>("MultiHourlyPrice")
+                    b.Property<decimal>("MultiHourlyPrice")
                         .HasPrecision(10, 2)
                         .HasColumnType("numeric(10,2)")
                         .HasColumnName("multi_hourly_price");
@@ -381,6 +379,11 @@ namespace Al3b.Api.Migrations
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("name");
+
+                    b.Property<decimal>("SingleHourlyPrice")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("numeric(10,2)")
+                        .HasColumnName("single_hourly_price");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -402,9 +405,9 @@ namespace Al3b.Api.Migrations
 
                     b.ToTable("price_categories", null, t =>
                         {
-                            t.HasCheckConstraint("ck_price_categories_hourly", "hourly_price >= 0");
-
                             t.HasCheckConstraint("ck_price_categories_multi", "multi_hourly_price >= 0");
+
+                            t.HasCheckConstraint("ck_price_categories_single", "single_hourly_price >= 0");
                         });
                 });
 
