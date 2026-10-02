@@ -27,7 +27,6 @@ class SideNav extends StatelessWidget {
       (Icons.local_drink_outlined, l10n.navQuickSale),
       (Icons.event_outlined, l10n.navReservations),
       (Icons.payments_outlined, l10n.navShift),
-      (Icons.bar_chart_rounded, l10n.navReports),
     ];
 
     return Container(
@@ -66,6 +65,17 @@ class SideNav extends StatelessWidget {
               ),
             ),
           const Spacer(),
+          // Management (staff, units & prices, products, reports, settings).
+          // TODO: show only to owners and managers once login exists.
+          Padding(
+            padding: const EdgeInsetsDirectional.only(bottom: 12),
+            child: _NavButton(
+              icon: Icons.tune_rounded,
+              label: l10n.navManage,
+              selected: selectedIndex == items.length,
+              onTap: () => onSelect(items.length),
+            ),
+          ),
           // Who is working now. Tapping it will open "Switch staff" (PIN).
           Tooltip(
             message: l10n.switchStaff,

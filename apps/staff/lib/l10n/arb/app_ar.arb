@@ -26,11 +26,8 @@
   "floorSummary": "شغال {running} · فاضي {free}",
   "navQuickSale": "بيع سريع",
   "navReservations": "الحجوزات",
-  "navShift": "الوردية والدرج",
-  "navReports": "التقارير",
+  "navShift": "الخزينة",
   "switchStaff": "تبديل الموظف",
-  "statusOnline": "متصل",
-  "drawerLabel": "الدرج",
   "sessionStarted": "بدأ {time} · {price} جنيه في الساعة",
   "playTime": "وقت اللعب",
   "noOrdersYet": "مفيش طلبات لسة",
@@ -39,5 +36,7 @@
   "moveUnit": "نقل",
   "switchToMulti": "حوّل زوجي",
   "switchToSingle": "حوّل فردي",
-  "endAndPay": "إنهاء ودفع"
+  "endAndPay": "إنهاء ودفع",
+  "navManage": "الإدارة",
+  "statusOffline": "مفيش نت · كل حاجة محفوظة على الجهاز"
 }

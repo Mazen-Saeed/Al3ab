@@ -118,6 +118,7 @@ class _FloorScreenState extends State<FloorScreen> {
                 NavigationDestination(icon: const Icon(Icons.local_drink_outlined), label: l10n.navQuickSale),
                 NavigationDestination(icon: const Badge(child: Icon(Icons.event_outlined)), label: l10n.navReservations),
                 NavigationDestination(icon: const Icon(Icons.payments_outlined), label: l10n.navShift),
+                NavigationDestination(icon: const Icon(Icons.tune_rounded), label: l10n.navManage),
               ],
             ),
           );
@@ -382,24 +383,19 @@ class _FloorHeader extends StatelessWidget {
             ],
           ),
         ),
-        _HeaderChip(
-          children: [
-            Container(
-              width: 8,
-              height: 8,
-              decoration: const BoxDecoration(color: AppColors.free, shape: BoxShape.circle),
-            ),
-            const SizedBox(width: 8),
-            Text(l10n.statusOnline),
-          ],
-        ),
-        _HeaderChip(
-          children: [
-            Text(l10n.drawerLabel, style: const TextStyle(color: AppColors.textMuted)),
-            const SizedBox(width: 8),
-            Text(l10n.amountEgp(sampleDrawerCash), style: const TextStyle(fontWeight: FontWeight.w700)),
-          ],
-        ),
+        // Connection: show nothing while online; a warning only when offline.
+        if (!sampleIsOnline)
+          _HeaderChip(
+            children: [
+              Container(
+                width: 8,
+                height: 8,
+                decoration: const BoxDecoration(color: AppColors.waitingPayment, shape: BoxShape.circle),
+              ),
+              const SizedBox(width: 8),
+              Text(l10n.statusOffline),
+            ],
+          ),
         FilledButton.tonalIcon(
           onPressed: () {}, // TODO: open quick sale
           icon: const Icon(Icons.add, size: 20),

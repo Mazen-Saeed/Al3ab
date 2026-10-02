@@ -62,8 +62,8 @@ class Unit {
 /// Sample venue name (owners type their own in Venue setup).
 const sampleVenueName = 'محل التجربة';
 
-/// Sample cash in the drawer (comes from the open shift later).
-const sampleDrawerCash = 1240;
+/// Sample connection state (comes from the sync service later).
+const sampleIsOnline = true;
 
 /// 12 sample units matching the design. Replaced by real data later.
 List<Unit> buildSampleUnits() {

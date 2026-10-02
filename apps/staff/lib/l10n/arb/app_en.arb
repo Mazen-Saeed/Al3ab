@@ -152,25 +152,13 @@
   "@navReservations": {
     "description": "Side nav: bookings"
   },
-  "navShift": "Shift & drawer",
+  "navShift": "Cash box",
   "@navShift": {
-    "description": "Side nav: shift and cash drawer"
-  },
-  "navReports": "Reports",
-  "@navReports": {
-    "description": "Side nav: reports (owners/managers)"
+    "description": "Side nav: the cash drawer (open/close, hand over, expenses)"
   },
   "switchStaff": "Switch staff",
   "@switchStaff": {
     "description": "Button at the bottom of the side nav: change who is working"
-  },
-  "statusOnline": "Online",
-  "@statusOnline": {
-    "description": "Header chip: this device is connected to the internet"
-  },
-  "drawerLabel": "Drawer",
-  "@drawerLabel": {
-    "description": "Header chip label before the cash amount in the drawer"
   },
   "sessionStarted": "Started {time} · {price} EGP/hour",
   "@sessionStarted": {
@@ -215,5 +203,13 @@
   "endAndPay": "End & pay",
   "@endAndPay": {
     "description": "Session panel main button: end the session and go to checkout"
+  },
+  "navManage": "Manage",
+  "@navManage": {
+    "description": "Side nav: management screens (staff, units & prices, products, reports, settings). Owners/managers only"
+  },
+  "statusOffline": "No internet · everything is saved on this device",
+  "@statusOffline": {
+    "description": "Header warning, shown only when the device is offline"
   }
 }
