@@ -7,9 +7,11 @@ Table venues {
   longitude numeric(9,6)
   opens_at time [note: 'if closes_at <= opens_at, closing is the next day']
   closes_at time
-  last_synced_at timestamptz [note: 'set by backend on every sync call from the shop PC, even empty ones']
+  last_synced_at timestamptz [note: 'set by backend on every sync call from the shop device, even empty ones']
+  shop_device_id uuid [unique, note: 'the one device allowed to run this shop offline; backend accepts sync only from it']
   created_at timestamptz [not null]
   updated_at timestamptz [not null]
+  updated_by_staff_id uuid [note: 'who made the last change, incl. soft delete']
   deleted_at timestamptz
 }
 
@@ -20,6 +22,7 @@ Table staff {
   password_hash varchar [not null]
   created_at timestamptz [not null]
   updated_at timestamptz [not null]
+  updated_by_staff_id uuid [note: 'who made the last change, incl. soft delete']
   deleted_at timestamptz
 }
 
@@ -29,6 +32,7 @@ Table staff_venues {
   venue_id uuid [not null]
   role varchar [not null, note: 'Owner | Manager | Staff']
   updated_at timestamptz [not null]
+  updated_by_staff_id uuid [note: 'who made the last change, incl. soft delete']
   deleted_at timestamptz
 
   indexes {
@@ -45,6 +49,7 @@ Table units {
   unit_type_id uuid [not null]
   price_category_id uuid [not null]
   updated_at timestamptz [not null]
+  updated_by_staff_id uuid [note: 'who made the last change, incl. soft delete']
   deleted_at timestamptz
 }
 
@@ -53,6 +58,7 @@ Table rooms {
   venue_id uuid [not null]
   name varchar [not null]
   updated_at timestamptz [not null]
+  updated_by_staff_id uuid [note: 'who made the last change, incl. soft delete']
   deleted_at timestamptz
 }
 
@@ -63,6 +69,7 @@ Table price_categories {
   single_hourly_price numeric(10,2) [not null]
   multi_hourly_price numeric(10,2) [not null]
   updated_at timestamptz [not null]
+  updated_by_staff_id uuid [note: 'who made the last change, incl. soft delete']
   deleted_at timestamptz
 }
 
@@ -78,6 +85,7 @@ Table customers {
   password_hash varchar [not null]
   created_at timestamptz [not null]
   updated_at timestamptz [not null]
+  updated_by_staff_id uuid [note: 'who made the last change, incl. soft delete']
   deleted_at timestamptz
 }
 
@@ -88,6 +96,7 @@ Table walk_in_customers {
   phone varchar
   created_at timestamptz [not null]
   updated_at timestamptz [not null]
+  updated_by_staff_id uuid [note: 'who made the last change, incl. soft delete']
   deleted_at timestamptz
 }
 
@@ -103,6 +112,7 @@ Table reservations {
   staff_id uuid
   created_at timestamptz [not null]
   updated_at timestamptz [not null]
+  updated_by_staff_id uuid [note: 'who made the last change, incl. soft delete']
   deleted_at timestamptz
 }
 
@@ -111,6 +121,7 @@ Table reservations_units {
   reservation_id uuid [not null]
   unit_id uuid [not null]
   updated_at timestamptz [not null]
+  updated_by_staff_id uuid [note: 'who made the last change, incl. soft delete']
   deleted_at timestamptz
 }
 
@@ -121,6 +132,7 @@ Table products {
   price numeric(10,2) [not null]
   stock_quantity integer [not null, default: 0, note: 'changed on the shop PC only (sales, restock); owner app shows it read-only']
   updated_at timestamptz [not null]
+  updated_by_staff_id uuid [note: 'who made the last change, incl. soft delete']
   deleted_at timestamptz
 }
 
@@ -134,6 +146,7 @@ Table sessions {
   staff_id uuid [not null]
   created_at timestamptz [not null]
   updated_at timestamptz [not null]
+  updated_by_staff_id uuid [note: 'who made the last change, incl. soft delete']
   deleted_at timestamptz
 }
 
@@ -146,6 +159,7 @@ Table sessions_units {
   mode varchar [not null, note: 'Single | Multi']
   hourly_price numeric(10,2) [not null]
   updated_at timestamptz [not null]
+  updated_by_staff_id uuid [note: 'who made the last change, incl. soft delete']
   deleted_at timestamptz
 }
 
@@ -157,6 +171,7 @@ Table sessions_products {
   unit_price numeric(10,2) [not null]
   ordered_at timestamptz [not null]
   updated_at timestamptz [not null]
+  updated_by_staff_id uuid [note: 'who made the last change, incl. soft delete']
   deleted_at timestamptz
 }
 
@@ -173,6 +188,7 @@ Table bills {
   shift_id uuid [not null]
   payment_method varchar [not null, note: 'Cash | Instapay | Wallet']
   updated_at timestamptz [not null]
+  updated_by_staff_id uuid [note: 'who made the last change, incl. soft delete']
   deleted_at timestamptz
 }
 
@@ -188,6 +204,7 @@ Table shifts {
   counted_cash numeric(10,2)
   note varchar
   updated_at timestamptz [not null]
+  updated_by_staff_id uuid [note: 'who made the last change, incl. soft delete']
   deleted_at timestamptz
 }
 
@@ -201,9 +218,41 @@ Table cash_movements {
   note varchar
   created_at timestamptz [not null]
   updated_at timestamptz [not null]
+  updated_by_staff_id uuid [note: 'who made the last change, incl. soft delete']
   deleted_at timestamptz
 }
 
+
+Table remote_commands {
+  id uuid [pk]
+  venue_id uuid [not null]
+  staff_id uuid [not null, note: 'who asked for it']
+  device_id uuid [not null, note: 'which phone sent it']
+  type varchar [not null, note: 'e.g. start_session; string so old devices can reject unknown types']
+  payload jsonb [not null]
+  status varchar [not null, default: 'Pending', note: 'Pending | Applied | Rejected | Expired']
+  reject_reason varchar
+  created_at timestamptz [not null]
+  applied_at timestamptz
+  updated_at timestamptz [not null]
+  updated_by_staff_id uuid [note: 'who made the last change, incl. soft delete']
+  deleted_at timestamptz
+}
+
+Table devices {
+  id uuid [pk, note: 'created on the device at install']
+  staff_id uuid [not null, note: 'who last logged in']
+  venue_id uuid [note: 'null for an owner phone covering several venues']
+  name varchar [not null]
+  platform varchar [not null, note: 'Windows | Android | IOS | MacOS']
+  app_version varchar
+  last_seen_at timestamptz
+  revoked_at timestamptz [note: 'lost/stolen: backend refuses login and sync']
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+  updated_by_staff_id uuid [note: 'who made the last change, incl. soft delete']
+  deleted_at timestamptz
+}
 
 Ref: units.room_id > rooms.id
 Ref: units.price_category_id > price_categories.id
@@ -239,3 +288,9 @@ Ref: shifts.closed_by_staff_id > staff.id
 Ref: cash_movements.venue_id > venues.id
 Ref: cash_movements.shift_id > shifts.id
 Ref: cash_movements.staff_id > staff.id
+Ref: remote_commands.venue_id > venues.id
+Ref: remote_commands.staff_id > staff.id
+Ref: remote_commands.device_id > devices.id
+Ref: devices.staff_id > staff.id
+Ref: devices.venue_id > venues.id
+Ref: venues.shop_device_id > devices.id

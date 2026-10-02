@@ -26,6 +26,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Bill> Bills => Set<Bill>();
     public DbSet<Shift> Shifts => Set<Shift>();
     public DbSet<CashMovement> CashMovements => Set<CashMovement>();
+    public DbSet<RemoteCommand> RemoteCommands => Set<RemoteCommand>();
+    public DbSet<Device> Devices => Set<Device>();
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {
@@ -40,6 +42,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         configurationBuilder.Properties<SessionMode>().HaveConversion<string>();
         configurationBuilder.Properties<PaymentMethod>().HaveConversion<string>();
         configurationBuilder.Properties<CashMovementType>().HaveConversion<string>();
+        configurationBuilder.Properties<RemoteCommandStatus>().HaveConversion<string>();
+        configurationBuilder.Properties<DevicePlatform>().HaveConversion<string>();
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
