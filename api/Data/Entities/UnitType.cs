@@ -1,4 +1,4 @@
-namespace Al3ab.Api.Data.Entities;
+namespace Al3b.Api.Data.Entities;
 
 // Global list (PS4, PS5, ...). Managed by the backend only, so it doesn't need sync columns.
 public class UnitType

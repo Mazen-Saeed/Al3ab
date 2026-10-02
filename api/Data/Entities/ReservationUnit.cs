@@ -1,4 +1,4 @@
-namespace Al3ab.Api.Data.Entities;
+namespace Al3b.Api.Data.Entities;
 
 public class ReservationUnit : SyncedEntity
 {

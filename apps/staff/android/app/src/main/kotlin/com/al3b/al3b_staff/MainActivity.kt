@@ -1,4 +1,4 @@
-package com.al3ab.al3ab_staff
+package com.al3b.al3b_staff
 
 import io.flutter.embedding.android.FlutterActivity
 

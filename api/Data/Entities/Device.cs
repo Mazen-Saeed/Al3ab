@@ -1,6 +1,6 @@
-using Al3ab.Api.Data.Enums;
+using Al3b.Api.Data.Enums;
 
-namespace Al3ab.Api.Data.Entities;
+namespace Al3b.Api.Data.Entities;
 
 // Every device that has logged in: shop devices and staff/owner phones.
 // Id is created on the device at install time and kept locally.

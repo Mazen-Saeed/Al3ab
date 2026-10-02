@@ -1,6 +1,6 @@
-using Al3ab.Api.Data.Enums;
+using Al3b.Api.Data.Enums;
 
-namespace Al3ab.Api.Data.Entities;
+namespace Al3b.Api.Data.Entities;
 
 public class Bill : SyncedEntity
 {

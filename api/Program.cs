@@ -1,4 +1,4 @@
-using Al3ab.Api.Data;
+using Al3b.Api.Data;
 using Microsoft.EntityFrameworkCore;
 
 DotNetEnv.Env.TraversePath().Load();

@@ -1,9 +1,9 @@
 using System.Linq.Expressions;
-using Al3ab.Api.Data.Entities;
-using Al3ab.Api.Data.Enums;
+using Al3b.Api.Data.Entities;
+using Al3b.Api.Data.Enums;
 using Microsoft.EntityFrameworkCore;
 
-namespace Al3ab.Api.Data;
+namespace Al3b.Api.Data;
 
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {

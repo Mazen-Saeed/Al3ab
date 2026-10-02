@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace Al3ab.Api.Migrations
+namespace Al3b.Api.Migrations
 {
     /// <inheritdoc />
     public partial class AddCheckConstraints : Migration

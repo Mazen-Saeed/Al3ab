@@ -1,6 +1,6 @@
-using Al3ab.Api.Data.Enums;
+using Al3b.Api.Data.Enums;
 
-namespace Al3ab.Api.Data.Entities;
+namespace Al3b.Api.Data.Entities;
 
 // An action requested from a remote device (e.g. owner's phone), applied by the venue's shop device.
 // First version: the exact command types and payloads get defined when we build remote actions.

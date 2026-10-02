@@ -1,4 +1,4 @@
-namespace Al3ab.Api.Data.Entities;
+namespace Al3b.Api.Data.Entities;
 
 // Base class for every table that syncs between the shop PC and the backend.
 public abstract class SyncedEntity

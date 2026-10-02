@@ -101,7 +101,7 @@ abstract class AppLocalizations {
   /// App name, shown in the window title
   ///
   /// In en, this message translates to:
-  /// **'Al3ab'**
+  /// **'Al3b'**
   String get appTitle;
 
   /// Title of the main screen listing the PlayStation devices

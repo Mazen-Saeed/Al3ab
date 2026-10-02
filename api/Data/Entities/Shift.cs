@@ -1,4 +1,4 @@
-namespace Al3ab.Api.Data.Entities;
+namespace Al3b.Api.Data.Entities;
 
 // One open shift per venue at a time. No payments without an open shift.
 public class Shift : SyncedEntity

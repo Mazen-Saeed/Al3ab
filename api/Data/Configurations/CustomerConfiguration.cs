@@ -1,8 +1,8 @@
-using Al3ab.Api.Data.Entities;
+using Al3b.Api.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Al3ab.Api.Data.Configurations;
+namespace Al3b.Api.Data.Configurations;
 
 public class CustomerConfiguration : IEntityTypeConfiguration<Customer>
 {

@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "com.al3ab" "\0"
-            VALUE "FileDescription", "al3ab_staff" "\0"
+            VALUE "CompanyName", "com.al3b" "\0"
+            VALUE "FileDescription", "al3b_staff" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "al3ab_staff" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2026 com.al3ab. All rights reserved." "\0"
-            VALUE "OriginalFilename", "al3ab_staff.exe" "\0"
-            VALUE "ProductName", "al3ab_staff" "\0"
+            VALUE "InternalName", "al3b_staff" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2026 com.al3b. All rights reserved." "\0"
+            VALUE "OriginalFilename", "al3b_staff.exe" "\0"
+            VALUE "ProductName", "al3b_staff" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

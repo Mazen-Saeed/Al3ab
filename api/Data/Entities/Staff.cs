@@ -1,4 +1,4 @@
-namespace Al3ab.Api.Data.Entities;
+namespace Al3b.Api.Data.Entities;
 
 // Everyone who works at a shop, owners included. Global: one login across venues.
 // Created/edited on the backend only; shop PCs keep a synced copy so login works offline.

@@ -1,4 +1,4 @@
-namespace Al3ab.Api.Data.Entities;
+namespace Al3b.Api.Data.Entities;
 
 // Customer-app account. Global: signs up once, books at any venue.
 public class Customer : SyncedEntity
