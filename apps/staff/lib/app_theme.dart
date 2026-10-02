@@ -24,8 +24,17 @@ class AppColors {
   static const maintenance = Color(0xFF8C7F72); // faded
 
   // Main action ("End & pay")
+  static const alert = Color(0xFFB5412A); // text on a cream card: last minute / overtime
   static const primary = Color(0xFFA9D3A0); // sage
   static const onPrimary = Color(0xFF14200F);
+}
+
+/// Text styles used in many places. Named by role, like AppColors.
+class AppText {
+  static const label = TextStyle(fontSize: 14, color: AppColors.textMuted); // small grey line above a field
+  static const small = TextStyle(fontSize: 13, color: AppColors.textMuted); // secondary info
+  static const sectionTitle = TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.text);
+  static const formTitle = TextStyle(fontSize: 30, fontWeight: FontWeight.w700); // big name in a form
 }
 
 /// The app-wide theme. Every Material widget reads its colors from here.
@@ -58,6 +67,25 @@ final appTheme = ThemeData(
     // Secondary buttons and the selected segment of a toggle use these.
     secondaryContainer: AppColors.raised,
     onSecondaryContainer: AppColors.text,
+  ),
+  // Every TextField: dark fill, rounded, green ring when focused.
+  inputDecorationTheme: InputDecorationTheme(
+    filled: true,
+    fillColor: AppColors.background,
+    contentPadding: const EdgeInsetsDirectional.symmetric(horizontal: 18, vertical: 16),
+    hintStyle: const TextStyle(color: AppColors.maintenance),
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(18),
+      borderSide: const BorderSide(color: AppColors.raised, width: 1.5),
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(18),
+      borderSide: const BorderSide(color: AppColors.raised, width: 1.5),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(18),
+      borderSide: const BorderSide(color: AppColors.primary, width: 2),
+    ),
   ),
   // Every FilledButton: rounded, tall enough to tap easily, semibold text.
   filledButtonTheme: FilledButtonThemeData(

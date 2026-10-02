@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../app_theme.dart';
 import '../l10n/l10n.dart';
-import 'unit.dart';
+import '../data/unit.dart';
+import 'time_text.dart';
 
 /// One tile on the Floor screen. Looks different for each [UnitStatus].
 class UnitTile extends StatelessWidget {
@@ -105,16 +106,25 @@ class _MainLine extends StatelessWidget {
       fontFeatures: const [FontFeature.tabularFigures()], // digits don't jump while ticking
     );
 
-    return switch (unit.status) {
+    final text = switch (unit.status) {
       UnitStatus.running => Text(
-          formatElapsed(unit.elapsed),
+          timerText(unit.elapsed, unit.remaining),
           textDirection: TextDirection.ltr, // a timer always reads left-to-right
-          style: style,
+          // Last minute or overtime: red-orange text so it stands out from across the room.
+          style: unit.needsAttention ? style.copyWith(color: AppColors.alert) : style,
         ),
       UnitStatus.waitingPayment => Text(l10n.amountEgp(unit.amountDue ?? 0), style: style),
       UnitStatus.free => Text(l10n.unitFree, style: style.copyWith(color: AppColors.free)),
       UnitStatus.maintenance => Text(l10n.unitMaintenance, style: style),
     };
+
+    // FittedBox + scaleDown: if the text is wider than the tile, shrink it to fit
+    // on one line instead of wrapping (a narrow phone tile can't fit "120 جنيه" at 30).
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      alignment: AlignmentDirectional.centerStart,
+      child: text,
+    );
   }
 }
 
@@ -136,7 +146,12 @@ class _BottomLine extends StatelessWidget {
     switch (unit.status) {
       case UnitStatus.running:
         final cost = l10n.amountEgp(unit.currentCost);
-        final mode = unit.hasMultiMode ? (unit.isMulti ? l10n.modeMulti : l10n.modeSingle) : null;
+        // Planned session: say what the big number is ("Left" / "Over") instead of the mode.
+        final mode = unit.remaining != null
+            ? (unit.isOvertime ? l10n.timeOver : l10n.timeLeft)
+            : unit.hasMultiMode
+                ? (unit.isMulti ? l10n.modeMulti : l10n.modeSingle)
+                : null;
         text = mode == null ? cost : '$mode · $cost';
         if (reservation != null) {
           // A booking is coming on a running unit: warn instead.
@@ -145,7 +160,7 @@ class _BottomLine extends StatelessWidget {
         }
       case UnitStatus.free:
         if (reservation != null) {
-          text = l10n.reservedAt(friendlyTime(context, reservation));
+          text = l10n.reservedAt(friendlyTime(l10n, reservation));
           textColor = AppColors.onReserved;
         } else {
           text = l10n.unitTapToStart;
@@ -181,26 +196,4 @@ class _Chip extends StatelessWidget {
       child: Text(text, style: const TextStyle(color: AppColors.onReserved, fontSize: 12)),
     );
   }
-}
-
-/// 1:24:10 style. Hours aren't padded; minutes and seconds always have 2 digits.
-String formatElapsed(Duration d) {
-  String two(int n) => n.toString().padLeft(2, '0');
-  return '${d.inHours}:${two(d.inMinutes % 60)}:${two(d.inSeconds % 60)}';
-}
-
-/// Time the way people say it: "٩ بليل", "٣ الظهر", "١٠:٣٠ الصبح".
-/// Simpler to read at a glance than "9:00 م".
-String friendlyTime(BuildContext context, DateTime time) {
-  final l10n = context.l10n;
-  final hour24 = time.hour;
-  final hour12 = hour24 % 12 == 0 ? 12 : hour24 % 12;
-  final hour = time.minute == 0
-      ? '$hour12'
-      : '$hour12:${time.minute.toString().padLeft(2, '0')}';
-
-  if (hour24 >= 5 && hour24 <= 11) return l10n.timeMorning(hour);
-  if (hour24 >= 12 && hour24 <= 15) return l10n.timeNoon(hour);
-  if (hour24 >= 16 && hour24 <= 17) return l10n.timeAfternoon(hour);
-  return l10n.timeNight(hour); // 18:00 – 04:59
 }

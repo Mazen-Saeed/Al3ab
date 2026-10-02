@@ -211,5 +211,118 @@
   "statusOffline": "No internet · everything is saved on this device",
   "@statusOffline": {
     "description": "Header warning, shown only when the device is offline"
+  },
+  "startSessionTitle": "Start session",
+  "@startSessionTitle": {
+    "description": "Small title above the unit name in the start-session form"
+  },
+  "playType": "Play type",
+  "@playType": {
+    "description": "Label above the single/multi choice"
+  },
+  "pricePerHour": "{price} EGP per hour",
+  "@pricePerHour": {
+    "description": "Price shown under a single/multi option",
+    "placeholders": {
+      "price": {
+        "type": "int"
+      }
+    }
+  },
+  "customerOptional": "Customer (optional)",
+  "@customerOptional": {
+    "description": "Label of the customer field in the start-session form"
+  },
+  "customerHint": "Name or phone number",
+  "@customerHint": {
+    "description": "Placeholder inside the customer field"
+  },
+  "startTimer": "Start timer",
+  "@startTimer": {
+    "description": "Main button of the start-session form"
+  },
+  "reservedWarning": "This unit is booked {time}",
+  "@reservedWarning": {
+    "description": "Warning in the start-session form when the unit has an upcoming booking; time is like \"9 at night\" (see friendlyTime)",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "durationLabel": "Duration",
+  "@durationLabel": {
+    "description": "Label above the planned-time choices in the start form"
+  },
+  "durationOpen": "Open",
+  "@durationOpen": {
+    "description": "Duration choice: no planned time, timer counts up"
+  },
+  "duration30": "30 min",
+  "@duration30": {
+    "description": "Duration choice"
+  },
+  "duration60": "1 hour",
+  "@duration60": {
+    "description": "Duration choice"
+  },
+  "duration120": "2 hours",
+  "@duration120": {
+    "description": "Duration choice"
+  },
+  "durationCustom": "Other",
+  "@durationCustom": {
+    "description": "Duration choice that opens a minutes field"
+  },
+  "customHoursHint": "Number of hours, e.g. 2.5",
+  "@customHoursHint": {
+    "description": "Placeholder of the custom duration field; decimals allowed (2.5 = two and a half hours)"
+  },
+  "timeLeft": "Left",
+  "timeOver": "Over",
+  "@timeLeft": {
+    "description": "Small label next to a countdown timer: time left of the planned time"
+  },
+  "@timeOver": {
+    "description": "Small label next to a timer that passed the planned time and keeps counting"
+  },
+  "alertTenMinutes": "10 minutes left on {unit}",
+  "@alertTenMinutes": {
+    "description": "Alert banner: 10 minutes before a planned session ends",
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "alertOneMinute": "1 minute left on {unit}",
+  "@alertOneMinute": {
+    "description": "Alert banner: 1 minute before a planned session ends",
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "alertTimeUp": "{unit}: time is up",
+  "@alertTimeUp": {
+    "description": "Alert banner: the planned time ran out",
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "addTime": "Add time",
+  "addTimeConfirm": "Add",
+  "@addTime": {
+    "description": "Button in the running-session panel (planned sessions) and title of the add-time form"
+  },
+  "@addTimeConfirm": {
+    "description": "Main button of the add-time form"
+  },
+  "makeOpenConfirm": "Make it open",
+  "@makeOpenConfirm": {
+    "description": "Main button of the add-time form when \"open\" is chosen: removes the planned time"
   }
 }

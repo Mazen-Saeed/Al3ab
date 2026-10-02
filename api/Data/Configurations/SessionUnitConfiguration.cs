@@ -12,6 +12,7 @@ public class SessionUnitConfiguration : IEntityTypeConfiguration<SessionUnit>
         {
             t.HasCheckConstraint("ck_sessions_units_time", "ended_at IS NULL OR ended_at >= started_at");
             t.HasCheckConstraint("ck_sessions_units_hourly_price", "hourly_price >= 0");
+            t.HasCheckConstraint("ck_sessions_units_planned_minutes", "planned_minutes IS NULL OR planned_minutes > 0");
         });
     }
 }

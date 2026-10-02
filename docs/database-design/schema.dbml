@@ -160,6 +160,7 @@ Table sessions_units {
   started_at timestamptz [not null]
   ended_at timestamptz
   mode varchar [not null, note: 'Single | Multi']
+  planned_minutes int [note: 'countdown length; null = open time. Reminder only, the bill is the time actually played']
   hourly_price numeric(10,2) [not null]
   updated_at timestamptz [not null]
   updated_by_staff_id uuid [note: 'who made the last change, incl. soft delete']

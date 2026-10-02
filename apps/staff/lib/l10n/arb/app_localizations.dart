@@ -331,6 +331,138 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No internet · everything is saved on this device'**
   String get statusOffline;
+
+  /// Small title above the unit name in the start-session form
+  ///
+  /// In en, this message translates to:
+  /// **'Start session'**
+  String get startSessionTitle;
+
+  /// Label above the single/multi choice
+  ///
+  /// In en, this message translates to:
+  /// **'Play type'**
+  String get playType;
+
+  /// Price shown under a single/multi option
+  ///
+  /// In en, this message translates to:
+  /// **'{price} EGP per hour'**
+  String pricePerHour(int price);
+
+  /// Label of the customer field in the start-session form
+  ///
+  /// In en, this message translates to:
+  /// **'Customer (optional)'**
+  String get customerOptional;
+
+  /// Placeholder inside the customer field
+  ///
+  /// In en, this message translates to:
+  /// **'Name or phone number'**
+  String get customerHint;
+
+  /// Main button of the start-session form
+  ///
+  /// In en, this message translates to:
+  /// **'Start timer'**
+  String get startTimer;
+
+  /// Warning in the start-session form when the unit has an upcoming booking; time is like "9 at night" (see friendlyTime)
+  ///
+  /// In en, this message translates to:
+  /// **'This unit is booked {time}'**
+  String reservedWarning(String time);
+
+  /// Label above the planned-time choices in the start form
+  ///
+  /// In en, this message translates to:
+  /// **'Duration'**
+  String get durationLabel;
+
+  /// Duration choice: no planned time, timer counts up
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get durationOpen;
+
+  /// Duration choice
+  ///
+  /// In en, this message translates to:
+  /// **'30 min'**
+  String get duration30;
+
+  /// Duration choice
+  ///
+  /// In en, this message translates to:
+  /// **'1 hour'**
+  String get duration60;
+
+  /// Duration choice
+  ///
+  /// In en, this message translates to:
+  /// **'2 hours'**
+  String get duration120;
+
+  /// Duration choice that opens a minutes field
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get durationCustom;
+
+  /// Placeholder of the custom duration field; decimals allowed (2.5 = two and a half hours)
+  ///
+  /// In en, this message translates to:
+  /// **'Number of hours, e.g. 2.5'**
+  String get customHoursHint;
+
+  /// Small label next to a countdown timer: time left of the planned time
+  ///
+  /// In en, this message translates to:
+  /// **'Left'**
+  String get timeLeft;
+
+  /// Small label next to a timer that passed the planned time and keeps counting
+  ///
+  /// In en, this message translates to:
+  /// **'Over'**
+  String get timeOver;
+
+  /// Alert banner: 10 minutes before a planned session ends
+  ///
+  /// In en, this message translates to:
+  /// **'10 minutes left on {unit}'**
+  String alertTenMinutes(String unit);
+
+  /// Alert banner: 1 minute before a planned session ends
+  ///
+  /// In en, this message translates to:
+  /// **'1 minute left on {unit}'**
+  String alertOneMinute(String unit);
+
+  /// Alert banner: the planned time ran out
+  ///
+  /// In en, this message translates to:
+  /// **'{unit}: time is up'**
+  String alertTimeUp(String unit);
+
+  /// Button in the running-session panel (planned sessions) and title of the add-time form
+  ///
+  /// In en, this message translates to:
+  /// **'Add time'**
+  String get addTime;
+
+  /// Main button of the add-time form
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get addTimeConfirm;
+
+  /// Main button of the add-time form when "open" is chosen: removes the planned time
+  ///
+  /// In en, this message translates to:
+  /// **'Make it open'**
+  String get makeOpenConfirm;
 }
 
 class _AppLocalizationsDelegate

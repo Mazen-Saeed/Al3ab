@@ -15,6 +15,10 @@ public class SessionUnit : SyncedEntity
     public DateTime? EndedAt { get; set; }
     public SessionMode Mode { get; set; }
 
+    // Planned length in minutes (countdown timer). Null = open time (counts up).
+    // Only a reminder: the bill is always the time actually played.
+    public int? PlannedMinutes { get; set; }
+
     // Snapshot of the price at the time: menu changes don't rewrite old sessions.
     public decimal HourlyPrice { get; set; }
 }

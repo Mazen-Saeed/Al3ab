@@ -145,4 +145,80 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get statusOffline => 'مفيش نت · كل حاجة محفوظة على الجهاز';
+
+  @override
+  String get startSessionTitle => 'بدء جلسة';
+
+  @override
+  String get playType => 'نوع اللعب';
+
+  @override
+  String pricePerHour(int price) {
+    return '$price جنيه في الساعة';
+  }
+
+  @override
+  String get customerOptional => 'العميل (اختياري)';
+
+  @override
+  String get customerHint => 'الاسم أو رقم الموبايل';
+
+  @override
+  String get startTimer => 'ابدأ الوقت';
+
+  @override
+  String reservedWarning(String time) {
+    return 'الجهاز ده محجوز $time';
+  }
+
+  @override
+  String get durationLabel => 'المدة';
+
+  @override
+  String get durationOpen => 'مفتوح';
+
+  @override
+  String get duration30 => 'نص ساعة';
+
+  @override
+  String get duration60 => 'ساعة';
+
+  @override
+  String get duration120 => 'ساعتين';
+
+  @override
+  String get durationCustom => 'مدة تانية';
+
+  @override
+  String get customHoursHint => 'عدد الساعات (مثلا 2.5)';
+
+  @override
+  String get timeLeft => 'باقي';
+
+  @override
+  String get timeOver => 'زيادة';
+
+  @override
+  String alertTenMinutes(String unit) {
+    return 'باقي 10 دقايق على $unit';
+  }
+
+  @override
+  String alertOneMinute(String unit) {
+    return 'باقي دقيقة على $unit';
+  }
+
+  @override
+  String alertTimeUp(String unit) {
+    return 'وقت $unit خلص';
+  }
+
+  @override
+  String get addTime => 'زوّد وقت';
+
+  @override
+  String get addTimeConfirm => 'زوّد';
+
+  @override
+  String get makeOpenConfirm => 'حوّل لمفتوح';
 }
