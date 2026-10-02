@@ -1,0 +1,6 @@
+# Settings for `flutter gen-l10n` (runs automatically on build because of `generate: true`).
+arb-dir: lib/l10n/arb
+template-arb-file: app_en.arb
+output-localization-file: app_localizations.dart
+nullable-getter: false
+preferred-supported-locales: [ar, en]

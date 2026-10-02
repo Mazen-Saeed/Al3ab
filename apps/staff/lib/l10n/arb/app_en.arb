@@ -1,0 +1,15 @@
+{
+  "@@locale": "en",
+  "appTitle": "Al3ab",
+  "@appTitle": {
+    "description": "App name, shown in the window title"
+  },
+  "homeTitle": "Devices",
+  "@homeTitle": {
+    "description": "Title of the main screen listing the PlayStation devices"
+  },
+  "counterLabel": "You have pushed the button this many times:",
+  "@counterLabel": {
+    "description": "Temporary demo label, removed when the real device screen is built"
+  }
+}
