@@ -12,6 +12,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Staff> Staff => Set<Staff>();
     public DbSet<StaffVenue> StaffVenues => Set<StaffVenue>();
     public DbSet<Room> Rooms => Set<Room>();
+    public DbSet<RoomGroup> RoomGroups => Set<RoomGroup>();
     public DbSet<UnitType> UnitTypes => Set<UnitType>();
     public DbSet<PriceCategory> PriceCategories => Set<PriceCategory>();
     public DbSet<Unit> Units => Set<Unit>();

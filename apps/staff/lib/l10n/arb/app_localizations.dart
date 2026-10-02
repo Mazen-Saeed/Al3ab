@@ -187,6 +187,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{hour} at night'**
   String timeNight(String hour);
+
+  /// Floor screen toggle: sections by room/group
+  ///
+  /// In en, this message translates to:
+  /// **'By place'**
+  String get viewByPlace;
+
+  /// Floor screen toggle: sections by unit type
+  ///
+  /// In en, this message translates to:
+  /// **'By type'**
+  String get viewByType;
+
+  /// Unit type name
+  ///
+  /// In en, this message translates to:
+  /// **'PlayStation'**
+  String get typePlayStation;
+
+  /// Unit type name
+  ///
+  /// In en, this message translates to:
+  /// **'Ping pong'**
+  String get typePingPong;
+
+  /// Unit type name
+  ///
+  /// In en, this message translates to:
+  /// **'Billiards'**
+  String get typeBilliards;
+
+  /// Section of private rooms (one unit each) of one type, e.g. Private PlayStation rooms
+  ///
+  /// In en, this message translates to:
+  /// **'Private {type} rooms'**
+  String privateRoomsOf(String type);
+
+  /// Heading in the by-type view: units in shared halls
+  ///
+  /// In en, this message translates to:
+  /// **'Shared'**
+  String get blockShared;
+
+  /// Heading in the by-type view: units in private rooms
+  ///
+  /// In en, this message translates to:
+  /// **'Private'**
+  String get blockPrivate;
+
+  /// Summary under the venue name on the Floor screen
+  ///
+  /// In en, this message translates to:
+  /// **'{running} running · {free} free'**
+  String floorSummary(int running, int free);
 }
 
 class _AppLocalizationsDelegate

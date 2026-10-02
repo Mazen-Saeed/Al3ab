@@ -11,11 +11,16 @@ class UnitTile extends StatelessWidget {
     required this.unit,
     this.selected = false,
     this.onTap,
+    this.title,
   });
 
   final Unit unit;
   final bool selected;
   final VoidCallback? onTap;
+
+  /// Text on top of the tile. Defaults to the unit's name;
+  /// private rooms pass the room's name instead ("VIP 1").
+  final String? title;
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +59,7 @@ class UnitTile extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      unit.name,
+                      title ?? unit.name,
                       style: TextStyle(color: foreground, fontSize: 14, fontWeight: FontWeight.w600),
                       overflow: TextOverflow.ellipsis,
                     ),

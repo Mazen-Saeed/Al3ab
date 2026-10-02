@@ -67,4 +67,35 @@ class AppLocalizationsAr extends AppLocalizations {
   String timeNight(String hour) {
     return '$hour بليل';
   }
+
+  @override
+  String get viewByPlace => 'حسب المكان';
+
+  @override
+  String get viewByType => 'حسب النوع';
+
+  @override
+  String get typePlayStation => 'بلايستيشن';
+
+  @override
+  String get typePingPong => 'بينج بونج';
+
+  @override
+  String get typeBilliards => 'بلياردو';
+
+  @override
+  String privateRoomsOf(String type) {
+    return 'غرف ال$type المميزة';
+  }
+
+  @override
+  String get blockShared => 'مشتركة';
+
+  @override
+  String get blockPrivate => 'مميزة';
+
+  @override
+  String floorSummary(int running, int free) {
+    return '$running شغالين · $free فاضيين';
+  }
 }

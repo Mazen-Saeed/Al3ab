@@ -14,5 +14,14 @@
   "timeMorning": "{hour} الصبح",
   "timeNoon": "{hour} الظهر",
   "timeAfternoon": "{hour} العصر",
-  "timeNight": "{hour} بليل"
+  "timeNight": "{hour} بليل",
+  "viewByPlace": "حسب المكان",
+  "viewByType": "حسب النوع",
+  "typePlayStation": "بلايستيشن",
+  "typePingPong": "بينج بونج",
+  "typeBilliards": "بلياردو",
+  "privateRoomsOf": "غرف ال{type} المميزة",
+  "blockShared": "مشتركة",
+  "blockPrivate": "مميزة",
+  "floorSummary": "شغال {running} · فاضي {free}"
 }

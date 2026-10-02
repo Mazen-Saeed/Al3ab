@@ -7,7 +7,7 @@ void main() {
     await tester.pumpWidget(const MyApp());
     await tester.pumpAndSettle();
 
-    expect(find.text('الصالة'), findsOneWidget); // title, in Arabic
+    expect(find.text('محل التجربة'), findsOneWidget); // venue name in the top bar
     expect(find.text('PS5-1'), findsOneWidget);
     expect(find.text('بلياردو 2'), findsOneWidget);
   });

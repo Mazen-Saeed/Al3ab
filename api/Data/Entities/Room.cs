@@ -6,4 +6,8 @@ public class Room : SyncedEntity
     public Venue Venue { get; set; } = null!;
 
     public required string Name { get; set; }
+
+    // Optional: the group this room belongs to on the Floor screen.
+    public Guid? RoomGroupId { get; set; }
+    public RoomGroup? RoomGroup { get; set; }
 }

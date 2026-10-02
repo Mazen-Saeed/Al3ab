@@ -58,6 +58,7 @@ Table rooms {
   id uuid [pk]
   venue_id uuid [not null]
   name varchar [not null]
+  room_group_id uuid [note: 'optional group on the Floor screen']
   updated_at timestamptz [not null]
   updated_by_staff_id uuid [note: 'who made the last change, incl. soft delete']
   deleted_at timestamptz
@@ -270,6 +271,17 @@ Table bill_items {
   Note: 'Receipt lines, copied at payment time and never changed afterwards'
 }
 
+Table room_groups {
+  id uuid [pk]
+  venue_id uuid [not null]
+  name varchar [not null, note: 'e.g. الصالات']
+  sort_order integer [not null, default: 0]
+  updated_at timestamptz [not null]
+  updated_by_staff_id uuid
+  deleted_at timestamptz
+  Note: 'Owner-made grouping of rooms for the Floor screen. Private rooms (one unit) are not grouped.'
+}
+
 Ref: units.room_id > rooms.id
 Ref: units.price_category_id > price_categories.id
 Ref: units.unit_type_id > unit_types.id
@@ -312,3 +324,5 @@ Ref: devices.venue_id > venues.id
 Ref: venues.shop_device_id > devices.id
 Ref: bill_items.bill_id > bills.id
 Ref: bill_items.product_id > products.id
+Ref: rooms.room_group_id > room_groups.id
+Ref: room_groups.venue_id > venues.id

@@ -94,5 +94,54 @@
         "type": "String"
       }
     }
+  },
+  "viewByPlace": "By place",
+  "@viewByPlace": {
+    "description": "Floor screen toggle: sections by room/group"
+  },
+  "viewByType": "By type",
+  "@viewByType": {
+    "description": "Floor screen toggle: sections by unit type"
+  },
+  "typePlayStation": "PlayStation",
+  "@typePlayStation": {
+    "description": "Unit type name"
+  },
+  "typePingPong": "Ping pong",
+  "@typePingPong": {
+    "description": "Unit type name"
+  },
+  "typeBilliards": "Billiards",
+  "@typeBilliards": {
+    "description": "Unit type name"
+  },
+  "privateRoomsOf": "Private {type} rooms",
+  "@privateRoomsOf": {
+    "description": "Section of private rooms (one unit each) of one type, e.g. Private PlayStation rooms",
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "blockShared": "Shared",
+  "@blockShared": {
+    "description": "Heading in the by-type view: units in shared halls"
+  },
+  "blockPrivate": "Private",
+  "@blockPrivate": {
+    "description": "Heading in the by-type view: units in private rooms"
+  },
+  "floorSummary": "Running {running} · Free {free}",
+  "@floorSummary": {
+    "description": "Summary under the venue name on the Floor screen",
+    "placeholders": {
+      "running": {
+        "type": "int"
+      },
+      "free": {
+        "type": "int"
+      }
+    }
   }
 }
