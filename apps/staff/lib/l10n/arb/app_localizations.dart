@@ -254,35 +254,17 @@ abstract class AppLocalizations {
   /// **'Reservations'**
   String get navReservations;
 
-  /// Side nav: shift and cash drawer
+  /// Side nav: the cash drawer (open/close, hand over, expenses)
   ///
   /// In en, this message translates to:
-  /// **'Shift & drawer'**
+  /// **'Cash box'**
   String get navShift;
-
-  /// Side nav: reports (owners/managers)
-  ///
-  /// In en, this message translates to:
-  /// **'Reports'**
-  String get navReports;
 
   /// Button at the bottom of the side nav: change who is working
   ///
   /// In en, this message translates to:
   /// **'Switch staff'**
   String get switchStaff;
-
-  /// Header chip: this device is connected to the internet
-  ///
-  /// In en, this message translates to:
-  /// **'Online'**
-  String get statusOnline;
-
-  /// Header chip label before the cash amount in the drawer
-  ///
-  /// In en, this message translates to:
-  /// **'Drawer'**
-  String get drawerLabel;
 
   /// Session panel: start time (friendly) and current hourly price
   ///
@@ -337,6 +319,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'End & pay'**
   String get endAndPay;
+
+  /// Side nav: management screens (staff, units & prices, products, reports, settings). Owners/managers only
+  ///
+  /// In en, this message translates to:
+  /// **'Manage'**
+  String get navManage;
+
+  /// Header warning, shown only when the device is offline
+  ///
+  /// In en, this message translates to:
+  /// **'No internet · everything is saved on this device'**
+  String get statusOffline;
 }
 
 class _AppLocalizationsDelegate

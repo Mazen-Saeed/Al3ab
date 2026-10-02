@@ -106,19 +106,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navReservations => 'Reservations';
 
   @override
-  String get navShift => 'Shift & drawer';
-
-  @override
-  String get navReports => 'Reports';
+  String get navShift => 'Cash box';
 
   @override
   String get switchStaff => 'Switch staff';
-
-  @override
-  String get statusOnline => 'Online';
-
-  @override
-  String get drawerLabel => 'Drawer';
 
   @override
   String sessionStarted(String time, int price) {
@@ -148,4 +139,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get endAndPay => 'End & pay';
+
+  @override
+  String get navManage => 'Manage';
+
+  @override
+  String get statusOffline =>
+      'No internet · everything is saved on this device';
 }

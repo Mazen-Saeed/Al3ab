@@ -106,19 +106,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get navReservations => 'الحجوزات';
 
   @override
-  String get navShift => 'الوردية والدرج';
-
-  @override
-  String get navReports => 'التقارير';
+  String get navShift => 'الخزينة';
 
   @override
   String get switchStaff => 'تبديل الموظف';
-
-  @override
-  String get statusOnline => 'متصل';
-
-  @override
-  String get drawerLabel => 'الدرج';
 
   @override
   String sessionStarted(String time, int price) {
@@ -148,4 +139,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get endAndPay => 'إنهاء ودفع';
+
+  @override
+  String get navManage => 'الإدارة';
+
+  @override
+  String get statusOffline => 'مفيش نت · كل حاجة محفوظة على الجهاز';
 }
