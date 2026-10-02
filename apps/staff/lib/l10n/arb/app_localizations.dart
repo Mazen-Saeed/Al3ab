@@ -239,8 +239,104 @@ abstract class AppLocalizations {
   /// Summary under the venue name on the Floor screen
   ///
   /// In en, this message translates to:
-  /// **'{running} running · {free} free'**
+  /// **'Running {running} · Free {free}'**
   String floorSummary(int running, int free);
+
+  /// Side nav: sell drinks/snacks without a session
+  ///
+  /// In en, this message translates to:
+  /// **'Quick sale'**
+  String get navQuickSale;
+
+  /// Side nav: bookings
+  ///
+  /// In en, this message translates to:
+  /// **'Reservations'**
+  String get navReservations;
+
+  /// Side nav: shift and cash drawer
+  ///
+  /// In en, this message translates to:
+  /// **'Shift & drawer'**
+  String get navShift;
+
+  /// Side nav: reports (owners/managers)
+  ///
+  /// In en, this message translates to:
+  /// **'Reports'**
+  String get navReports;
+
+  /// Button at the bottom of the side nav: change who is working
+  ///
+  /// In en, this message translates to:
+  /// **'Switch staff'**
+  String get switchStaff;
+
+  /// Header chip: this device is connected to the internet
+  ///
+  /// In en, this message translates to:
+  /// **'Online'**
+  String get statusOnline;
+
+  /// Header chip label before the cash amount in the drawer
+  ///
+  /// In en, this message translates to:
+  /// **'Drawer'**
+  String get drawerLabel;
+
+  /// Session panel: start time (friendly) and current hourly price
+  ///
+  /// In en, this message translates to:
+  /// **'Started {time} · {price} EGP/hour'**
+  String sessionStarted(String time, int price);
+
+  /// Session panel line: cost of time played
+  ///
+  /// In en, this message translates to:
+  /// **'Play time'**
+  String get playTime;
+
+  /// Session panel: no drinks/snacks ordered in this session
+  ///
+  /// In en, this message translates to:
+  /// **'No orders yet'**
+  String get noOrdersYet;
+
+  /// Session panel: total so far
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get total;
+
+  /// Session panel button: add drinks/snacks
+  ///
+  /// In en, this message translates to:
+  /// **'Order'**
+  String get addOrder;
+
+  /// Session panel button: move the session to another unit
+  ///
+  /// In en, this message translates to:
+  /// **'Move'**
+  String get moveUnit;
+
+  /// Session panel button: switch to multi price
+  ///
+  /// In en, this message translates to:
+  /// **'Make multi'**
+  String get switchToMulti;
+
+  /// Session panel button: switch to single price
+  ///
+  /// In en, this message translates to:
+  /// **'Make single'**
+  String get switchToSingle;
+
+  /// Session panel main button: end the session and go to checkout
+  ///
+  /// In en, this message translates to:
+  /// **'End & pay'**
+  String get endAndPay;
 }
 
 class _AppLocalizationsDelegate

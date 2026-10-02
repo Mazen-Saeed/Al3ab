@@ -143,5 +143,77 @@
         "type": "int"
       }
     }
+  },
+  "navQuickSale": "Quick sale",
+  "@navQuickSale": {
+    "description": "Side nav: sell drinks/snacks without a session"
+  },
+  "navReservations": "Reservations",
+  "@navReservations": {
+    "description": "Side nav: bookings"
+  },
+  "navShift": "Shift & drawer",
+  "@navShift": {
+    "description": "Side nav: shift and cash drawer"
+  },
+  "navReports": "Reports",
+  "@navReports": {
+    "description": "Side nav: reports (owners/managers)"
+  },
+  "switchStaff": "Switch staff",
+  "@switchStaff": {
+    "description": "Button at the bottom of the side nav: change who is working"
+  },
+  "statusOnline": "Online",
+  "@statusOnline": {
+    "description": "Header chip: this device is connected to the internet"
+  },
+  "drawerLabel": "Drawer",
+  "@drawerLabel": {
+    "description": "Header chip label before the cash amount in the drawer"
+  },
+  "sessionStarted": "Started {time} · {price} EGP/hour",
+  "@sessionStarted": {
+    "description": "Session panel: start time (friendly) and current hourly price",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      },
+      "price": {
+        "type": "int"
+      }
+    }
+  },
+  "playTime": "Play time",
+  "@playTime": {
+    "description": "Session panel line: cost of time played"
+  },
+  "noOrdersYet": "No orders yet",
+  "@noOrdersYet": {
+    "description": "Session panel: no drinks/snacks ordered in this session"
+  },
+  "total": "Total",
+  "@total": {
+    "description": "Session panel: total so far"
+  },
+  "addOrder": "Order",
+  "@addOrder": {
+    "description": "Session panel button: add drinks/snacks"
+  },
+  "moveUnit": "Move",
+  "@moveUnit": {
+    "description": "Session panel button: move the session to another unit"
+  },
+  "switchToMulti": "Make multi",
+  "@switchToMulti": {
+    "description": "Session panel button: switch to multi price"
+  },
+  "switchToSingle": "Make single",
+  "@switchToSingle": {
+    "description": "Session panel button: switch to single price"
+  },
+  "endAndPay": "End & pay",
+  "@endAndPay": {
+    "description": "Session panel main button: end the session and go to checkout"
   }
 }

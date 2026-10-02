@@ -96,6 +96,56 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String floorSummary(int running, int free) {
-    return '$running running · $free free';
+    return 'Running $running · Free $free';
   }
+
+  @override
+  String get navQuickSale => 'Quick sale';
+
+  @override
+  String get navReservations => 'Reservations';
+
+  @override
+  String get navShift => 'Shift & drawer';
+
+  @override
+  String get navReports => 'Reports';
+
+  @override
+  String get switchStaff => 'Switch staff';
+
+  @override
+  String get statusOnline => 'Online';
+
+  @override
+  String get drawerLabel => 'Drawer';
+
+  @override
+  String sessionStarted(String time, int price) {
+    return 'Started $time · $price EGP/hour';
+  }
+
+  @override
+  String get playTime => 'Play time';
+
+  @override
+  String get noOrdersYet => 'No orders yet';
+
+  @override
+  String get total => 'Total';
+
+  @override
+  String get addOrder => 'Order';
+
+  @override
+  String get moveUnit => 'Move';
+
+  @override
+  String get switchToMulti => 'Make multi';
+
+  @override
+  String get switchToSingle => 'Make single';
+
+  @override
+  String get endAndPay => 'End & pay';
 }

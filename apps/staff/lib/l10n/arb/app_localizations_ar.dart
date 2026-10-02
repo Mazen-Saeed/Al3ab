@@ -96,6 +96,56 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String floorSummary(int running, int free) {
-    return '$running شغالين · $free فاضيين';
+    return 'شغال $running · فاضي $free';
   }
+
+  @override
+  String get navQuickSale => 'بيع سريع';
+
+  @override
+  String get navReservations => 'الحجوزات';
+
+  @override
+  String get navShift => 'الوردية والدرج';
+
+  @override
+  String get navReports => 'التقارير';
+
+  @override
+  String get switchStaff => 'تبديل الموظف';
+
+  @override
+  String get statusOnline => 'متصل';
+
+  @override
+  String get drawerLabel => 'الدرج';
+
+  @override
+  String sessionStarted(String time, int price) {
+    return 'بدأ $time · $price جنيه في الساعة';
+  }
+
+  @override
+  String get playTime => 'وقت اللعب';
+
+  @override
+  String get noOrdersYet => 'مفيش طلبات لسة';
+
+  @override
+  String get total => 'الإجمالي';
+
+  @override
+  String get addOrder => 'طلب';
+
+  @override
+  String get moveUnit => 'نقل';
+
+  @override
+  String get switchToMulti => 'حوّل زوجي';
+
+  @override
+  String get switchToSingle => 'حوّل فردي';
+
+  @override
+  String get endAndPay => 'إنهاء ودفع';
 }

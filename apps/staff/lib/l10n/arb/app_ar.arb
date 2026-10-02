@@ -23,5 +23,21 @@
   "privateRoomsOf": "غرف ال{type} المميزة",
   "blockShared": "مشتركة",
   "blockPrivate": "مميزة",
-  "floorSummary": "شغال {running} · فاضي {free}"
+  "floorSummary": "شغال {running} · فاضي {free}",
+  "navQuickSale": "بيع سريع",
+  "navReservations": "الحجوزات",
+  "navShift": "الوردية والدرج",
+  "navReports": "التقارير",
+  "switchStaff": "تبديل الموظف",
+  "statusOnline": "متصل",
+  "drawerLabel": "الدرج",
+  "sessionStarted": "بدأ {time} · {price} جنيه في الساعة",
+  "playTime": "وقت اللعب",
+  "noOrdersYet": "مفيش طلبات لسة",
+  "total": "الإجمالي",
+  "addOrder": "طلب",
+  "moveUnit": "نقل",
+  "switchToMulti": "حوّل زوجي",
+  "switchToSingle": "حوّل فردي",
+  "endAndPay": "إنهاء ودفع"
 }

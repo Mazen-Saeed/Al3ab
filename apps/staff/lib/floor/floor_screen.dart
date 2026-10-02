@@ -1,7 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../app_theme.dart';
 import '../l10n/l10n.dart';
+import '../shell/layout.dart';
+import '../shell/side_nav.dart';
+import 'session_panel.dart';
 import 'unit.dart';
 import 'unit_tile.dart';
 
@@ -22,54 +27,140 @@ class FloorScreen extends StatefulWidget {
 
 class _FloorScreenState extends State<FloorScreen> {
   bool _byType = false; // the toggle: false = by place, true = by type
+  String _selectedId = 'ps5-1'; // which unit the side panel shows
+
+  late final List<Unit> _units; // loaded once when the screen opens
+  Timer? _ticker; // fires every second so running timers move
+
+  @override
+  void initState() {
+    super.initState();
+    // Runs ONCE, when the screen is created (not on every redraw).
+    _units = buildSampleUnits();
+
+    // Every second: redraw. Nothing in our data changes, but DateTime.now() does,
+    // so each tile's elapsed time and cost are recalculated in build().
+    _ticker = Timer.periodic(const Duration(seconds: 1), (_) => setState(() {}));
+  }
+
+  @override
+  void dispose() {
+    // Runs ONCE, when the screen is removed. Stop the timer, or it keeps firing
+    // and calling setState on a screen that no longer exists.
+    _ticker?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final units = buildSampleUnits();
+    final units = _units;
     final sections = _byType ? _sectionsByType(units, l10n) : _sectionsByPlace(units, l10n);
 
     final running = units.where((u) => u.status == UnitStatus.running).length;
     final free = units.where((u) => u.status == UnitStatus.free).length;
+    final selected = units.firstWhere((u) => u.id == _selectedId);
 
-    return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 72,
-        centerTitle: false,
-        // Title: the venue's name + a live summary, instead of a generic word.
-        title: Column(
+    // The middle part (header, toggle, sections) is the same on every screen size.
+    Widget content(bool isWide) => Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(sampleVenueName, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
-            Text(
-              l10n.floorSummary(running, free),
-              style: const TextStyle(fontSize: 13, color: AppColors.textMuted),
-            ),
-          ],
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsetsDirectional.only(end: 20),
-            child: SegmentedButton<bool>(
+            _FloorHeader(running: running, free: free),
+            const SizedBox(height: 16),
+            SegmentedButton<bool>(
               segments: [
                 ButtonSegment(value: false, label: Text(l10n.viewByPlace)),
                 ButtonSegment(value: true, label: Text(l10n.viewByType)),
               ],
               selected: {_byType},
               showSelectedIcon: false,
-              // Tapping a segment changes the state and redraws the screen.
               onSelectionChanged: (selection) => setState(() => _byType = selection.first),
             ),
-          ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsetsDirectional.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            for (final section in sections) _SectionView(section: section),
+            const SizedBox(height: 16),
+            Expanded(
+              // Only this part scrolls; header, nav and panel stay in place.
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    for (final section in sections)
+                      _SectionView(
+                        section: section,
+                        selectedId: _selectedId,
+                        onSelect: (unit) => _select(unit, openSheet: !isWide),
+                      ),
+                  ],
+                ),
+              ),
+            ),
           ],
+        );
+
+    // LayoutBuilder tells us how much width we have, so we can pick a layout.
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final width = constraints.maxWidth;
+
+        // Phone: bottom navigation bar, no side panel.
+        if (width < kPhoneLayout) {
+          return Scaffold(
+            body: SafeArea(
+              child: Padding(
+                padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 0),
+                child: content(false),
+              ),
+            ),
+            bottomNavigationBar: NavigationBar(
+              selectedIndex: 0,
+              onDestinationSelected: (_) {}, // other screens come later
+              destinations: [
+                NavigationDestination(icon: const Icon(Icons.grid_view_rounded), label: l10n.homeTitle),
+                NavigationDestination(icon: const Icon(Icons.local_drink_outlined), label: l10n.navQuickSale),
+                NavigationDestination(icon: const Badge(child: Icon(Icons.event_outlined)), label: l10n.navReservations),
+                NavigationDestination(icon: const Icon(Icons.payments_outlined), label: l10n.navShift),
+              ],
+            ),
+          );
+        }
+
+        // Tablet / PC: side nav + content (+ side panel only when wide).
+        final isWide = width >= kWideLayout;
+        return Scaffold(
+          body: Padding(
+            padding: const EdgeInsetsDirectional.all(20),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch, // every column is full height
+              children: [
+                SideNav(selectedIndex: 0, onSelect: (_) {}, hasNewReservation: true),
+                const SizedBox(width: 20),
+                // Expanded = "take all the width that's left".
+                Expanded(child: content(isWide)),
+                if (isWide) ...[
+                  const SizedBox(width: 20),
+                  SessionPanel(unit: selected, width: 340),
+                ],
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  /// Tap on a tile: select it. On smaller screens, also open the panel in a bottom sheet.
+  void _select(Unit unit, {required bool openSheet}) {
+    setState(() => _selectedId = unit.id);
+    if (!openSheet) return;
+
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true, // allow a taller sheet than the default half screen
+      backgroundColor: Colors.transparent, // the panel draws its own rounded background
+      builder: (context) => Padding(
+        padding: const EdgeInsetsDirectional.all(12),
+        child: SizedBox(
+          height: 620,
+          child: SessionPanel(unit: unit),
         ),
       ),
     );
@@ -182,9 +273,11 @@ class _Block {
 
 /// Draws one section: its title, then each block (optional heading + grid).
 class _SectionView extends StatelessWidget {
-  const _SectionView({required this.section});
+  const _SectionView({required this.section, required this.selectedId, required this.onSelect});
 
   final _Section section;
+  final String selectedId;
+  final ValueChanged<Unit> onSelect;
 
   @override
   Widget build(BuildContext context) {
@@ -207,7 +300,12 @@ class _SectionView extends StatelessWidget {
                   style: const TextStyle(color: AppColors.textMuted, fontSize: 13, fontWeight: FontWeight.w500),
                 ),
               ),
-            _UnitGrid(units: block.units, showRoomNames: block.showRoomNames),
+            _UnitGrid(
+              units: block.units,
+              showRoomNames: block.showRoomNames,
+              selectedId: selectedId,
+              onSelect: onSelect,
+            ),
             const SizedBox(height: 12),
           ],
         ],
@@ -218,10 +316,17 @@ class _SectionView extends StatelessWidget {
 
 /// Tiles in a grid whose column count adapts to the available width.
 class _UnitGrid extends StatelessWidget {
-  const _UnitGrid({required this.units, required this.showRoomNames});
+  const _UnitGrid({
+    required this.units,
+    required this.showRoomNames,
+    required this.selectedId,
+    required this.onSelect,
+  });
 
   final List<Unit> units;
   final bool showRoomNames;
+  final String selectedId;
+  final ValueChanged<Unit> onSelect;
 
   @override
   Widget build(BuildContext context) {
@@ -242,9 +347,82 @@ class _UnitGrid extends StatelessWidget {
         return UnitTile(
           unit: unit,
           title: showRoomNames ? unit.roomName : null,
-          selected: unit.id == 'ps5-1',
+          selected: unit.id == selectedId,
+          onTap: () => onSelect(unit),
         );
       },
+    );
+  }
+}
+
+/// Top of the Floor screen: venue name + summary, then status chips and quick sale.
+class _FloorHeader extends StatelessWidget {
+  const _FloorHeader({required this.running, required this.free});
+
+  final int running;
+  final int free;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    // Wrap = a Row that moves items to the next line when they don't fit.
+    return Wrap(
+      spacing: 10, // horizontal gap
+      runSpacing: 12, // vertical gap between lines
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: [
+        Padding(
+          padding: const EdgeInsetsDirectional.only(end: 14),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(sampleVenueName, style: const TextStyle(fontSize: 26, fontWeight: FontWeight.w700)),
+              Text(l10n.floorSummary(running, free), style: const TextStyle(fontSize: 14, color: AppColors.textMuted)),
+            ],
+          ),
+        ),
+        _HeaderChip(
+          children: [
+            Container(
+              width: 8,
+              height: 8,
+              decoration: const BoxDecoration(color: AppColors.free, shape: BoxShape.circle),
+            ),
+            const SizedBox(width: 8),
+            Text(l10n.statusOnline),
+          ],
+        ),
+        _HeaderChip(
+          children: [
+            Text(l10n.drawerLabel, style: const TextStyle(color: AppColors.textMuted)),
+            const SizedBox(width: 8),
+            Text(l10n.amountEgp(sampleDrawerCash), style: const TextStyle(fontWeight: FontWeight.w700)),
+          ],
+        ),
+        FilledButton.tonalIcon(
+          onPressed: () {}, // TODO: open quick sale
+          icon: const Icon(Icons.add, size: 20),
+          label: Text(l10n.navQuickSale),
+        ),
+      ],
+    );
+  }
+}
+
+/// A rounded pill used for status info in the header.
+class _HeaderChip extends StatelessWidget {
+  const _HeaderChip({required this.children});
+
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 44,
+      padding: const EdgeInsetsDirectional.symmetric(horizontal: 16),
+      decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(999)),
+      child: Row(mainAxisSize: MainAxisSize.min, children: children),
     );
   }
 }

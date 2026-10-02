@@ -62,6 +62,9 @@ class Unit {
 /// Sample venue name (owners type their own in Venue setup).
 const sampleVenueName = 'محل التجربة';
 
+/// Sample cash in the drawer (comes from the open shift later).
+const sampleDrawerCash = 1240;
+
 /// 12 sample units matching the design. Replaced by real data later.
 List<Unit> buildSampleUnits() {
   final now = DateTime.now();

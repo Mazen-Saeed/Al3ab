@@ -55,5 +55,18 @@ final appTheme = ThemeData(
     inversePrimary: AppColors.surface,
     error: AppColors.waitingPayment,
     onError: AppColors.onWaitingPayment,
+    // Secondary buttons and the selected segment of a toggle use these.
+    secondaryContainer: AppColors.raised,
+    onSecondaryContainer: AppColors.text,
+  ),
+  // Every FilledButton: rounded, tall enough to tap easily, semibold text.
+  filledButtonTheme: FilledButtonThemeData(
+    style: FilledButton.styleFrom(
+      minimumSize: const Size(0, 52),
+      // Less side padding than the default, so short labels like "حوّل زوجي" fit on one line.
+      padding: const EdgeInsetsDirectional.symmetric(horizontal: 12),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+      textStyle: const TextStyle(fontFamily: 'Alexandria', fontSize: 15, fontWeight: FontWeight.w600),
+    ),
   ),
 );
