@@ -12,3 +12,7 @@
 bin/
 obj/
 *.user
+
+# Project notes
+docs/project.md
+docs/decisions.md
