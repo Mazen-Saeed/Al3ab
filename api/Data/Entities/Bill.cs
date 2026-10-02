@@ -1,0 +1,28 @@
+using Al3ab.Api.Data.Enums;
+
+namespace Al3ab.Api.Data.Entities;
+
+public class Bill : SyncedEntity
+{
+    public Guid VenueId { get; set; }
+    public Venue Venue { get; set; } = null!;
+
+    public Guid SessionId { get; set; }
+    public Session Session { get; set; } = null!;
+
+    // Who took the payment.
+    public Guid StaffId { get; set; }
+    public Staff Staff { get; set; } = null!;
+
+    // The shift that was open when the bill was paid. Only Cash bills count toward the drawer.
+    public Guid ShiftId { get; set; }
+    public Shift Shift { get; set; } = null!;
+
+    public decimal Subtotal { get; set; }   // before discount
+    public decimal Discount { get; set; }
+    public decimal Total { get; set; }      // after discount = amount actually paid
+    public string? DiscountNote { get; set; }
+
+    public PaymentMethod PaymentMethod { get; set; }
+    public DateTime? PaidAt { get; set; }
+}

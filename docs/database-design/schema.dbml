@@ -1,138 +1,213 @@
 Table venues {
-  id integer [pk, increment]
+  id uuid [pk]
   name varchar [not null]
   phone varchar [not null]
   address varchar
-  latitude decimal
-  longitude decimal
-  opens_at time
+  latitude numeric(9,6)
+  longitude numeric(9,6)
+  opens_at time [note: 'if closes_at <= opens_at, closing is the next day']
   closes_at time
-  created_at timestamp
+  last_synced_at timestamptz [note: 'set by backend on every sync call from the shop PC, even empty ones']
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+  deleted_at timestamptz
 }
 
 Table staff {
-  id integer [pk, increment]
-  venue_id integer [not null]
+  id uuid [pk]
   name varchar [not null]
-  phone varchar [not null]
+  phone varchar [not null, unique]
   password_hash varchar [not null]
-  role varchar [not null, default: 'staff']
-  created_at timestamp
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+  deleted_at timestamptz
+}
+
+Table staff_venues {
+  id uuid [pk]
+  staff_id uuid [not null]
+  venue_id uuid [not null]
+  role varchar [not null, note: 'Owner | Manager | Staff']
+  updated_at timestamptz [not null]
+  deleted_at timestamptz
 
   indexes {
-    (venue_id, phone) [unique]
+    (staff_id, venue_id) [unique]
   }
 }
 
 Table units {
-  id integer [pk, increment]
-  venue_id integer [not null]
-  room_id integer [not null]
+  id uuid [pk]
+  venue_id uuid [not null]
+  room_id uuid [not null]
   name varchar [not null]
-  status varchar [not null, default: 'active']
-  type_id integer [not null]
-  price_category_id integer [not null]
+  status varchar [not null, default: 'Active', note: 'Active | Maintenance | Disabled']
+  unit_type_id uuid [not null]
+  price_category_id uuid [not null]
+  updated_at timestamptz [not null]
+  deleted_at timestamptz
 }
 
 Table rooms {
-  id integer [pk, increment]
-  venue_id integer [not null]
+  id uuid [pk]
+  venue_id uuid [not null]
   name varchar [not null]
+  updated_at timestamptz [not null]
+  deleted_at timestamptz
 }
 
 Table price_categories {
-  id integer [pk, increment]
-  venue_id integer [not null]
+  id uuid [pk]
+  venue_id uuid [not null]
   name varchar [not null]
   single_hourly_price numeric(10,2) [not null]
   multi_hourly_price numeric(10,2) [not null]
+  updated_at timestamptz [not null]
+  deleted_at timestamptz
 }
 
-Table types {
-  id integer [pk, increment]
+Table unit_types {
+  id uuid [pk]
   name varchar [not null]
 }
 
 Table customers {
-  id integer [pk, increment]
-  venue_id integer [not null]
-  phone varchar [not null]
-  name varchar
+  id uuid [pk]
+  name varchar [not null]
+  phone varchar [not null, unique]
+  password_hash varchar [not null]
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+  deleted_at timestamptz
+}
 
-  indexes {
-    (venue_id, phone) [unique]
-  }
+Table walk_in_customers {
+  id uuid [pk]
+  venue_id uuid [not null]
+  name varchar
+  phone varchar
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+  deleted_at timestamptz
 }
 
 Table reservations {
-  id integer [pk, increment]
-  venue_id integer [not null]
-  customer_id integer [not null]
-  status varchar [not null, default: 'booked'] 
-  starts_at timestamp
-  ends_at timestamp
-  staff_id integer [not null]
-  created_at timestamp
+  id uuid [pk]
+  venue_id uuid [not null]
+  customer_id uuid
+  walk_in_customer_id uuid
+  status varchar [not null, default: 'Pending', note: 'Pending | Confirmed | Rejected | Expired | Cancelled | Completed. Backend confirms instantly if shop online, else PC decides on sync']
+  confirmation_code varchar [note: 'customer shows this (or its QR) at the shop']
+  starts_at timestamptz [not null]
+  ends_at timestamptz [not null]
+  staff_id uuid
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+  deleted_at timestamptz
 }
 
 Table reservations_units {
-  id integer [pk, increment]
-  reservation_id integer [not null]
-  unit_id integer [not null]
+  id uuid [pk]
+  reservation_id uuid [not null]
+  unit_id uuid [not null]
+  updated_at timestamptz [not null]
+  deleted_at timestamptz
 }
 
 Table products {
-  id integer [pk, increment]
-  venue_id integer [not null]
+  id uuid [pk]
+  venue_id uuid [not null]
   name varchar [not null]
   price numeric(10,2) [not null]
-  stock_quantity integer [not null, default: 0]
+  stock_quantity integer [not null, default: 0, note: 'changed on the shop PC only (sales, restock); owner app shows it read-only']
+  updated_at timestamptz [not null]
+  deleted_at timestamptz
 }
 
 Table sessions {
-  id integer [pk, increment]
-  venue_id integer [not null]
-  reservation_id integer
-  customer_id integer
-  status varchar [not null, default: 'active']
-  staff_id integer [not null]
-  created_at timestamp
+  id uuid [pk]
+  venue_id uuid [not null]
+  reservation_id uuid
+  customer_id uuid
+  walk_in_customer_id uuid
+  status varchar [not null, default: 'Active', note: 'Active | Completed | Cancelled']
+  staff_id uuid [not null]
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+  deleted_at timestamptz
 }
 
 Table sessions_units {
-  id integer [pk, increment]
-  session_id integer [not null]
-  unit_id integer [not null]
-  started_at timestamp [not null]
-  ended_at timestamp
-  mode varchar [not null]
+  id uuid [pk]
+  session_id uuid [not null]
+  unit_id uuid [not null]
+  started_at timestamptz [not null]
+  ended_at timestamptz
+  mode varchar [not null, note: 'Single | Multi']
   hourly_price numeric(10,2) [not null]
+  updated_at timestamptz [not null]
+  deleted_at timestamptz
 }
 
 Table sessions_products {
-  id integer [pk, increment]
-  session_id integer [not null]
-  product_id integer [not null]
+  id uuid [pk]
+  session_id uuid [not null]
+  product_id uuid [not null]
   quantity integer [not null, default: 1]
   unit_price numeric(10,2) [not null]
-  ordered_at timestamp
+  ordered_at timestamptz [not null]
+  updated_at timestamptz [not null]
+  deleted_at timestamptz
 }
 
 Table bills {
-  id integer [pk, increment]
-   venue_id integer [not null]
-   session_id integer [not null]
-   total_price numeric(10,2) [not null]
-   discount numeric(10,2) [not null, default: 0]
-   paid_at timestamp
-   staff_id integer [not null]
-   discount_note varchar
+  id uuid [pk]
+  venue_id uuid [not null]
+  session_id uuid [not null]
+  subtotal numeric(10,2) [not null, note: 'before discount']
+  discount numeric(10,2) [not null, default: 0]
+  total numeric(10,2) [not null, note: 'after discount = amount actually paid']
+  paid_at timestamptz
+  staff_id uuid [not null]
+  discount_note varchar
+  shift_id uuid [not null]
+  payment_method varchar [not null, note: 'Cash | Instapay | Wallet']
+  updated_at timestamptz [not null]
+  deleted_at timestamptz
+}
+
+Table shifts {
+  id uuid [pk]
+  venue_id uuid [not null]
+  opened_by_staff_id uuid [not null]
+  opened_at timestamptz [not null]
+  opening_cash numeric(10,2) [not null]
+  closed_by_staff_id uuid
+  closed_at timestamptz
+  expected_cash numeric(10,2) [note: 'calculated at close, stored as snapshot']
+  counted_cash numeric(10,2)
+  note varchar
+  updated_at timestamptz [not null]
+  deleted_at timestamptz
+}
+
+Table cash_movements {
+  id uuid [pk]
+  venue_id uuid [not null]
+  shift_id uuid [not null]
+  staff_id uuid [not null]
+  type varchar [not null, note: 'Expense | CashIn | OwnerWithdrawal']
+  amount numeric(10,2) [not null]
+  note varchar
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+  deleted_at timestamptz
 }
 
 
 Ref: units.room_id > rooms.id
 Ref: units.price_category_id > price_categories.id
-Ref: units.type_id > types.id
+Ref: units.unit_type_id > unit_types.id
 Ref: units.venue_id > venues.id
 Ref: rooms.venue_id > venues.id
 Ref: price_categories.venue_id > venues.id
@@ -140,17 +215,27 @@ Ref: reservations.venue_id > venues.id
 Ref: reservations.customer_id > customers.id
 Ref: reservations_units.reservation_id > reservations.id
 Ref: reservations_units.unit_id > units.id
-Ref: customers.venue_id > venues.id
+Ref: walk_in_customers.venue_id > venues.id
 Ref: sessions.venue_id > venues.id
 Ref: reservations.id - sessions.reservation_id
-Ref: customers.id - sessions.customer_id
+Ref: sessions.customer_id > customers.id
+Ref: sessions.walk_in_customer_id > walk_in_customers.id
+Ref: reservations.walk_in_customer_id > walk_in_customers.id
 Ref: sessions_units.session_id > sessions.id
 Ref: sessions_units.unit_id > units.id
 Ref: sessions_products.session_id > sessions.id
 Ref: sessions_products.product_id > products.id
 Ref: bills.venue_id > venues.id
 Ref: bills.session_id > sessions.id
-Ref: staff.venue_id > venues.id
+Ref: staff_venues.staff_id > staff.id
+Ref: staff_venues.venue_id > venues.id
 Ref: sessions.staff_id > staff.id
 Ref: bills.staff_id > staff.id
 Ref: reservations.staff_id > staff.id
+Ref: bills.shift_id > shifts.id
+Ref: shifts.venue_id > venues.id
+Ref: shifts.opened_by_staff_id > staff.id
+Ref: shifts.closed_by_staff_id > staff.id
+Ref: cash_movements.venue_id > venues.id
+Ref: cash_movements.shift_id > shifts.id
+Ref: cash_movements.staff_id > staff.id

@@ -1,4 +1,4 @@
-using api.Data;
+using Al3ab.Api.Data;
 using Microsoft.EntityFrameworkCore;
 
 DotNetEnv.Env.TraversePath().Load();
@@ -6,7 +6,8 @@ DotNetEnv.Env.TraversePath().Load();
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("Default"))
+           .UseSnakeCaseNamingConvention());
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -17,8 +18,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-app.UseHttpsRedirection();
 
 app.MapGet("/venues", async (AppDbContext db) =>
     await db.Venues.ToListAsync());
