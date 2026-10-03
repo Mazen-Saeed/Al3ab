@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../app_theme.dart';
 import '../data/product.dart';
 import '../l10n/l10n.dart';
+import '../data/money.dart';
 
 /// A label on one side, an amount on the other. Used by the session panel and Checkout.
 class BillRow extends StatelessWidget {
@@ -62,9 +63,9 @@ class OrderRow extends StatelessWidget {
           const SizedBox(width: 6),
         ],
         Expanded(
-          child: Text(l10n.orderLine(line.name, line.quantity, line.unitPrice), style: AppText.small),
+          child: Text(l10n.orderLine(line.name, line.quantity, formatMoney(line.unitPrice)), style: AppText.small),
         ),
-        Text(l10n.amountEgp(line.total), style: AppText.small),
+        Text(l10n.amountEgp(formatMoney(line.total)), style: AppText.small),
       ],
     );
   }

@@ -1,7 +1,6 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import '../app_theme.dart';
@@ -14,12 +13,13 @@ import '../shell/form_surface.dart';
 import '../shell/pill.dart';
 import 'bill_widgets.dart';
 import 'time_text.dart';
+import '../data/money.dart';
 
 /// What staff chose in the checkout form.
 class CheckoutResult {
   const CheckoutResult({required this.discount, this.discountReason, required this.method});
 
-  final int discount; // EGP, already limited to the subtotal
+  final int discount; // piasters, already limited to the subtotal
   final String? discountReason;
   final PaymentMethod method;
 }
@@ -70,7 +70,7 @@ class _CheckoutFormState extends State<_CheckoutForm> {
   int get _subtotal => _playCost + _ordersSum;
 
   /// What was typed, never more than the subtotal (a discount can't make the bill negative).
-  int get _discount => math.min(int.tryParse(_discountField.text) ?? 0, _subtotal);
+  int get _discount => math.min(parseMoney(_discountField.text) ?? 0, _subtotal);
   int get _due => _subtotal - _discount;
 
   /// A discount needs a reason (the owner reads these later).
@@ -121,11 +121,11 @@ class _CheckoutFormState extends State<_CheckoutForm> {
                       pricePerHour: widget.unit.isMulti ? widget.unit.multiHourlyPrice! : widget.unit.hourlyPrice,
                       isMulti: widget.unit.isMulti,
                     ),
-                    value: l10n.amountEgp(_playCost),
+                    value: l10n.amountEgp(formatMoney(_playCost)),
                   ),
                   if (widget.orders.isNotEmpty) ...[
                     const SizedBox(height: 14),
-                    BillRow(label: l10n.ordersTitle, value: l10n.amountEgp(_ordersSum), bold: true),
+                    BillRow(label: l10n.ordersTitle, value: l10n.amountEgp(formatMoney(_ordersSum)), bold: true),
                     const SizedBox(height: 4),
                     for (final line in widget.orders) OrderRow(line: line),
                   ],
@@ -133,7 +133,7 @@ class _CheckoutFormState extends State<_CheckoutForm> {
                     padding: EdgeInsetsDirectional.symmetric(vertical: 14),
                     child: Divider(height: 1, color: AppColors.raised),
                   ),
-                  BillRow(label: l10n.billSubtotal, value: l10n.amountEgp(_subtotal), bold: true),
+                  BillRow(label: l10n.billSubtotal, value: l10n.amountEgp(formatMoney(_subtotal)), bold: true),
                   const SizedBox(height: 20),
 
                   // Discount (optional). The reason field appears once there is a discount.
@@ -141,8 +141,8 @@ class _CheckoutFormState extends State<_CheckoutForm> {
                   const SizedBox(height: 10),
                   TextField(
                     controller: _discountField,
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    keyboardType: moneyKeyboard,
+                    inputFormatters: moneyInputFormatters,
                     onChanged: (_) => setState(() {}), // redraw: due amount, reason field, button
                     decoration: const InputDecoration(hintText: '0'),
                   ),
@@ -185,7 +185,7 @@ class _CheckoutFormState extends State<_CheckoutForm> {
             textBaseline: TextBaseline.alphabetic,
             children: [
               Expanded(child: Text(l10n.amountDue, style: const TextStyle(fontWeight: FontWeight.w600))),
-              Text(l10n.amountEgp(_due), style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w700)),
+              Text(l10n.amountEgp(formatMoney(_due)), style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w700)),
             ],
           ),
           const SizedBox(height: 16),

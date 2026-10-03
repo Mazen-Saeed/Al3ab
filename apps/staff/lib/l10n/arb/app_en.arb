@@ -34,10 +34,10 @@
   },
   "amountEgp": "{amount} EGP",
   "@amountEgp": {
-    "description": "Money amount in Egyptian pounds",
+    "description": "Money amount in Egyptian pounds, already formatted (see formatMoney)",
     "placeholders": {
       "amount": {
-        "type": "int"
+        "type": "String"
       }
     }
   },
@@ -168,7 +168,7 @@
         "type": "String"
       },
       "price": {
-        "type": "int"
+        "type": "String"
       }
     }
   },
@@ -225,7 +225,7 @@
     "description": "Price shown under a single/multi option",
     "placeholders": {
       "price": {
-        "type": "int"
+        "type": "String"
       }
     }
   },
@@ -339,7 +339,7 @@
     "placeholders": {
       "name": {"type": "String"},
       "quantity": {"type": "int"},
-      "price": {"type": "int"}
+      "price": {"type": "String"}
     }
   },
   "removeItem": "Remove",
@@ -477,6 +477,10 @@
   "productPriceLabel": "Price in EGP",
   "@productPriceLabel": {
     "description": "Label of the product price field"
+  },
+  "productCostLabel": "Cost price (optional)",
+  "@productCostLabel": {
+    "description": "Label of the optional cost price field in the product form (what one costs the shop)"
   },
   "saveProduct": "Save",
   "@saveProduct": {

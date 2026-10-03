@@ -4,6 +4,7 @@ import '../app_theme.dart';
 import '../data/product.dart';
 import '../l10n/l10n.dart';
 import 'product_grid.dart';
+import '../data/money.dart';
 
 /// A grid of products: tap one to add it, use − / + to change how many.
 /// Stateless on purpose: the screen that uses it owns the quantities
@@ -68,7 +69,7 @@ class _ProductCard extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  context.l10n.amountEgp(product.price),
+                  context.l10n.amountEgp(formatMoney(product.price)),
                   style: TextStyle(color: picked ? AppColors.textOnLightMuted : AppColors.textMuted),
                 ),
                 const SizedBox(height: 8),

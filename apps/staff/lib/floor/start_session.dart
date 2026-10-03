@@ -6,6 +6,7 @@ import '../shell/form_surface.dart';
 import 'duration_picker.dart';
 import '../data/unit.dart';
 import 'time_text.dart';
+import '../data/money.dart';
 
 /// What staff chose in the form. Returned to the Floor screen when they press start.
 class StartSessionResult {
@@ -184,7 +185,7 @@ class _ModeButton extends StatelessWidget {
             children: [
               Text(title, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: fg)),
               const SizedBox(height: 4),
-              Text(context.l10n.pricePerHour(price), style: TextStyle(fontSize: 13, color: muted)),
+              Text(context.l10n.pricePerHour(formatMoney(price)), style: TextStyle(fontSize: 13, color: muted)),
             ],
           ),
         ),

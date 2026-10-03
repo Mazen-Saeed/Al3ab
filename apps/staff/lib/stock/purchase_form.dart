@@ -5,6 +5,7 @@ import '../app_theme.dart';
 import '../data/stock.dart';
 import '../l10n/l10n.dart';
 import '../shell/form_surface.dart';
+import '../data/money.dart';
 
 /// One shopping trip: what was bought and what the receipt said.
 class PurchaseResult {
@@ -13,7 +14,7 @@ class PurchaseResult {
   /// Stock item id -> how many arrived (only items with quantity > 0).
   final Map<String, int> quantities;
 
-  /// The receipt total, whole EGP.
+  /// The receipt total, piasters.
   final int total;
 }
 
@@ -56,7 +57,7 @@ class _PurchaseFormState extends State<_PurchaseForm> {
       };
 
   // Something bought and a total typed (0 is allowed: a gift).
-  bool get _canSave => _quantities.isNotEmpty && int.tryParse(_total.text) != null;
+  bool get _canSave => _quantities.isNotEmpty && parseMoney(_total.text) != null;
 
   @override
   Widget build(BuildContext context) {
@@ -85,14 +86,14 @@ class _PurchaseFormState extends State<_PurchaseForm> {
           TextField(
             key: const ValueKey('purchase-total'),
             controller: _total,
-            keyboardType: TextInputType.number,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            keyboardType: moneyKeyboard,
+            inputFormatters: moneyInputFormatters,
             onChanged: (_) => setState(() {}),
           ),
           const SizedBox(height: 22),
           FilledButton(
             onPressed: _canSave
-                ? () => Navigator.pop(context, PurchaseResult(quantities: _quantities, total: int.parse(_total.text)))
+                ? () => Navigator.pop(context, PurchaseResult(quantities: _quantities, total: parseMoney(_total.text)!))
                 : null,
             style: FilledButton.styleFrom(minimumSize: const Size(0, 60)),
             child: Text(l10n.purchaseConfirm, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),

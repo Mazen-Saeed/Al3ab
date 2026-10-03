@@ -34,7 +34,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get modeMulti => 'زوجي';
 
   @override
-  String amountEgp(int amount) {
+  String amountEgp(String amount) {
     return '$amount جنيه';
   }
 
@@ -112,7 +112,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get switchStaff => 'تبديل الموظف';
 
   @override
-  String sessionStarted(String time, int price) {
+  String sessionStarted(String time, String price) {
     return 'بدأ $time · $price جنيه في الساعة';
   }
 
@@ -153,7 +153,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get playType => 'نوع اللعب';
 
   @override
-  String pricePerHour(int price) {
+  String pricePerHour(String price) {
     return '$price جنيه في الساعة';
   }
 
@@ -229,7 +229,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get ordersTitle => 'الطلبات';
 
   @override
-  String orderLine(String name, int quantity, int price) {
+  String orderLine(String name, int quantity, String price) {
     return '$name · $quantity × $price';
   }
 
@@ -332,6 +332,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get productPriceLabel => 'السعر بالجنيه';
+
+  @override
+  String get productCostLabel => 'سعر الشراء (اختياري)';
 
   @override
   String get saveProduct => 'حفظ';

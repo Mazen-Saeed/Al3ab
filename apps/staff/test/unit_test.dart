@@ -10,13 +10,29 @@ void main() {
     test('costAt counts until the given moment, not until now', () {
       final start = DateTime(2026, 1, 1, 10);
       final unit = testUnit(status: UnitStatus.running, startedAt: start); // 50 per hour
-      expect(unit.costAt(start.add(const Duration(minutes: 30))), 25);
-      expect(unit.costAt(start.add(const Duration(hours: 2))), 100);
+      expect(unit.costAt(start.add(const Duration(minutes: 30))), 2500);
+      expect(unit.costAt(start.add(const Duration(hours: 2))), 10000);
+    });
+
+    test('a price with piasters: 7.50 an hour costs 7 after 1 hour (rounded down to whole pounds)', () {
+      final start = DateTime(2026, 1, 1, 10);
+      final unit = Unit(
+        id: 'u2',
+        name: 'PP-1',
+        type: UnitType.pingPong,
+        roomId: 'r1',
+        roomName: 'ترابيزات',
+        status: UnitStatus.running,
+        hourlyPrice: 750, // 7.50 EGP
+        startedAt: start,
+      );
+      expect(unit.costAt(start.add(const Duration(hours: 1))), 700);
+      expect(unit.costAt(start.add(const Duration(hours: 2))), 1500); // 15.00 exactly
     });
 
     test('open single: 1 hour at 50 is 50', () {
       final unit = testUnit(status: UnitStatus.running, startedAt: ago(const Duration(hours: 1, seconds: 5)));
-      expect(unit.currentCost, 50);
+      expect(unit.currentCost, 5000);
     });
 
     test('multi uses the multi price', () {
@@ -26,12 +42,12 @@ void main() {
         isMulti: true,
         startedAt: ago(const Duration(minutes: 30, seconds: 5)),
       );
-      expect(unit.currentCost, 35); // half an hour at 70
+      expect(unit.currentCost, 3500); // half an hour at 70
     });
 
     test('rounds down to whole pounds', () {
       final unit = testUnit(status: UnitStatus.running, startedAt: ago(const Duration(minutes: 10, seconds: 1)));
-      expect(unit.currentCost, 8); // 8.35 -> 8
+      expect(unit.currentCost, 800); // 8.35 EGP -> 8 (rounded down to whole pounds)
     });
 
     test('a unit that is not running costs nothing', () {

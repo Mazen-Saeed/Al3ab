@@ -16,6 +16,7 @@ import 'add_time.dart';
 import 'bill_widgets.dart';
 import 'checkout.dart';
 import 'time_text.dart';
+import '../data/money.dart';
 
 /// Details and actions for the selected unit.
 /// On wide screens it sits next to the grid; on smaller screens it opens in a bottom sheet.
@@ -161,7 +162,7 @@ class _RunningSession extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      l10n.sessionStarted(friendlyTime(l10n, unit.startedAt!), price),
+                      l10n.sessionStarted(friendlyTime(l10n, unit.startedAt!), formatMoney(price)),
                       style: const TextStyle(fontSize: 13, color: AppColors.textOnLightMuted),
                     ),
                     Text(
@@ -206,13 +207,13 @@ class _RunningSession extends StatelessWidget {
                 BillRow(
                   label: l10n.playTime,
                   detail: playDetail(l10n, unit.elapsed, pricePerHour: price, isMulti: unit.isMulti),
-                  value: l10n.amountEgp(playCost),
+                  value: l10n.amountEgp(formatMoney(playCost)),
                 ),
                 const SizedBox(height: 18), // clear gap between the two sections
                 if (orders.isEmpty)
                   Text(l10n.noOrdersYet, style: AppText.small)
                 else ...[
-                  BillRow(label: l10n.ordersTitle, value: l10n.amountEgp(ordersSum), bold: true),
+                  BillRow(label: l10n.ordersTitle, value: l10n.amountEgp(formatMoney(ordersSum)), bold: true),
                   const SizedBox(height: 4),
                   for (final line in orders)
                     OrderRow(line: line, onRemove: () => onRemoveOrder(line.productId)),
@@ -230,7 +231,7 @@ class _RunningSession extends StatelessWidget {
           textBaseline: TextBaseline.alphabetic,
           children: [
             Expanded(child: Text(l10n.total, style: const TextStyle(fontWeight: FontWeight.w600))),
-            Text(l10n.amountEgp(cost), style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w700)),
+            Text(l10n.amountEgp(formatMoney(cost)), style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w700)),
           ],
         ),
 

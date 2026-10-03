@@ -90,6 +90,6 @@ class Purchase {
   const Purchase({required this.id, required this.total, required this.at});
 
   final String id;
-  final int total; // whole EGP
+  final int total; // piasters
   final DateTime at;
 }

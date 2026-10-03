@@ -94,6 +94,7 @@
   "newProduct": "منتج للمنيو",
   "productNameLabel": "اسم المنتج",
   "productPriceLabel": "السعر بالجنيه",
+  "productCostLabel": "سعر الشراء (اختياري)",
   "saveProduct": "حفظ",
   "deleteProduct": "امسح المنتج",
   "stockTitle": "المخزون",

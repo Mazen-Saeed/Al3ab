@@ -1,3 +1,5 @@
+import 'money.dart';
+
 /// What kind of thing is rented by time.
 enum UnitType { playstation, pingPong, billiards }
 
@@ -37,7 +39,7 @@ class Unit {
   final String? groupName; // "الصالات"
   final UnitStatus status;
 
-  // Prices in whole EGP for now (real money handling comes with the database).
+  // Prices are piasters per hour (6000 = 60 EGP), see money.dart.
   final int hourlyPrice;
   final int? multiHourlyPrice; // null = no multi mode, don't ask "single or multi?"
 
@@ -99,11 +101,12 @@ class Unit {
     return base + extra;
   }
 
-  /// Play-time cost until [now], rounded down to whole EGP. Checkout freezes [now] when it
+  /// Play-time cost until [now] in piasters, rounded down to whole pounds (same rule as before
+  /// the switch to piasters; whole ints only, no double). Checkout freezes [now] when it
   /// opens, so the amount on screen is exactly the amount saved in the bill.
   int costAt(DateTime now) {
     final price = isMulti ? multiHourlyPrice! : hourlyPrice;
-    return (elapsedAt(now).inSeconds * price / 3600).floor();
+    return elapsedAt(now).inSeconds * price ~/ (3600 * piastersPerPound) * piastersPerPound;
   }
 
   /// Play-time cost so far.

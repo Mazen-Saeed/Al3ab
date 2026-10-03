@@ -31,33 +31,33 @@ List<Unit> buildSampleUnits() {
 
   return [
     // Two halls, grouped by the owner as "صالات البلايستيشن المشتركة"
-    Unit(id: 'ps5-1', name: 'PS5-1', type: UnitType.playstation, roomId: 'hall-1', roomName: 'صالة 1', groupId: 'halls', groupName: 'صالات البلايستيشن المشتركة', status: UnitStatus.running, hourlyPrice: 50, multiHourlyPrice: 70, startedAt: ago(1, 24, 10)),
-    Unit(id: 'ps5-2', name: 'PS5-2', type: UnitType.playstation, roomId: 'hall-1', roomName: 'صالة 1', groupId: 'halls', groupName: 'صالات البلايستيشن المشتركة', status: UnitStatus.running, hourlyPrice: 50, multiHourlyPrice: 70, startedAt: ago(0, 47, 33), isMulti: true, plannedMinutes: 60),
-    Unit(id: 'ps5-3', name: 'PS5-3', type: UnitType.playstation, roomId: 'hall-1', roomName: 'صالة 1', groupId: 'halls', groupName: 'صالات البلايستيشن المشتركة', status: UnitStatus.free, hourlyPrice: 50, multiHourlyPrice: 70, nextReservationAt: now.add(const Duration(hours: 1, minutes: 20))),
-    Unit(id: 'ps5-4', name: 'PS5-4', type: UnitType.playstation, roomId: 'hall-2', roomName: 'صالة 2', groupId: 'halls', groupName: 'صالات البلايستيشن المشتركة', status: UnitStatus.running, hourlyPrice: 50, multiHourlyPrice: 70, startedAt: ago(0, 59, 10), plannedMinutes: 60, nextReservationAt: now.add(const Duration(minutes: 15))),
-    const Unit(id: 'ps4-1', name: 'PS4-1', type: UnitType.playstation, roomId: 'hall-2', roomName: 'صالة 2', groupId: 'halls', groupName: 'صالات البلايستيشن المشتركة', status: UnitStatus.waitingPayment, hourlyPrice: 60, multiHourlyPrice: 80, amountDue: 120),
-    const Unit(id: 'ps4-2', name: 'PS4-2', type: UnitType.playstation, roomId: 'hall-2', roomName: 'صالة 2', groupId: 'halls', groupName: 'صالات البلايستيشن المشتركة', status: UnitStatus.maintenance, hourlyPrice: 60, multiHourlyPrice: 80, note: 'جهاز بايظ'),
+    Unit(id: 'ps5-1', name: 'PS5-1', type: UnitType.playstation, roomId: 'hall-1', roomName: 'صالة 1', groupId: 'halls', groupName: 'صالات البلايستيشن المشتركة', status: UnitStatus.running, hourlyPrice: 5000, multiHourlyPrice: 7000, startedAt: ago(1, 24, 10)),
+    Unit(id: 'ps5-2', name: 'PS5-2', type: UnitType.playstation, roomId: 'hall-1', roomName: 'صالة 1', groupId: 'halls', groupName: 'صالات البلايستيشن المشتركة', status: UnitStatus.running, hourlyPrice: 5000, multiHourlyPrice: 7000, startedAt: ago(0, 47, 33), isMulti: true, plannedMinutes: 60),
+    Unit(id: 'ps5-3', name: 'PS5-3', type: UnitType.playstation, roomId: 'hall-1', roomName: 'صالة 1', groupId: 'halls', groupName: 'صالات البلايستيشن المشتركة', status: UnitStatus.free, hourlyPrice: 5000, multiHourlyPrice: 7000, nextReservationAt: now.add(const Duration(hours: 1, minutes: 20))),
+    Unit(id: 'ps5-4', name: 'PS5-4', type: UnitType.playstation, roomId: 'hall-2', roomName: 'صالة 2', groupId: 'halls', groupName: 'صالات البلايستيشن المشتركة', status: UnitStatus.running, hourlyPrice: 5000, multiHourlyPrice: 7000, startedAt: ago(0, 59, 10), plannedMinutes: 60, nextReservationAt: now.add(const Duration(minutes: 15))),
+    const Unit(id: 'ps4-1', name: 'PS4-1', type: UnitType.playstation, roomId: 'hall-2', roomName: 'صالة 2', groupId: 'halls', groupName: 'صالات البلايستيشن المشتركة', status: UnitStatus.waitingPayment, hourlyPrice: 6000, multiHourlyPrice: 8000, amountDue: 12000),
+    const Unit(id: 'ps4-2', name: 'PS4-2', type: UnitType.playstation, roomId: 'hall-2', roomName: 'صالة 2', groupId: 'halls', groupName: 'صالات البلايستيشن المشتركة', status: UnitStatus.maintenance, hourlyPrice: 6000, multiHourlyPrice: 8000, note: 'جهاز بايظ'),
     // Table room (no group)
-    Unit(id: 'pp-1', name: 'بينج بونج 1', type: UnitType.pingPong, roomId: 'tables', roomName: 'ترابيزات البينج والبلياردو', status: UnitStatus.running, hourlyPrice: 40, multiHourlyPrice: 60, startedAt: ago(0, 32, 10), isMulti: true),
-    const Unit(id: 'pp-2', name: 'بينج بونج 2', type: UnitType.pingPong, roomId: 'tables', roomName: 'ترابيزات البينج والبلياردو', status: UnitStatus.free, hourlyPrice: 40, multiHourlyPrice: 60),
-    Unit(id: 'bil-1', name: 'بلياردو 1', type: UnitType.billiards, roomId: 'tables', roomName: 'ترابيزات البينج والبلياردو', status: UnitStatus.running, hourlyPrice: 60, startedAt: ago(1, 5, 0), plannedMinutes: 60),
-    const Unit(id: 'bil-2', name: 'بلياردو 2', type: UnitType.billiards, roomId: 'tables', roomName: 'ترابيزات البينج والبلياردو', status: UnitStatus.free, hourlyPrice: 60),
+    Unit(id: 'pp-1', name: 'بينج بونج 1', type: UnitType.pingPong, roomId: 'tables', roomName: 'ترابيزات البينج والبلياردو', status: UnitStatus.running, hourlyPrice: 4000, multiHourlyPrice: 6000, startedAt: ago(0, 32, 10), isMulti: true),
+    const Unit(id: 'pp-2', name: 'بينج بونج 2', type: UnitType.pingPong, roomId: 'tables', roomName: 'ترابيزات البينج والبلياردو', status: UnitStatus.free, hourlyPrice: 4000, multiHourlyPrice: 6000),
+    Unit(id: 'bil-1', name: 'بلياردو 1', type: UnitType.billiards, roomId: 'tables', roomName: 'ترابيزات البينج والبلياردو', status: UnitStatus.running, hourlyPrice: 6000, startedAt: ago(1, 5, 0), plannedMinutes: 60),
+    const Unit(id: 'bil-2', name: 'بلياردو 2', type: UnitType.billiards, roomId: 'tables', roomName: 'ترابيزات البينج والبلياردو', status: UnitStatus.free, hourlyPrice: 6000),
     // Private rooms (one unit each)
-    Unit(id: 'ps5-5', name: 'PS5-5', type: UnitType.playstation, roomId: 'vip-1', roomName: 'VIP 1', status: UnitStatus.running, hourlyPrice: 90, multiHourlyPrice: 120, startedAt: ago(0, 5, 12), isMulti: true),
-    const Unit(id: 'ps5-6', name: 'PS5-6', type: UnitType.playstation, roomId: 'vip-2', roomName: 'VIP 2', status: UnitStatus.free, hourlyPrice: 90, multiHourlyPrice: 120),
+    Unit(id: 'ps5-5', name: 'PS5-5', type: UnitType.playstation, roomId: 'vip-1', roomName: 'VIP 1', status: UnitStatus.running, hourlyPrice: 9000, multiHourlyPrice: 12000, startedAt: ago(0, 5, 12), isMulti: true),
+    const Unit(id: 'ps5-6', name: 'PS5-6', type: UnitType.playstation, roomId: 'vip-2', roomName: 'VIP 2', status: UnitStatus.free, hourlyPrice: 9000, multiHourlyPrice: 12000),
   ];
 }
 
 /// Sample counter products. Replaced by the owner's own list later.
 const sampleProducts = [
-  Product(id: 'pepsi', name: 'بيبسي', price: 15, stockItemId: 'stock-pepsi'),
-  Product(id: 'chips', name: 'شيبسي', price: 15, stockItemId: 'stock-chips'),
-  Product(id: 'tea', name: 'شاي', price: 10, stockItemId: 'stock-tea'),
-  Product(id: 'coffee', name: 'قهوة', price: 20, stockItemId: 'stock-coffee'),
-  Product(id: 'water', name: 'مياه', price: 8, stockItemId: 'stock-water'),
-  Product(id: 'juice', name: 'عصير', price: 15, stockItemId: 'stock-juice'),
-  Product(id: 'indomie', name: 'اندومي', price: 25, stockItemId: 'stock-indomie'),
-  Product(id: 'biscuit', name: 'بسكوت', price: 10, stockItemId: 'stock-biscuit'),
+  Product(id: 'pepsi', name: 'بيبسي', price: 1500, stockItemId: 'stock-pepsi'),
+  Product(id: 'chips', name: 'شيبسي', price: 1500, stockItemId: 'stock-chips'),
+  Product(id: 'tea', name: 'شاي', price: 1000, stockItemId: 'stock-tea'),
+  Product(id: 'coffee', name: 'قهوة', price: 2000, stockItemId: 'stock-coffee'),
+  Product(id: 'water', name: 'مياه', price: 800, stockItemId: 'stock-water'),
+  Product(id: 'juice', name: 'عصير', price: 1500, stockItemId: 'stock-juice'),
+  Product(id: 'indomie', name: 'اندومي', price: 2500, stockItemId: 'stock-indomie'),
+  Product(id: 'biscuit', name: 'بسكوت', price: 1000, stockItemId: 'stock-biscuit'),
 ];
 
 /// Sample stock. Cans and bags subtract on every sale; tea and coffee are counted in tins/packets

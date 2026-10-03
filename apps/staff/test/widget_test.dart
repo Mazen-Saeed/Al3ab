@@ -103,7 +103,7 @@ void main() {
       await tester.tap(find.textContaining(l10n.addToBill));
       await _letAnimationFinish(tester);
 
-      expect(find.text(l10n.orderLine('بيبسي', 2, 15)), findsOneWidget);
+      expect(find.text(l10n.orderLine('بيبسي', 2, '15')), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
   }
@@ -208,7 +208,33 @@ void _productsTests() {
       await _letAnimationFinish(tester);
 
       expect(find.text('كولا'), findsOneWidget);
-      expect(find.text(l10n.amountEgp(12)), findsOneWidget);
+      expect(find.text(l10n.amountEgp('12')), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('a price with piasters and a cost price at $name width', (tester) async {
+      tester.view.physicalSize = size;
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+
+      await pumpApp(tester);
+      await tester.tap(find.byIcon(Icons.tune_rounded));
+      await tester.pump(const Duration(milliseconds: 300));
+      await tester.tap(find.text(l10n.productsTitle));
+      await tester.pump(const Duration(milliseconds: 300));
+      await tester.tap(find.text(l10n.newProduct));
+      await _letAnimationFinish(tester);
+
+      await tester.enterText(find.byType(TextField).at(0), 'قهوة تركي');
+      await tester.enterText(find.byType(TextField).at(1), '7,5'); // 7.50, a comma works too
+      await tester.enterText(find.byType(TextField).at(2), '4.25'); // the optional cost price
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.ensureVisible(find.text(l10n.saveProduct));
+      await tester.tap(find.text(l10n.saveProduct));
+      await _letAnimationFinish(tester);
+
+      expect(find.text('قهوة تركي'), findsOneWidget);
+      expect(find.text(l10n.amountEgp('7.50')), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
   }

@@ -70,16 +70,18 @@ class CatalogNotifier extends Notifier<Catalog> {
   Catalog build() => ref.watch(initialCatalogProvider);
 
   /// Adds a product to the menu. It is not counted in stock until [startTracking].
-  void addProduct(String name, int price) {
-    state = state.copyWith(products: [...state.products, Product(id: newId(), name: name, price: price)]);
+  void addProduct(String name, int price, {int? costPrice}) {
+    state = state.copyWith(
+      products: [...state.products, Product(id: newId(), name: name, price: price, costPrice: costPrice)],
+    );
   }
 
-  /// Changes a product's name and price. Bills already made keep the old values (they copied them).
+  /// Changes a product's name, price and cost price (null clears it). Bills already made keep the old values (they copied them).
   /// Its stock item is named after it, so it follows the new name.
-  void updateProduct(String id, {required String name, required int price}) {
+  void updateProduct(String id, {required String name, required int price, int? costPrice}) {
     final products = [...state.products];
     final index = products.indexWhere((p) => p.id == id);
-    products[index] = products[index].copyWith(name: name, price: price);
+    products[index] = products[index].withDetails(name: name, price: price, costPrice: costPrice);
     final items = [...state.stockItems];
     final stockIndex = items.indexWhere((s) => s.id == products[index].stockItemId);
     if (stockIndex != -1) items[stockIndex] = items[stockIndex].withName(name);
@@ -149,7 +151,7 @@ class CatalogNotifier extends Notifier<Catalog> {
   void stopTracking(String stockItemId) => state = _withoutStockItem(state, stockItemId);
 
   /// "اشتريت": one shopping trip. [quantities]: stock item id -> how many arrived. [total] is what
-  /// the receipt said (whole EGP). Saves the trip and one log entry per item, and adds to the shelf.
+  /// the receipt said (piasters). Saves the trip and one log entry per item, and adds to the shelf.
   void recordPurchase(Map<String, int> quantities, {required int total}) {
     final bought = {
       for (final entry in quantities.entries)

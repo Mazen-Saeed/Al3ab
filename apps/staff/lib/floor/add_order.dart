@@ -5,6 +5,7 @@ import '../data/unit.dart';
 import '../l10n/l10n.dart';
 import '../shell/form_surface.dart';
 import '../products/product_picker.dart';
+import '../data/money.dart';
 
 /// Lets staff pick products for a unit's bill.
 /// Returns product id -> quantity (only products with quantity > 0), or null if closed.
@@ -60,7 +61,7 @@ class _AddOrderFormState extends State<_AddOrderForm> {
             onPressed: _quantities.isEmpty ? null : () => Navigator.pop(context, Map.of(_quantities)),
             style: FilledButton.styleFrom(minimumSize: const Size(0, 60)),
             child: Text(
-              _quantities.isEmpty ? l10n.addToBill : '${l10n.addToBill} · ${l10n.amountEgp(_sum)}',
+              _quantities.isEmpty ? l10n.addToBill : '${l10n.addToBill} · ${l10n.amountEgp(formatMoney(_sum))}',
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
             ),
           ),

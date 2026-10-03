@@ -4,6 +4,7 @@ import '../app_theme.dart';
 import '../l10n/l10n.dart';
 import '../data/unit.dart';
 import 'time_text.dart';
+import '../data/money.dart';
 
 /// One tile on the Floor screen. Looks different for each [UnitStatus].
 class UnitTile extends StatelessWidget {
@@ -113,7 +114,7 @@ class _MainLine extends StatelessWidget {
           // Last minute or overtime: red-orange text so it stands out from across the room.
           style: unit.needsAttention ? style.copyWith(color: AppColors.alert) : style,
         ),
-      UnitStatus.waitingPayment => Text(l10n.amountEgp(unit.amountDue ?? 0), style: style),
+      UnitStatus.waitingPayment => Text(l10n.amountEgp(formatMoney(unit.amountDue ?? 0)), style: style),
       UnitStatus.free => Text(l10n.unitFree, style: style.copyWith(color: AppColors.free)),
       UnitStatus.maintenance => Text(l10n.unitMaintenance, style: style),
     };
@@ -145,7 +146,7 @@ class _BottomLine extends StatelessWidget {
 
     switch (unit.status) {
       case UnitStatus.running:
-        final cost = l10n.amountEgp(unit.currentCost);
+        final cost = l10n.amountEgp(formatMoney(unit.currentCost));
         // Planned session: say what the big number is ("Left" / "Over") instead of the mode.
         final mode = unit.remaining != null
             ? (unit.isOvertime ? l10n.timeOver : l10n.timeLeft)

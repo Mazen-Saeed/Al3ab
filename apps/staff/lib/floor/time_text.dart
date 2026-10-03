@@ -1,4 +1,5 @@
 import '../l10n/l10n.dart';
+import '../data/money.dart';
 
 /// 1:24:10 style. Hours aren't padded; minutes and seconds always have 2 digits.
 String formatElapsed(Duration d) {
@@ -62,6 +63,6 @@ String playDetail(AppLocalizations l10n, Duration played, {required int pricePer
   return [
     playedText(l10n, played),
     if (isMulti) l10n.modeMulti,
-    l10n.pricePerHour(pricePerHour),
+    l10n.pricePerHour(formatMoney(pricePerHour)),
   ].join(' · ');
 }

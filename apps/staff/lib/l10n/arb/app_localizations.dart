@@ -146,11 +146,11 @@ abstract class AppLocalizations {
   /// **'Multi'**
   String get modeMulti;
 
-  /// Money amount in Egyptian pounds
+  /// Money amount in Egyptian pounds, already formatted (see formatMoney)
   ///
   /// In en, this message translates to:
   /// **'{amount} EGP'**
-  String amountEgp(int amount);
+  String amountEgp(String amount);
 
   /// Upcoming booking on a unit; time is like "9 at night" (see friendlyTime)
   ///
@@ -270,7 +270,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'Started {time} · {price} EGP/hour'**
-  String sessionStarted(String time, int price);
+  String sessionStarted(String time, String price);
 
   /// Session panel line: cost of time played
   ///
@@ -348,7 +348,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'{price} EGP per hour'**
-  String pricePerHour(int price);
+  String pricePerHour(String price);
 
   /// Label of the customer field in the start-session form
   ///
@@ -480,7 +480,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'{name} · {quantity} × {price}'**
-  String orderLine(String name, int quantity, int price);
+  String orderLine(String name, int quantity, String price);
 
   /// Tooltip of the small button that takes an order line off the bill
   ///
@@ -661,6 +661,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Price in EGP'**
   String get productPriceLabel;
+
+  /// Label of the optional cost price field in the product form (what one costs the shop)
+  ///
+  /// In en, this message translates to:
+  /// **'Cost price (optional)'**
+  String get productCostLabel;
 
   /// Main button of the product form
   ///

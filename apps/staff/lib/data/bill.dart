@@ -27,7 +27,7 @@ class Bill {
   final int hourlyPrice; // the price per hour that applied (single or multi)
   final int playCost;
   final List<OrderLine> lines;
-  final int discount; // EGP taken off, never more than the subtotal
+  final int discount; // piasters taken off, never more than the subtotal
   final String? discountReason;
   final PaymentMethod method;
 

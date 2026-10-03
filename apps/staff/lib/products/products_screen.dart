@@ -9,6 +9,7 @@ import '../shell/add_card.dart';
 import '../stock/inventory_section.dart';
 import 'product_form.dart';
 import 'product_grid.dart';
+import '../data/money.dart';
 
 /// The "Menu and stock" page (Manage), two parts, each with its own buttons:
 /// 1. المنيو: what customers buy. "+ منتج للمنيو", then the products. Tap one to change its name or price.
@@ -24,11 +25,11 @@ class ProductsScreen extends ConsumerWidget {
     final result = await showProductForm(context, product: product);
     if (result == null) return;
     if (product == null) {
-      catalog.addProduct(result.name, result.price);
+      catalog.addProduct(result.name, result.price, costPrice: result.costPrice);
     } else if (result.delete) {
       catalog.deleteProduct(product.id);
     } else {
-      catalog.updateProduct(product.id, name: result.name, price: result.price);
+      catalog.updateProduct(product.id, name: result.name, price: result.price, costPrice: result.costPrice);
     }
   }
 
@@ -108,7 +109,7 @@ class _ProductCard extends StatelessWidget {
                   style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
                 ),
                 const SizedBox(height: 2),
-                Text(context.l10n.amountEgp(product.price), style: AppText.small),
+                Text(context.l10n.amountEgp(formatMoney(product.price)), style: AppText.small),
               ],
             ),
           ),

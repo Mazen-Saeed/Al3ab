@@ -1,4 +1,5 @@
 import 'package:al3b_staff/data/catalog_provider.dart';
+import 'package:al3b_staff/data/money.dart';
 import 'package:al3b_staff/data/preferences_provider.dart';
 import 'package:al3b_staff/data/product.dart';
 import 'package:al3b_staff/data/sample_data.dart';
@@ -27,8 +28,8 @@ Unit testUnit({
       roomId: 'r1',
       roomName: 'صالة 1',
       status: status,
-      hourlyPrice: hourly,
-      multiHourlyPrice: multi,
+      hourlyPrice: hourly * piastersPerPound, // tests say pounds, the model holds piasters
+      multiHourlyPrice: multi == null ? null : multi * piastersPerPound,
       startedAt: startedAt,
       isMulti: isMulti,
       plannedMinutes: planned,

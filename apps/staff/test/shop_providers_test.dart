@@ -68,8 +68,8 @@ void main() {
   });
 
   group('orders', () {
-    const pepsi = Product(id: 'pepsi', name: 'بيبسي', price: 15);
-    const tea = Product(id: 'tea', name: 'شاي', price: 10);
+    const pepsi = Product(id: 'pepsi', name: 'بيبسي', price: 1500);
+    const tea = Product(id: 'tea', name: 'شاي', price: 1000);
     ProviderContainer makeOrderContainer() => makeContainer(products: [pepsi, tea]);
 
     test('addOrder adds lines and the total sums them', () {
@@ -77,7 +77,7 @@ void main() {
       c.read(ordersProvider.notifier).addOrder('u1', {'pepsi': 2, 'tea': 1});
       final orders = c.read(ordersProvider);
       expect(orders.forUnit('u1').length, 2);
-      expect(orders.totalFor('u1'), 40);
+      expect(orders.totalFor('u1'), 4000);
     });
 
     test('ordering the same product again raises its quantity', () {
@@ -104,7 +104,7 @@ void main() {
   group('endAndPay', () {
     final start = DateTime(2026, 1, 1, 10);
     final oneHourLater = start.add(const Duration(hours: 1));
-    const pepsi = Product(id: 'pepsi', name: 'بيبسي', price: 15);
+    const pepsi = Product(id: 'pepsi', name: 'بيبسي', price: 1500);
 
     // A unit running since 10:00 at 50 EGP/hour, with 2 Pepsi ordered: bill = 50 + 30.
     ProviderContainer makeRunning() {
@@ -120,9 +120,9 @@ void main() {
       final c = makeRunning();
       final bill = c.read(billsProvider.notifier).endAndPay('u1', endedAt: oneHourLater, method: PaymentMethod.cash);
 
-      expect(bill.playCost, 50);
-      expect(bill.ordersTotal, 30);
-      expect(bill.total, 80);
+      expect(bill.playCost, 5000);
+      expect(bill.ordersTotal, 3000);
+      expect(bill.total, 8000);
       expect(c.read(billsProvider).single, same(bill));
       expect(c.read(ordersProvider).forUnit('u1'), isEmpty);
 
@@ -136,11 +136,11 @@ void main() {
       final bill = makeRunning().read(billsProvider.notifier).endAndPay(
             'u1',
             endedAt: oneHourLater,
-            discount: 10,
+            discount: 1000,
             discountReason: 'زبون دايم',
             method: PaymentMethod.instapay,
           );
-      expect(bill.total, 70);
+      expect(bill.total, 7000);
       expect(bill.discountReason, 'زبون دايم');
       expect(bill.method, PaymentMethod.instapay);
     });
@@ -148,8 +148,8 @@ void main() {
     test('a discount can never be more than the subtotal', () {
       final bill = makeRunning()
           .read(billsProvider.notifier)
-          .endAndPay('u1', endedAt: oneHourLater, discount: 500, method: PaymentMethod.cash);
-      expect(bill.discount, 80);
+          .endAndPay('u1', endedAt: oneHourLater, discount: 50000, method: PaymentMethod.cash);
+      expect(bill.discount, 8000);
       expect(bill.total, 0);
     });
 
@@ -189,26 +189,47 @@ void main() {
       final c = makeContainer();
       final catalog = c.read(catalogProvider.notifier);
 
-      catalog.addProduct('كولا', 12);
+      catalog.addProduct('كولا', 1200);
       final id = c.read(catalogProvider).products.single.id;
       expect(c.read(catalogProvider).products.single.name, 'كولا');
 
-      catalog.updateProduct(id, name: 'كولا كبيرة', price: 20);
-      expect(c.read(catalogProvider).products.single.price, 20);
+      catalog.updateProduct(id, name: 'كولا كبيرة', price: 2000);
+      expect(c.read(catalogProvider).products.single.price, 2000);
 
       catalog.deleteProduct(id);
       expect(c.read(catalogProvider).products, isEmpty);
     });
 
+    test('a product can have a cost price, change it, and clear it', () {
+      final c = makeContainer();
+      final catalog = c.read(catalogProvider.notifier);
+
+      catalog.addProduct('كولا', 1200, costPrice: 850); // sells for 12, costs 8.50
+      final id = c.read(catalogProvider).products.single.id;
+      expect(c.read(catalogProvider).products.single.costPrice, 850);
+
+      catalog.updateProduct(id, name: 'كولا', price: 1200, costPrice: 900);
+      expect(c.read(catalogProvider).products.single.costPrice, 900);
+
+      catalog.updateProduct(id, name: 'كولا', price: 1200); // no cost price: cleared
+      expect(c.read(catalogProvider).products.single.costPrice, isNull);
+    });
+
+    test('a product without a cost price has none by default', () {
+      final c = makeContainer();
+      c.read(catalogProvider.notifier).addProduct('كولا', 1200);
+      expect(c.read(catalogProvider).products.single.costPrice, isNull);
+    });
+
     test('a bill keeps its lines after the product is deleted', () {
       final c = makeContainer(
         units: [testUnit(status: UnitStatus.running, startedAt: ago(const Duration(minutes: 5)))],
-        products: [const Product(id: 'a', name: 'شاي', price: 10)],
+        products: [const Product(id: 'a', name: 'شاي', price: 1000)],
       );
       c.read(ordersProvider.notifier).addOrder('u1', {'a': 2});
       c.read(catalogProvider.notifier).deleteProduct('a');
       expect(c.read(ordersProvider).forUnit('u1').single.name, 'شاي');
-      expect(c.read(ordersProvider).totalFor('u1'), 20);
+      expect(c.read(ordersProvider).totalFor('u1'), 2000);
     });
   });
 
@@ -217,8 +238,8 @@ void main() {
     ProviderContainer stockContainer() => makeContainer(
           units: [testUnit(status: UnitStatus.running, startedAt: ago(const Duration(minutes: 5)))],
           products: [
-            const Product(id: 'pepsi', name: 'بيبسي', price: 15, stockItemId: 's-pepsi'),
-            const Product(id: 'tea', name: 'شاي', price: 10, stockItemId: 's-tea'),
+            const Product(id: 'pepsi', name: 'بيبسي', price: 1500, stockItemId: 's-pepsi'),
+            const Product(id: 'tea', name: 'شاي', price: 1000, stockItemId: 's-tea'),
           ],
           stockItems: [
             const StockItem(id: 's-pepsi', name: 'بيبسي', deductsOnSale: true, onHand: 24),
@@ -256,12 +277,12 @@ void main() {
 
     test('a shopping trip adds every item and saves one total', () {
       final c = stockContainer();
-      c.read(catalogProvider.notifier).recordPurchase({'s-tea': 10, 's-pepsi': 6}, total: 480);
+      c.read(catalogProvider.notifier).recordPurchase({'s-tea': 10, 's-pepsi': 6}, total: 48000);
 
       expect(onHand(c, 's-tea'), 13);
       expect(onHand(c, 's-pepsi'), 30);
       final trip = c.read(catalogProvider).purchases.single;
-      expect(trip.total, 480);
+      expect(trip.total, 48000);
       expect(c.read(catalogProvider).movements.map((m) => (m.kind, m.quantity, m.purchaseId)).toList(), [
         (StockMovementKind.purchase, 10, trip.id),
         (StockMovementKind.purchase, 6, trip.id),
@@ -270,8 +291,8 @@ void main() {
 
     test('a shopping trip with nothing picked, or an unknown item, saves nothing', () {
       final c = stockContainer();
-      c.read(catalogProvider.notifier).recordPurchase({'s-tea': 0}, total: 50);
-      c.read(catalogProvider.notifier).recordPurchase({'nope': 3}, total: 50);
+      c.read(catalogProvider.notifier).recordPurchase({'s-tea': 0}, total: 5000);
+      c.read(catalogProvider.notifier).recordPurchase({'nope': 3}, total: 5000);
       expect(c.read(catalogProvider).purchases, isEmpty);
       expect(c.read(catalogProvider).movements, isEmpty);
     });
@@ -318,12 +339,12 @@ void main() {
 
     test('editing a product keeps its stock item', () {
       final c = stockContainer();
-      c.read(catalogProvider.notifier).updateProduct('pepsi', name: 'بيبسي كبير', price: 20);
+      c.read(catalogProvider.notifier).updateProduct('pepsi', name: 'بيبسي كبير', price: 2000);
       expect(c.read(catalogProvider).products.firstWhere((p) => p.id == 'pepsi').stockItemId, 's-pepsi');
     });
 
     test('startTracking creates a stock item named like the product, with the first count', () {
-      final c = makeContainer(products: [const Product(id: 'c', name: 'كولا', price: 12)]);
+      final c = makeContainer(products: [const Product(id: 'c', name: 'كولا', price: 1200)]);
       c.read(catalogProvider.notifier).startTracking('c', deductsOnSale: true, lowStockAt: 2, count: 5);
 
       final catalog = c.read(catalogProvider);
@@ -381,7 +402,7 @@ void main() {
 
     test('renaming a product renames its stock item', () {
       final c = stockContainer();
-      c.read(catalogProvider.notifier).updateProduct('pepsi', name: 'بيبسي كبير', price: 15);
+      c.read(catalogProvider.notifier).updateProduct('pepsi', name: 'بيبسي كبير', price: 1500);
       expect(c.read(catalogProvider).stockItems.firstWhere((s) => s.id == 's-pepsi').name, 'بيبسي كبير');
     });
 
@@ -403,7 +424,7 @@ void main() {
       c.read(catalogProvider.notifier).addInternalItem('سكر');
       final id = c.read(catalogProvider).stockItems.last.id;
 
-      c.read(catalogProvider.notifier).recordPurchase({id: 4}, total: 40);
+      c.read(catalogProvider.notifier).recordPurchase({id: 4}, total: 4000);
       expect(onHand(c, id), 4);
 
       c.read(catalogProvider.notifier).updateStockItem(id, name: 'سكر ناعم', deductsOnSale: false, lowStockAt: 1);

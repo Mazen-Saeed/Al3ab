@@ -34,7 +34,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get modeMulti => 'Multi';
 
   @override
-  String amountEgp(int amount) {
+  String amountEgp(String amount) {
     return '$amount EGP';
   }
 
@@ -112,7 +112,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get switchStaff => 'Switch staff';
 
   @override
-  String sessionStarted(String time, int price) {
+  String sessionStarted(String time, String price) {
     return 'Started $time · $price EGP/hour';
   }
 
@@ -154,7 +154,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get playType => 'Play type';
 
   @override
-  String pricePerHour(int price) {
+  String pricePerHour(String price) {
     return '$price EGP per hour';
   }
 
@@ -230,7 +230,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ordersTitle => 'Orders';
 
   @override
-  String orderLine(String name, int quantity, int price) {
+  String orderLine(String name, int quantity, String price) {
     return '$name · $quantity × $price';
   }
 
@@ -333,6 +333,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get productPriceLabel => 'Price in EGP';
+
+  @override
+  String get productCostLabel => 'Cost price (optional)';
 
   @override
   String get saveProduct => 'Save';
