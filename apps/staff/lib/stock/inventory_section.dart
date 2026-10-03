@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../app_theme.dart';
-import '../data/shop_store.dart';
+import '../data/catalog_provider.dart';
 import '../data/stock.dart';
 import '../l10n/l10n.dart';
 import '../shell/add_card.dart';
@@ -14,53 +15,58 @@ import 'stock_text.dart';
 /// counted item (menu products, and things used but not sold, like sugar and milk).
 /// - Tap a row to fix its number, record an opened tin, or open its settings.
 /// - Under the heading: "+ صنف جديد" (add an item) and "اشتريت" (a shopping trip, several items at once).
-/// The parent redraws it when the store changes.
-class InventorySection extends StatelessWidget {
-  const InventorySection({super.key, required this.store});
+/// It watches the catalog, so it redraws itself when the stock changes.
+class InventorySection extends ConsumerWidget {
+  const InventorySection({super.key});
 
-  final ShopStore store;
+  // Each action reads what it needs from `ref` BEFORE its first await: after a form closes the
+  // page may be gone, and `ref` must not be used then.
 
-  Future<void> _add(BuildContext context) async {
-    final result = await showStockItemForm(context, untracked: store.untrackedProducts);
+  Future<void> _add(BuildContext context, WidgetRef ref) async {
+    final catalog = ref.read(catalogProvider.notifier);
+    final result = await showStockItemForm(context, untracked: ref.read(catalogProvider).untrackedProducts);
     if (result == null) return;
     final productId = result.productId;
     final name = result.name;
     if (productId != null) {
-      store.startTracking(productId, deductsOnSale: result.deductsOnSale, lowStockAt: result.lowStockAt, count: result.count);
+      catalog.startTracking(productId, deductsOnSale: result.deductsOnSale, lowStockAt: result.lowStockAt, count: result.count);
     } else if (name != null) {
-      store.addInternalItem(name, lowStockAt: result.lowStockAt, count: result.count);
+      catalog.addInternalItem(name, lowStockAt: result.lowStockAt, count: result.count);
     }
   }
 
-  Future<void> _buy(BuildContext context) async {
-    final result = await showPurchaseForm(context, store.stockItems);
+  Future<void> _buy(BuildContext context, WidgetRef ref) async {
+    final catalog = ref.read(catalogProvider.notifier);
+    final result = await showPurchaseForm(context, ref.read(catalogProvider).stockItems);
     if (result == null) return;
-    store.recordPurchase(result.quantities, total: result.total);
+    catalog.recordPurchase(result.quantities, total: result.total);
   }
 
-  Future<void> _open(BuildContext context, StockItem item) async {
+  Future<void> _open(BuildContext context, WidgetRef ref, StockItem item) async {
+    final catalog = ref.read(catalogProvider.notifier);
     final result = await showStockAction(context, item);
     if (result == null) return;
     if (result.settings) {
       if (!context.mounted) return; // the page may be gone while the first form was open
-      return _settings(context, item);
+      return _settings(context, ref, item);
     }
     switch (result.action) {
       case StockAction.opened:
-        store.recordOpened(item.id, result.quantity);
+        catalog.recordOpened(item.id, result.quantity);
       case StockAction.count:
-        store.recordCount(item.id, result.quantity, note: result.note);
+        catalog.recordCount(item.id, result.quantity, note: result.note);
     }
   }
 
-  Future<void> _settings(BuildContext context, StockItem item) async {
-    final internal = store.isInternal(item);
+  Future<void> _settings(BuildContext context, WidgetRef ref, StockItem item) async {
+    final catalog = ref.read(catalogProvider.notifier);
+    final internal = ref.read(catalogProvider).isInternal(item);
     final result = await showStockItemForm(context, item: item, itemIsInternal: internal);
     if (result == null) return;
     if (result.delete) {
-      store.stopTracking(item.id);
+      catalog.stopTracking(item.id);
     } else {
-      store.updateStockItem(
+      catalog.updateStockItem(
         item.id,
         name: internal ? result.name : null,
         deductsOnSale: result.deductsOnSale,
@@ -70,9 +76,9 @@ class InventorySection extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
-    final items = store.stockItems;
+    final items = ref.watch(catalogProvider).stockItems;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -87,10 +93,10 @@ class InventorySection extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Expanded(child: AddCard(label: l10n.addToStock, onTap: () => _add(context))),
+                Expanded(child: AddCard(label: l10n.addToStock, onTap: () => _add(context, ref))),
                 const SizedBox(width: 10),
                 OutlinedButton.icon(
-                  onPressed: items.isEmpty ? null : () => _buy(context),
+                  onPressed: items.isEmpty ? null : () => _buy(context, ref),
                   icon: const Icon(Icons.shopping_basket_outlined, size: 20),
                   label: Text(l10n.stockBought),
                   style: OutlinedButton.styleFrom(
@@ -114,7 +120,7 @@ class InventorySection extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               for (final item in items) ...[
-                _StockRow(item: item, onTap: () => _open(context, item)),
+                _StockRow(item: item, onTap: () => _open(context, ref, item)),
                 const SizedBox(height: 10),
               ],
             ],

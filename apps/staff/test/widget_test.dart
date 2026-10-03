@@ -1,5 +1,4 @@
 import 'package:al3b_staff/data/sample_data.dart';
-import 'package:al3b_staff/l10n/app_language.dart';
 import 'package:al3b_staff/l10n/arb/app_localizations_ar.dart';
 import 'package:al3b_staff/l10n/arb/app_localizations_en.dart';
 import 'package:al3b_staff/shell/pill.dart';
@@ -9,7 +8,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 
 import 'helpers.dart';
 
-// These tests use pumpApp() / pump() instead of pumpAndSettle(): the store's clock never stops.
+// These tests use pumpApp() / pump() instead of pumpAndSettle(): the clock never stops.
 void main() {
   final l10n = AppLocalizationsAr();
   _checkoutTests();
@@ -19,7 +18,6 @@ void main() {
   _resizeTests();
 
   testWidgets('the Manage page switches the language to English and back', (tester) async {
-    addTearDown(() => appLanguage.value = const Locale('ar')); // the notifier is global: put it back
     await pumpApp(tester);
     await tester.tap(find.byIcon(Icons.tune_rounded));
     await tester.pump(const Duration(milliseconds: 300));
@@ -42,7 +40,7 @@ void main() {
     expect(find.text('PS5-1'), findsWidgets); // tile (+ panel on wide screens)
     expect(find.text('بلياردو 2'), findsOneWidget);
 
-    await tester.pumpWidget(const SizedBox()); // unmount: stops the store's clock
+    await tester.pumpWidget(const SizedBox()); // unmount: stops the clock
   });
 
   testWidgets('tapping a free unit and pressing start makes it run', (tester) async {

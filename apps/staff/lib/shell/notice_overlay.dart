@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../app_theme.dart';
 import 'notice_board.dart';
@@ -6,14 +7,14 @@ import 'notice_board.dart';
 /// Draws the notices on top of the whole app, at the top of the screen
 /// (the bottom is where the main buttons and the phone's nav bar are).
 /// Placed once, in MaterialApp's `builder`, so it floats over every page.
-class NoticeOverlay extends StatelessWidget {
-  const NoticeOverlay({super.key, required this.board, required this.child});
+class NoticeOverlay extends ConsumerWidget {
+  const NoticeOverlay({super.key, required this.child});
 
-  final NoticeBoard board;
   final Widget child; // the whole app
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final notices = ref.watch(noticeBoardProvider); // redraws when a notice appears or goes
     return Stack(
       fit: StackFit.expand,
       children: [
@@ -27,18 +28,18 @@ class NoticeOverlay extends StatelessWidget {
                 padding: const EdgeInsetsDirectional.all(12),
                 // Only the cards catch taps; the empty space around them
                 // passes taps through to the page underneath.
-                child: ListenableBuilder(
-                  listenable: board,
-                  builder: (context, _) => Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      for (final notice in board.notices)
-                        Padding(
-                          padding: const EdgeInsetsDirectional.only(bottom: 8),
-                          child: _NoticeCard(notice: notice, onClose: () => board.dismiss(notice)),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    for (final notice in notices)
+                      Padding(
+                        padding: const EdgeInsetsDirectional.only(bottom: 8),
+                        child: _NoticeCard(
+                          notice: notice,
+                          onClose: () => ref.read(noticeBoardProvider.notifier).dismiss(notice),
                         ),
-                    ],
-                  ),
+                      ),
+                  ],
                 ),
               ),
             ),

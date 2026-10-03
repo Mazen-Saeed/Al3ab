@@ -1,8 +1,8 @@
 import 'dart:async';
-import 'dart:collection';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// What a notice is about. Decides its look and its sound.
 enum NoticeKind {
@@ -20,50 +20,53 @@ class Notice {
   final Duration? autoHide; // null = stays until staff close it
 }
 
+/// How a notice's sound is played. Tests replace it, so no audio plugin is needed.
+final noticeSoundProvider = Provider<void Function(NoticeKind kind)>((ref) => _playNoticeSound);
+
 /// The one place any part of the app posts a message to the staff
 /// ("PS5-2: 10 minutes left", later "new booking"). NoticeOverlay draws what is on it.
-class NoticeBoard extends ChangeNotifier {
-  /// [playSound]: tests pass a fake so no audio plugin is needed.
-  NoticeBoard({void Function(NoticeKind kind)? playSound}) : _playSound = playSound ?? _playNoticeSound;
-
+/// The state is the list of notices showing, newest first.
+class NoticeBoardNotifier extends Notifier<List<Notice>> {
   static const maxVisible = 3; // more than this would cover the screen
 
-  final void Function(NoticeKind kind) _playSound;
-  final _notices = <Notice>[]; // newest first
   final _hideTimers = <Notice, Timer>{};
 
-  UnmodifiableListView<Notice> get notices => UnmodifiableListView(_notices);
+  @override
+  List<Notice> build() {
+    ref.onDispose(() {
+      for (final timer in _hideTimers.values) {
+        timer.cancel();
+      }
+      _hideTimers.clear();
+    });
+    return const [];
+  }
 
   void show(NoticeKind kind, String title, {Duration? autoHide}) {
     final notice = Notice(kind: kind, title: title, autoHide: autoHide);
-    _notices.insert(0, notice);
-    while (_notices.length > maxVisible) {
-      _remove(_notices.last); // the oldest makes room
+    final next = [notice, ...state];
+    while (next.length > maxVisible) {
+      _hideTimers.remove(next.removeLast())?.cancel(); // the oldest makes room
     }
     if (autoHide != null) {
       _hideTimers[notice] = Timer(autoHide, () => dismiss(notice));
     }
-    _playSound(kind);
-    notifyListeners();
+    state = next;
+    ref.read(noticeSoundProvider)(kind);
   }
 
   void dismiss(Notice notice) {
-    if (_remove(notice)) notifyListeners();
-  }
-
-  bool _remove(Notice notice) {
     _hideTimers.remove(notice)?.cancel();
-    return _notices.remove(notice);
-  }
-
-  @override
-  void dispose() {
-    for (final timer in _hideTimers.values) {
-      timer.cancel();
+    if (state.contains(notice)) {
+      state = [
+        for (final other in state)
+          if (other != notice) other,
+      ];
     }
-    super.dispose();
   }
 }
+
+final noticeBoardProvider = NotifierProvider<NoticeBoardNotifier, List<Notice>>(NoticeBoardNotifier.new);
 
 AudioPlayer? _player; // created on first use
 

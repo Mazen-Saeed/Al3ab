@@ -1,26 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../data/shop_store.dart';
+import '../data/clock_provider.dart';
 import '../data/unit.dart';
+import '../data/units_provider.dart';
 import '../l10n/l10n.dart';
 import 'notice_board.dart';
 
 /// Warns staff when a planned session has 10 minutes left, 1 minute left, and when time is up.
 ///
 /// It sits above every page (see main.dart), so alerts keep working whatever page is open.
-/// It checks on every store notification, which includes the 1-second clock.
-class SessionAlerts extends StatefulWidget {
-  const SessionAlerts({super.key, required this.store, required this.board, required this.child});
+/// It checks every second (the clock) and whenever the units change (adding time re-arms the alerts).
+class SessionAlerts extends ConsumerStatefulWidget {
+  const SessionAlerts({super.key, required this.child});
 
-  final ShopStore store;
-  final NoticeBoard board; // where the warnings are posted
   final Widget child;
 
   @override
-  State<SessionAlerts> createState() => _SessionAlertsState();
+  ConsumerState<SessionAlerts> createState() => _SessionAlertsState();
 }
 
-class _SessionAlertsState extends State<SessionAlerts> {
+class _SessionAlertsState extends ConsumerState<SessionAlerts> {
   static const _thresholds = [Duration(minutes: 10), Duration(minutes: 1), Duration.zero];
 
   /// Alerts already handled, so each one fires only once. Key = unit + start time +
@@ -33,19 +33,10 @@ class _SessionAlertsState extends State<SessionAlerts> {
     // Thresholds already crossed when the app opens are marked as done without a banner:
     // the tile is red anyway, and an old alert is just noise.
     _check(announce: false);
-    widget.store.addListener(_onStoreChanged);
   }
-
-  @override
-  void dispose() {
-    widget.store.removeListener(_onStoreChanged);
-    super.dispose();
-  }
-
-  void _onStoreChanged() => _check(announce: true);
 
   void _check({required bool announce}) {
-    for (final unit in widget.store.units) {
+    for (final unit in ref.read(unitsProvider)) {
       final remaining = unit.remaining;
       if (unit.status != UnitStatus.running || remaining == null) continue;
 
@@ -63,7 +54,7 @@ class _SessionAlertsState extends State<SessionAlerts> {
 
   void _announce(Unit unit, Duration threshold) {
     final l10n = context.l10n;
-    final board = widget.board;
+    final board = ref.read(noticeBoardProvider.notifier);
     switch (threshold.inMinutes) {
       case 10:
         board.show(NoticeKind.endingSoon, l10n.alertTenMinutes(unit.name), autoHide: const Duration(seconds: 10));
@@ -76,5 +67,10 @@ class _SessionAlertsState extends State<SessionAlerts> {
   }
 
   @override
-  Widget build(BuildContext context) => widget.child;
+  Widget build(BuildContext context) {
+    // Check on every clock tick and on every change to the units.
+    ref.listen(clockProvider, (previous, next) => _check(announce: true));
+    ref.listen(unitsProvider, (previous, next) => _check(announce: true));
+    return widget.child;
+  }
 }

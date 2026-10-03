@@ -1,62 +1,43 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'app_theme.dart';
-import 'data/sample_data.dart';
-import 'data/shop_store.dart';
+import 'data/preferences_provider.dart';
 import 'l10n/app_language.dart';
 import 'l10n/l10n.dart';
 import 'shell/app_shell.dart';
-import 'shell/notice_board.dart';
 import 'shell/notice_overlay.dart';
 import 'shell/session_alerts.dart';
 
-void main() {
-  runApp(const MyApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized(); // a plugin is used before runApp
+  final prefs = await SharedPreferences.getInstance(); // the saved settings, read once here
+  runApp(
+    // ProviderScope holds every provider (units, menu and stock, bills...)
+    ProviderScope(
+      overrides: [sharedPreferencesProvider.overrideWith((ref) => prefs)],
+      child: const MyApp(),
+    ),
+  );
 }
 
-class MyApp extends StatefulWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  // The one store for the whole app. Sample data for now; local SQLite later.
-  final _store = ShopStore(
-    buildSampleUnits(),
-    products: sampleProducts,
-    stockItems: sampleStockItems,
-    paymentAccounts: samplePaymentAccounts,
-  );
-  final _board = NoticeBoard(); // messages to staff, shown at the top of every page
-
-  @override
-  void dispose() {
-    _store.dispose(); // stops its clock
-    _board.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     // Rebuilds the whole app when the language changes (Manage > language).
-    return ValueListenableBuilder<Locale>(
-      valueListenable: appLanguage,
-      builder: (context, locale, _) => MaterialApp(
-        onGenerateTitle: (context) => context.l10n.appTitle,
-        locale: locale,
-        supportedLocales: AppLocalizations.supportedLocales,
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        theme: appTheme,
-        // builder wraps the whole app, so notices float above every page.
-        builder: (context, child) => NoticeOverlay(board: _board, child: child!),
-        home: SessionAlerts(
-          store: _store,
-          board: _board,
-          child: AppShell(store: _store),
-        ),
-      ),
+    final locale = ref.watch(appLanguageProvider);
+    return MaterialApp(
+      onGenerateTitle: (context) => context.l10n.appTitle,
+      locale: locale,
+      supportedLocales: AppLocalizations.supportedLocales,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      theme: appTheme,
+      // builder wraps the whole app, so notices float above every page.
+      builder: (context, child) => NoticeOverlay(child: child!),
+      home: const SessionAlerts(child: AppShell()),
     );
   }
 }

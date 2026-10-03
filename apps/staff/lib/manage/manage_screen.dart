@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../app_theme.dart';
-import '../data/shop_store.dart';
 import '../l10n/app_language.dart';
 import '../l10n/l10n.dart';
 import '../products/products_screen.dart';
@@ -10,16 +10,14 @@ import '../products/products_screen.dart';
 /// list (the nav stays visible); its back button returns here. Products (with its stock) is the
 /// first area; places & devices, staff, reports and settings will be added to this list as they
 /// are built.
-class ManageScreen extends StatefulWidget {
-  const ManageScreen({super.key, required this.store});
-
-  final ShopStore store;
+class ManageScreen extends ConsumerStatefulWidget {
+  const ManageScreen({super.key});
 
   @override
-  State<ManageScreen> createState() => _ManageScreenState();
+  ConsumerState<ManageScreen> createState() => _ManageScreenState();
 }
 
-class _ManageScreenState extends State<ManageScreen> {
+class _ManageScreenState extends ConsumerState<ManageScreen> {
   bool _showProducts = false;
 
   @override
@@ -27,7 +25,7 @@ class _ManageScreenState extends State<ManageScreen> {
     final l10n = context.l10n;
 
     if (_showProducts) {
-      return ProductsScreen(store: widget.store, onBack: () => setState(() => _showProducts = false));
+      return ProductsScreen(onBack: () => setState(() => _showProducts = false));
     }
 
     return Column(
@@ -45,7 +43,7 @@ class _ManageScreenState extends State<ManageScreen> {
         _ManageEntry(
           icon: Icons.language,
           title: l10n.localeName == 'ar' ? 'English' : 'العربية',
-          onTap: () => appLanguage.value = Locale(l10n.localeName == 'ar' ? 'en' : 'ar'),
+          onTap: () => ref.read(appLanguageProvider.notifier).set(Locale(l10n.localeName == 'ar' ? 'en' : 'ar')),
         ),
       ],
     );

@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../app_theme.dart';
+import '../data/bills_provider.dart';
+import '../data/catalog_provider.dart';
+import '../data/clock_provider.dart';
+import '../data/orders_provider.dart';
+import '../data/payment_accounts_provider.dart';
 import '../data/product.dart';
-import '../data/shop_store.dart';
 import '../data/unit.dart';
+import '../data/units_provider.dart';
 import '../l10n/l10n.dart';
 import 'add_order.dart';
 import 'add_time.dart';
@@ -13,38 +19,43 @@ import 'time_text.dart';
 
 /// Details and actions for the selected unit.
 /// On wide screens it sits next to the grid; on smaller screens it opens in a bottom sheet.
-/// It reads the unit from the store by id, so it always shows the latest version
+/// It reads the unit from the units by id, so it always shows the latest version
 /// (even when it stays open in a bottom sheet while the data changes).
-class SessionPanel extends StatelessWidget {
-  const SessionPanel({super.key, required this.store, required this.unitId, required this.onClose, this.width});
+class SessionPanel extends ConsumerWidget {
+  const SessionPanel({super.key, required this.unitId, required this.onClose, this.width});
 
-  final ShopStore store;
   final String unitId;
   final double? width; // fixed width next to the grid; null = fill the space (bottom sheet)
   final VoidCallback onClose; // hides the panel (or closes the sheet)
 
-  Future<void> _addTime(BuildContext context, Unit unit) async {
+  // Each action reads what it needs from `ref` BEFORE its first await: after the form closes the
+  // panel may be gone, and `ref` must not be used then.
+
+  Future<void> _addTime(BuildContext context, WidgetRef ref, Unit unit) async {
+    final units = ref.read(unitsProvider.notifier);
     final result = await showAddTime(context, unit);
-    if (result != null) store.addTime(unit.id, result.minutes);
+    if (result != null) units.addTime(unit.id, result.minutes);
   }
 
-  Future<void> _addOrder(BuildContext context, Unit unit) async {
-    final quantities = await showAddOrder(context, unit, store.products);
-    if (quantities != null) store.addOrder(unit.id, quantities);
+  Future<void> _addOrder(BuildContext context, WidgetRef ref, Unit unit) async {
+    final orders = ref.read(ordersProvider.notifier);
+    final quantities = await showAddOrder(context, unit, ref.read(catalogProvider).products);
+    if (quantities != null) orders.addOrder(unit.id, quantities);
   }
 
-  Future<void> _checkout(BuildContext context, Unit unit) async {
+  Future<void> _checkout(BuildContext context, WidgetRef ref, Unit unit) async {
     // Freeze the clock now: the form shows, and the bill saves, the amount at this moment.
     final endedAt = DateTime.now();
+    final bills = ref.read(billsProvider.notifier);
     final result = await showCheckout(
       context,
       unit,
-      store.ordersFor(unit.id),
+      ref.read(ordersProvider).forUnit(unit.id),
       endedAt,
-      paymentAccounts: store.paymentAccounts,
+      paymentAccounts: ref.read(paymentAccountsProvider),
     );
     if (result == null) return;
-    store.endAndPay(
+    bills.endAndPay(
       unit.id,
       endedAt: endedAt,
       discount: result.discount,
@@ -55,38 +66,35 @@ class SessionPanel extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return ListenableBuilder(
-      listenable: store,
-      builder: (context, _) {
-        final unit = store.unitById(unitId);
-        return Container(
-          width: width,
-          padding: const EdgeInsetsDirectional.all(22),
-          decoration: BoxDecoration(
-            color: AppColors.surface,
-            borderRadius: BorderRadius.circular(28),
-          ),
-          child: unit.status == UnitStatus.running
-              ? _RunningSession(
-                  unit: unit,
-                  orders: store.ordersFor(unit.id),
-                  onAddTime: () => _addTime(context, unit),
-                  onAddOrder: () => _addOrder(context, unit),
-                  onCheckout: () => _checkout(context, unit),
-                  onRemoveOrder: (productId) => store.removeOrderLine(unit.id, productId),
-                  onClose: onClose,
-                )
-              : _NotRunning(
-                  unit: unit,
-                  onClose: onClose,
-                  onBackToWork: () {
-                    store.clearMaintenance(unit.id);
-                    onClose(); // a free unit has nothing to show here
-                  },
-                ),
-        );
-      },
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(clockProvider); // redraws every second, so the time and the amount move
+    final unit = ref.watch(unitsProvider).byId(unitId);
+    final orders = ref.watch(ordersProvider).forUnit(unit.id);
+    return Container(
+      width: width,
+      padding: const EdgeInsetsDirectional.all(22),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(28),
+      ),
+      child: unit.status == UnitStatus.running
+          ? _RunningSession(
+              unit: unit,
+              orders: orders,
+              onAddTime: () => _addTime(context, ref, unit),
+              onAddOrder: () => _addOrder(context, ref, unit),
+              onCheckout: () => _checkout(context, ref, unit),
+              onRemoveOrder: (productId) => ref.read(ordersProvider.notifier).removeOrderLine(unit.id, productId),
+              onClose: onClose,
+            )
+          : _NotRunning(
+              unit: unit,
+              onClose: onClose,
+              onBackToWork: () {
+                ref.read(unitsProvider.notifier).clearMaintenance(unit.id);
+                onClose(); // a free unit has nothing to show here
+              },
+            ),
     );
   }
 }

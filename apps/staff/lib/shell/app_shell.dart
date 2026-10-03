@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../app_theme.dart';
-import '../data/shop_store.dart';
 import '../floor/floor_screen.dart';
 import '../l10n/l10n.dart';
 import '../manage/manage_screen.dart';
@@ -13,9 +12,7 @@ import 'side_nav.dart';
 ///
 /// Page order = nav order: Floor, Quick sale, Reservations, Cash box, Manage.
 class AppShell extends StatefulWidget {
-  const AppShell({super.key, required this.store});
-
-  final ShopStore store;
+  const AppShell({super.key});
 
   @override
   State<AppShell> createState() => _AppShellState();
@@ -42,11 +39,11 @@ class _AppShellState extends State<AppShell> {
       index: _index,
       sizing: StackFit.expand,
       children: [
-        FloorScreen(store: widget.store),
+        const FloorScreen(),
         _ComingSoon(title: l10n.navQuickSale),
         _ComingSoon(title: l10n.navReservations),
         _ComingSoon(title: l10n.navShift),
-        ManageScreen(store: widget.store),
+        const ManageScreen(),
       ],
     );
 
