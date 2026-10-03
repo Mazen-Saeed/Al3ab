@@ -7,7 +7,6 @@ public class Room : SyncedEntity
 
     public required string Name { get; set; }
 
-    // Optional: the group this room belongs to on the Floor screen.
-    public Guid? RoomGroupId { get; set; }
-    public RoomGroup? RoomGroup { get; set; }
+    // Where the room sits in the list (smaller = first). Set by drag and drop in the app.
+    public int SortOrder { get; set; }
 }

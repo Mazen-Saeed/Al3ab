@@ -18,6 +18,9 @@ public class Unit : SyncedEntity
     public PriceCategory PriceCategory { get; set; } = null!;
 
     public required string Name { get; set; }
+
+    // Where the unit sits inside its room (smaller = first). Moving a unit to another room changes RoomId.
+    public int SortOrder { get; set; }
     public UnitStatus Status { get; set; } = UnitStatus.Active;
 
     // Why it is in maintenance ("the controller is broken"). Only meaningful while Status = Maintenance.

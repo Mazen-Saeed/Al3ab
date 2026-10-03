@@ -13,4 +13,5 @@ public class PriceCategory : SyncedEntity
     // Price per hour in multi mode (e.g. 4 controllers, doubles in ping pong).
     // Null = this category has no multi mode, so the app doesn't ask "single or multi?".
     public decimal? MultiHourlyPrice { get; set; }
+
 }

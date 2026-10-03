@@ -17,6 +17,9 @@ public class StockMovementConfiguration : IEntityTypeConfiguration<StockMovement
             // Only a purchase belongs to a shopping trip; only a count has an expected number.
             t.HasCheckConstraint("ck_stock_movements_purchase", "purchase_id IS NULL OR kind = 'Purchase'");
             t.HasCheckConstraint("ck_stock_movements_expected", "expected_quantity IS NULL OR kind = 'Count'");
+
+            // Only a purchase has a cost, and it can not be negative.
+            t.HasCheckConstraint("ck_stock_movements_cost", "cost IS NULL OR (kind = 'Purchase' AND cost >= 0)");
         });
     }
 }

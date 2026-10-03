@@ -29,6 +29,10 @@ public class StockMovement : SyncedEntity
     public Guid StaffId { get; set; }
     public Staff Staff { get; set; } = null!;
 
+    // Set on a Purchase only: what was paid for this item's whole quantity on that trip (not per piece).
+    // Cost per piece = Cost / Quantity. Null for Opened and Count.
+    public decimal? Cost { get; set; }
+
     public string? Note { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }
