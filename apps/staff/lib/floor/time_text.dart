@@ -59,7 +59,12 @@ String playedText(AppLocalizations l10n, Duration played) {
 }
 
 /// The line under "وقت اللعب" on a bill: "ساعة و20 دقيقة · زوجي · 50 جنيه في الساعة".
-String playDetail(AppLocalizations l10n, Duration played, {required int pricePerHour, required bool isMulti}) {
+String playDetail(
+  AppLocalizations l10n,
+  Duration played, {
+  required int pricePerHour,
+  required bool isMulti,
+}) {
   return [
     playedText(l10n, played),
     if (isMulti) l10n.modeMulti,

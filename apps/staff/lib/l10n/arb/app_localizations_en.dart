@@ -84,6 +84,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get typeBilliards => 'Billiards';
 
   @override
+  String get typePc => 'PC';
+
+  @override
   String privateRoomsOf(String type) {
     return 'Private $type rooms';
   }
@@ -103,7 +106,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navQuickSale => 'Quick sale';
 
   @override
-  String get navReservations => 'Reservations';
+  String get navReservations => 'Bookings';
 
   @override
   String get navShift => 'Cash box';
@@ -191,7 +194,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get durationCustom => 'Other';
 
   @override
-  String get customHoursHint => 'Number of hours, e.g. 2.5';
+  String get customHoursHint => 'Number of hours, e.g. 2.25';
+
+  @override
+  String get duration15 => '15 min';
+
+  @override
+  String get customHoursNote => '2.25 means two hours and a quarter';
 
   @override
   String get timeLeft => 'Left';
@@ -222,6 +231,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get makeOpenConfirm => 'Make it open';
+
+  @override
+  String get setTime => 'Set a time limit';
+
+  @override
+  String get setTimeConfirm => 'Set';
+
+  @override
+  String get fromNowNote => 'The time is counted from now';
 
   @override
   String get addToBill => 'Add to bill';
@@ -335,9 +353,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get productPriceLabel => 'Price in EGP';
 
   @override
-  String get productCostLabel => 'Cost price (optional)';
-
-  @override
   String get saveProduct => 'Save';
 
   @override
@@ -448,7 +463,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get purchaseTitle => 'What did you buy?';
 
   @override
-  String get purchaseTotalLabel => 'How much did you pay?';
+  String get purchaseTotalLabel => 'Total';
+
+  @override
+  String get purchasePaidHint => 'Paid (total for this item, EGP)';
 
   @override
   String get purchaseConfirm => 'Save purchase';
@@ -467,4 +485,106 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get stockInternalHint => 'Like sugar, milk and cups';
+
+  @override
+  String get placesTitle => 'Rooms and devices';
+
+  @override
+  String get newPlace => 'New room';
+
+  @override
+  String get newDevice => 'New device';
+
+  @override
+  String get editDevice => 'Edit device';
+
+  @override
+  String get placeNameLabel => 'Room name';
+
+  @override
+  String get placeNameHint => 'For example Hall 1, VIP 1';
+
+  @override
+  String get settingsTitle => 'Settings';
+
+  @override
+  String get languageLabel => 'Language';
+
+  @override
+  String get deviceNameLabel => 'Device name';
+
+  @override
+  String get deviceNameHint => 'For example PS5-1';
+
+  @override
+  String get deviceTypeLabel => 'Type';
+
+  @override
+  String get singlePriceLabel => 'Price per hour, single (EGP)';
+
+  @override
+  String get multiPriceLabel => 'Price per hour, pair (EGP, optional)';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get deleteDevice => 'Delete device';
+
+  @override
+  String get deviceBusyHint =>
+      'This device has a session now, so only the name can change.';
+
+  @override
+  String get pricesTitle => 'Prices';
+
+  @override
+  String get newPriceCategory => 'New price';
+
+  @override
+  String get priceNameLabel => 'Price name';
+
+  @override
+  String get priceNameHint => 'For example PS5 regular, VIP';
+
+  @override
+  String get priceCategoryLabel => 'Price';
+
+  @override
+  String get noPriceCategoryHint => 'Add a price first in Manage > Prices';
+
+  @override
+  String get deletePriceCategory => 'Delete price';
+
+  @override
+  String get priceCategoryInUse =>
+      'This price is used by devices, so it cannot be deleted.';
+
+  @override
+  String get quickSaleSell => 'Sell';
+
+  @override
+  String get quickSaleDone => 'Sold';
+
+  @override
+  String get moveSessionHint =>
+      'The time so far is charged at this unit price, the rest at the new unit price.';
+
+  @override
+  String get moveNoFreeUnits => 'No free units right now';
+
+  @override
+  String get stopClock => 'Stop the clock';
+
+  @override
+  String get resumeClock => 'Resume';
+
+  @override
+  String get clockStopped => 'Clock stopped · waiting for payment';
+
+  @override
+  String get stopAll => 'Stop all';
+
+  @override
+  String get resumeAll => 'Resume all';
 }

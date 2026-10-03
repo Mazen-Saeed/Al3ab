@@ -87,6 +87,11 @@ final appTheme = ThemeData(
       borderSide: const BorderSide(color: AppColors.primary, width: 2),
     ),
   ),
+  // The bottom bar of a phone has five tabs: a small label, so none of them wraps onto a second line.
+  navigationBarTheme: NavigationBarThemeData(
+    labelPadding: const EdgeInsets.only(top: 2),
+    labelTextStyle: WidgetStateProperty.all(const TextStyle(fontSize: 11, fontWeight: FontWeight.w600)),
+  ),
   // Every FilledButton: rounded, tall enough to tap easily, semibold text.
   filledButtonTheme: FilledButtonThemeData(
     style: FilledButton.styleFrom(

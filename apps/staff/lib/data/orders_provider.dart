@@ -41,6 +41,16 @@ class OrdersNotifier extends Notifier<Map<String, List<OrderLine>>> {
     state = {...state, unitId: lines};
   }
 
+  /// The session moved to another unit: its order lines go with it.
+  void moveOrders(String fromId, String toId) {
+    final lines = state.forUnit(fromId);
+    state = {
+      for (final entry in state.entries)
+        if (entry.key != fromId) entry.key: entry.value,
+      if (lines.isNotEmpty) toId: [...state.forUnit(toId), ...lines],
+    };
+  }
+
   /// A unit's bill is done (paid): forget its lines. (Called by the bills when a bill is saved.)
   void clear(String unitId) {
     state = {

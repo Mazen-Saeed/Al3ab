@@ -64,6 +64,7 @@ class StockMovement {
     required this.quantity,
     required this.at,
     this.purchaseId,
+    this.cost,
     this.expected,
     this.note,
   });
@@ -77,11 +78,22 @@ class StockMovement {
   /// Purchase only: the shopping trip it belongs to.
   final String? purchaseId;
 
+  /// Purchase only: what was paid for this line (piasters), so one cost is [cost] / [quantity].
+  final int? cost;
+
   /// Count only: what the app expected on the shelf. quantity - expected = found extra (+) or missing (-).
   final int? expected;
 
   /// Count only: why the number changed ("a bottle broke"). Optional.
   final String? note;
+}
+
+/// One line of a shopping trip: how many of an item arrived and what the shop paid for them.
+class PurchaseLine {
+  const PurchaseLine({required this.quantity, required this.cost});
+
+  final int quantity; // > 0
+  final int cost; // piasters for all [quantity] together (0 allowed: a gift)
 }
 
 /// One shopping trip: the total on the receipt. The items bought are

@@ -23,7 +23,7 @@ class SessionAlerts extends ConsumerStatefulWidget {
 class _SessionAlertsState extends ConsumerState<SessionAlerts> {
   static const _thresholds = [Duration(minutes: 10), Duration(minutes: 1), Duration.zero];
 
-  /// Alerts already handled, so each one fires only once. Key = unit + start time +
+  /// Alerts already handled, so each one fires only once. Key = unit + session start +
   /// planned length + threshold, so adding time to a session re-arms its alerts.
   final _alerted = <String>{};
 
@@ -43,7 +43,8 @@ class _SessionAlertsState extends ConsumerState<SessionAlerts> {
       Duration? smallest;
       for (final threshold in _thresholds) {
         if (remaining > threshold) continue; // not reached yet
-        final key = '${unit.id}:${unit.startedAt!.millisecondsSinceEpoch}:${unit.plannedMinutes}:${threshold.inSeconds}';
+        final start = (unit.originalStart ?? unit.startedAt!).millisecondsSinceEpoch; // a resume does not change it
+        final key = '${unit.id}:$start:${unit.plannedMinutes}:${threshold.inSeconds}';
         // Set.add returns true only if the key was new. So this is "first time we see it".
         if (_alerted.add(key)) smallest = threshold;
       }

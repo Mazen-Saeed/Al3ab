@@ -48,6 +48,17 @@ class Catalog {
     return id == null ? null : stockItems.where((s) => s.id == id).firstOrNull;
   }
 
+  /// What one [item] cost on its latest purchase (piasters, rounded), or null if it was never bought
+  /// with a price. This is where profit comes from: a product's price minus the cost of its stock item.
+  int? unitCostOf(StockItem item) {
+    for (final m in movements.reversed) {
+      if (m.stockItemId == item.id && m.kind == StockMovementKind.purchase && m.cost != null) {
+        return (m.cost! + m.quantity ~/ 2) ~/ m.quantity;
+      }
+    }
+    return null;
+  }
+
   /// Products that are not counted in stock yet (the "add to stock" form offers these).
   List<Product> get untrackedProducts => [
         for (final product in products)
@@ -70,18 +81,18 @@ class CatalogNotifier extends Notifier<Catalog> {
   Catalog build() => ref.watch(initialCatalogProvider);
 
   /// Adds a product to the menu. It is not counted in stock until [startTracking].
-  void addProduct(String name, int price, {int? costPrice}) {
+  void addProduct(String name, int price) {
     state = state.copyWith(
-      products: [...state.products, Product(id: newId(), name: name, price: price, costPrice: costPrice)],
+      products: [...state.products, Product(id: newId(), name: name, price: price)],
     );
   }
 
-  /// Changes a product's name, price and cost price (null clears it). Bills already made keep the old values (they copied them).
+  /// Changes a product's name and price. Bills already made keep the old values (they copied them).
   /// Its stock item is named after it, so it follows the new name.
-  void updateProduct(String id, {required String name, required int price, int? costPrice}) {
+  void updateProduct(String id, {required String name, required int price}) {
     final products = [...state.products];
     final index = products.indexWhere((p) => p.id == id);
-    products[index] = products[index].withDetails(name: name, price: price, costPrice: costPrice);
+    products[index] = products[index].withDetails(name: name, price: price);
     final items = [...state.stockItems];
     final stockIndex = items.indexWhere((s) => s.id == products[index].stockItemId);
     if (stockIndex != -1) items[stockIndex] = items[stockIndex].withName(name);
@@ -150,19 +161,24 @@ class CatalogNotifier extends Notifier<Catalog> {
   /// Stops counting: the stock item and its log go. The product stays on the menu, uncounted.
   void stopTracking(String stockItemId) => state = _withoutStockItem(state, stockItemId);
 
-  /// "اشتريت": one shopping trip. [quantities]: stock item id -> how many arrived. [total] is what
-  /// the receipt said (piasters). Saves the trip and one log entry per item, and adds to the shelf.
-  void recordPurchase(Map<String, int> quantities, {required int total}) {
+  /// "اشتريت": one shopping trip. [lines]: stock item id -> how many arrived and what was paid for
+  /// them (piasters). The trip's total is the sum of the lines. Saves the trip and one log entry per
+  /// item (with its cost), and adds to the shelf.
+  void recordPurchase(Map<String, PurchaseLine> lines) {
     final bought = {
-      for (final entry in quantities.entries)
-        if (entry.value > 0 && state.stockItems.any((s) => s.id == entry.key)) entry.key: entry.value,
+      for (final entry in lines.entries)
+        if (entry.value.quantity > 0 && entry.value.cost >= 0 && state.stockItems.any((s) => s.id == entry.key))
+          entry.key: entry.value,
     };
-    if (bought.isEmpty || total < 0) return;
+    if (bought.isEmpty) return;
     final id = newId();
     final items = [...state.stockItems];
     final movements = [...state.movements];
-    bought.forEach((itemId, quantity) {
-      _writeMovement(items, movements, itemId, StockMovementKind.purchase, quantity, delta: quantity, purchaseId: id);
+    var total = 0;
+    bought.forEach((itemId, line) {
+      total += line.cost;
+      _writeMovement(items, movements, itemId, StockMovementKind.purchase, line.quantity,
+          delta: line.quantity, purchaseId: id, cost: line.cost);
     });
     state = state.copyWith(
       stockItems: items,
@@ -246,6 +262,7 @@ bool _writeMovement(
   int? delta,
   int? setTo,
   String? purchaseId,
+  int? cost,
   int? expected,
   String? note,
 }) {
@@ -259,6 +276,7 @@ bool _writeMovement(
     quantity: quantity,
     at: DateTime.now(),
     purchaseId: purchaseId,
+    cost: cost,
     expected: expected,
     note: note,
   ));

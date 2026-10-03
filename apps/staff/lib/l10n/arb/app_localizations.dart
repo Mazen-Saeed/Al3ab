@@ -218,6 +218,12 @@ abstract class AppLocalizations {
   /// **'Billiards'**
   String get typeBilliards;
 
+  /// Unit type name: a gaming PC
+  ///
+  /// In en, this message translates to:
+  /// **'PC'**
+  String get typePc;
+
   /// Section of private rooms (one unit each) of one type, e.g. Private PlayStation rooms
   ///
   /// In en, this message translates to:
@@ -251,7 +257,7 @@ abstract class AppLocalizations {
   /// Side nav: bookings
   ///
   /// In en, this message translates to:
-  /// **'Reservations'**
+  /// **'Bookings'**
   String get navReservations;
 
   /// Side nav: the cash drawer (open/close, hand over, expenses)
@@ -410,11 +416,23 @@ abstract class AppLocalizations {
   /// **'Other'**
   String get durationCustom;
 
-  /// Placeholder of the custom duration field; decimals allowed (2.5 = two and a half hours)
+  /// Placeholder of the custom duration field; decimals allowed (2.25 = two hours and a quarter)
   ///
   /// In en, this message translates to:
-  /// **'Number of hours, e.g. 2.5'**
+  /// **'Number of hours, e.g. 2.25'**
   String get customHoursHint;
+
+  /// Duration choice
+  ///
+  /// In en, this message translates to:
+  /// **'15 min'**
+  String get duration15;
+
+  /// Small note under the custom duration field: how to read the decimals
+  ///
+  /// In en, this message translates to:
+  /// **'2.25 means two hours and a quarter'**
+  String get customHoursNote;
 
   /// Small label next to a countdown timer: time left of the planned time
   ///
@@ -458,11 +476,29 @@ abstract class AppLocalizations {
   /// **'Add'**
   String get addTimeConfirm;
 
-  /// Main button of the add-time form when "open" is chosen: removes the planned time
+  /// Button in the panel of a fixed-time session: turn it into open time (removes the planned time)
   ///
   /// In en, this message translates to:
   /// **'Make it open'**
   String get makeOpenConfirm;
+
+  /// Button in the panel of an open session and title of its form: turn it into a fixed time
+  ///
+  /// In en, this message translates to:
+  /// **'Set a time limit'**
+  String get setTime;
+
+  /// Main button of the form that gives an open session a time limit
+  ///
+  /// In en, this message translates to:
+  /// **'Set'**
+  String get setTimeConfirm;
+
+  /// Small note in the set-a-time-limit form
+  ///
+  /// In en, this message translates to:
+  /// **'The time is counted from now'**
+  String get fromNowNote;
 
   /// Main button of the order form: puts the chosen products on the session's bill
   ///
@@ -662,12 +698,6 @@ abstract class AppLocalizations {
   /// **'Price in EGP'**
   String get productPriceLabel;
 
-  /// Label of the optional cost price field in the product form (what one costs the shop)
-  ///
-  /// In en, this message translates to:
-  /// **'Cost price (optional)'**
-  String get productCostLabel;
-
   /// Main button of the product form
   ///
   /// In en, this message translates to:
@@ -866,11 +896,17 @@ abstract class AppLocalizations {
   /// **'What did you buy?'**
   String get purchaseTitle;
 
-  /// Label of the receipt total in the shopping-trip form
+  /// Label of the worked-out total of the shopping trip
   ///
   /// In en, this message translates to:
-  /// **'How much did you pay?'**
+  /// **'Total'**
   String get purchaseTotalLabel;
+
+  /// Hint of the cost field under an item picked in the shopping-trip form
+  ///
+  /// In en, this message translates to:
+  /// **'Paid (total for this item, EGP)'**
+  String get purchasePaidHint;
 
   /// Main button of the shopping-trip form
   ///
@@ -907,6 +943,204 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Like sugar, milk and cups'**
   String get stockInternalHint;
+
+  /// Manage entry and title of the Places page
+  ///
+  /// In en, this message translates to:
+  /// **'Rooms and devices'**
+  String get placesTitle;
+
+  /// Button and form title: add a room or hall
+  ///
+  /// In en, this message translates to:
+  /// **'New room'**
+  String get newPlace;
+
+  /// Button and form title: add a unit to a room
+  ///
+  /// In en, this message translates to:
+  /// **'New device'**
+  String get newDevice;
+
+  /// Form title: change a unit
+  ///
+  /// In en, this message translates to:
+  /// **'Edit device'**
+  String get editDevice;
+
+  /// Label of the room name field
+  ///
+  /// In en, this message translates to:
+  /// **'Room name'**
+  String get placeNameLabel;
+
+  /// Hint of the room name field
+  ///
+  /// In en, this message translates to:
+  /// **'For example Hall 1, VIP 1'**
+  String get placeNameHint;
+
+  /// Manage entry and title of the Settings page
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settingsTitle;
+
+  /// Label above the language choices in Settings
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get languageLabel;
+
+  /// Label of the unit name field
+  ///
+  /// In en, this message translates to:
+  /// **'Device name'**
+  String get deviceNameLabel;
+
+  /// Hint of the unit name field
+  ///
+  /// In en, this message translates to:
+  /// **'For example PS5-1'**
+  String get deviceNameHint;
+
+  /// Label above the unit type choices
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get deviceTypeLabel;
+
+  /// Label of the single hourly price field
+  ///
+  /// In en, this message translates to:
+  /// **'Price per hour, single (EGP)'**
+  String get singlePriceLabel;
+
+  /// Label of the optional multi hourly price field
+  ///
+  /// In en, this message translates to:
+  /// **'Price per hour, pair (EGP, optional)'**
+  String get multiPriceLabel;
+
+  /// Main button of the Places forms
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// Button that removes a unit
+  ///
+  /// In en, this message translates to:
+  /// **'Delete device'**
+  String get deleteDevice;
+
+  /// Shown in the unit form while a session is running
+  ///
+  /// In en, this message translates to:
+  /// **'This device has a session now, so only the name can change.'**
+  String get deviceBusyHint;
+
+  /// Manage entry and title of the Prices page
+  ///
+  /// In en, this message translates to:
+  /// **'Prices'**
+  String get pricesTitle;
+
+  /// Button that adds a price category
+  ///
+  /// In en, this message translates to:
+  /// **'New price'**
+  String get newPriceCategory;
+
+  /// Label of the name field in the price form
+  ///
+  /// In en, this message translates to:
+  /// **'Price name'**
+  String get priceNameLabel;
+
+  /// Hint of the name field in the price form
+  ///
+  /// In en, this message translates to:
+  /// **'For example PS5 regular, VIP'**
+  String get priceNameHint;
+
+  /// Label above the price choices in the device form
+  ///
+  /// In en, this message translates to:
+  /// **'Price'**
+  String get priceCategoryLabel;
+
+  /// Shown in the device form when no price exists
+  ///
+  /// In en, this message translates to:
+  /// **'Add a price first in Manage > Prices'**
+  String get noPriceCategoryHint;
+
+  /// Delete button of the price form
+  ///
+  /// In en, this message translates to:
+  /// **'Delete price'**
+  String get deletePriceCategory;
+
+  /// Hint in the price form when devices use it
+  ///
+  /// In en, this message translates to:
+  /// **'This price is used by devices, so it cannot be deleted.'**
+  String get priceCategoryInUse;
+
+  /// Button that completes a quick sale
+  ///
+  /// In en, this message translates to:
+  /// **'Sell'**
+  String get quickSaleSell;
+
+  /// Message after a quick sale
+  ///
+  /// In en, this message translates to:
+  /// **'Sold'**
+  String get quickSaleDone;
+
+  /// Hint in the move form
+  ///
+  /// In en, this message translates to:
+  /// **'The time so far is charged at this unit price, the rest at the new unit price.'**
+  String get moveSessionHint;
+
+  /// Shown in the move form when nothing is free
+  ///
+  /// In en, this message translates to:
+  /// **'No free units right now'**
+  String get moveNoFreeUnits;
+
+  /// Button that stops the clock of a session
+  ///
+  /// In en, this message translates to:
+  /// **'Stop the clock'**
+  String get stopClock;
+
+  /// Button that restarts a stopped clock
+  ///
+  /// In en, this message translates to:
+  /// **'Resume'**
+  String get resumeClock;
+
+  /// Shown on the timer card when the clock is stopped
+  ///
+  /// In en, this message translates to:
+  /// **'Clock stopped · waiting for payment'**
+  String get clockStopped;
+
+  /// Floor header button that stops every running clock (power cut)
+  ///
+  /// In en, this message translates to:
+  /// **'Stop all'**
+  String get stopAll;
+
+  /// Floor header button that restarts the clocks stopped by Stop all
+  ///
+  /// In en, this message translates to:
+  /// **'Resume all'**
+  String get resumeAll;
 }
 
 class _AppLocalizationsDelegate

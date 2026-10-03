@@ -31,7 +31,7 @@ class SideNav extends StatelessWidget {
 
     return Container(
       width: 88,
-      padding: const EdgeInsetsDirectional.symmetric(vertical: 20),
+      padding: const EdgeInsetsDirectional.symmetric(vertical: 14),
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(28),
@@ -52,10 +52,10 @@ class SideNav extends StatelessWidget {
               style: const TextStyle(color: AppColors.textOnLight, fontSize: 22, fontWeight: FontWeight.w700),
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 14),
           for (final (index, (icon, label)) in items.indexed)
             Padding(
-              padding: const EdgeInsetsDirectional.only(bottom: 10),
+              padding: const EdgeInsetsDirectional.only(bottom: 6),
               child: _NavButton(
                 icon: icon,
                 label: label,

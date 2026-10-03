@@ -15,6 +15,7 @@ import 'add_order.dart';
 import 'add_time.dart';
 import 'bill_widgets.dart';
 import 'checkout.dart';
+import 'move_session.dart';
 import 'time_text.dart';
 import '../data/money.dart';
 
@@ -23,19 +24,29 @@ import '../data/money.dart';
 /// It reads the unit from the units by id, so it always shows the latest version
 /// (even when it stays open in a bottom sheet while the data changes).
 class SessionPanel extends ConsumerWidget {
-  const SessionPanel({super.key, required this.unitId, required this.onClose, this.width});
+  const SessionPanel({super.key, required this.unitId, required this.onClose, this.onMoved, this.width});
 
   final String unitId;
   final double? width; // fixed width next to the grid; null = fill the space (bottom sheet)
   final VoidCallback onClose; // hides the panel (or closes the sheet)
+  final void Function(String newUnitId)? onMoved; // the session moved to another unit: show that one
 
   // Each action reads what it needs from `ref` BEFORE its first await: after the form closes the
   // panel may be gone, and `ref` must not be used then.
 
   Future<void> _addTime(BuildContext context, WidgetRef ref, Unit unit) async {
     final units = ref.read(unitsProvider.notifier);
-    final result = await showAddTime(context, unit);
-    if (result != null) units.addTime(unit.id, result.minutes);
+    final minutes = await showAddTime(context, unit);
+    if (minutes != null) units.addTime(unit.id, minutes);
+  }
+
+  Future<void> _move(BuildContext context, WidgetRef ref, Unit unit) async {
+    final units = ref.read(unitsProvider.notifier);
+    final free = ref.read(unitsProvider).where((u) => u.status == UnitStatus.free).toList();
+    final toId = await showMoveSession(context, unit, free);
+    if (toId == null) return;
+    units.moveSession(unit.id, toId);
+    onMoved?.call(toId);
   }
 
   Future<void> _addOrder(BuildContext context, WidgetRef ref, Unit unit) async {
@@ -78,13 +89,18 @@ class SessionPanel extends ConsumerWidget {
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(28),
       ),
-      child: unit.status == UnitStatus.running
+      child: unit.status == UnitStatus.running || unit.status == UnitStatus.waitingPayment
           ? _RunningSession(
               unit: unit,
               orders: orders,
               onAddTime: () => _addTime(context, ref, unit),
+              onMakeOpen: () => ref.read(unitsProvider.notifier).addTime(unit.id, null),
               onAddOrder: () => _addOrder(context, ref, unit),
               onCheckout: () => _checkout(context, ref, unit),
+              onMove: () => _move(context, ref, unit),
+              onSwitchMode: () => ref.read(unitsProvider.notifier).switchMode(unit.id),
+              onStop: () => ref.read(unitsProvider.notifier).stopClock(unit.id),
+              onResume: () => ref.read(unitsProvider.notifier).resumeClock(unit.id),
               onRemoveOrder: (productId) => ref.read(ordersProvider.notifier).removeOrderLine(unit.id, productId),
               onClose: onClose,
             )
@@ -106,23 +122,34 @@ class _RunningSession extends StatelessWidget {
     required this.unit,
     required this.orders,
     required this.onAddTime,
+    required this.onMakeOpen,
     required this.onAddOrder,
     required this.onCheckout,
+    required this.onMove,
+    required this.onSwitchMode,
+    required this.onStop,
+    required this.onResume,
     required this.onRemoveOrder,
     required this.onClose,
   });
 
   final Unit unit;
   final List<OrderLine> orders;
-  final VoidCallback onAddTime;
+  final VoidCallback onAddTime; // more time on a fixed session, or a time limit on an open one
+  final VoidCallback onMakeOpen; // fixed session -> open time
   final VoidCallback onAddOrder;
   final VoidCallback onCheckout;
+  final VoidCallback onMove; // the session goes to another free unit
+  final VoidCallback onSwitchMode; // single <-> pair
+  final VoidCallback onStop; // stop the clock, wait for payment
+  final VoidCallback onResume; // the clock runs again
   final void Function(String productId) onRemoveOrder;
   final VoidCallback onClose;
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final stopped = unit.status == UnitStatus.waitingPayment; // the clock is stopped
     final price = unit.isMulti ? unit.multiHourlyPrice! : unit.hourlyPrice;
     final playCost = unit.currentCost;
     final ordersSum = orders.fold(0, (sum, line) => sum + line.total);
@@ -175,30 +202,80 @@ class _RunningSession extends StatelessWidget {
                         fontFeatures: const [FontFeature.tabularFigures()],
                       ),
                     ),
-                    if (unit.remaining != null)
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              unit.isOvertime ? l10n.timeOver : l10n.timeLeft,
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: unit.needsAttention ? AppColors.alert : AppColors.textOnLightMuted,
+                    if (stopped) ...[
+                      Text(
+                        l10n.clockStopped,
+                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.textOnLightMuted),
+                      ),
+                      const SizedBox(height: 8),
+                      Align(
+                        alignment: AlignmentDirectional.centerStart,
+                        child: FilledButton.icon(
+                          onPressed: onResume,
+                          icon: const Icon(Icons.play_arrow_rounded, size: 18),
+                          label: Text(l10n.resumeClock),
+                          style: FilledButton.styleFrom(
+                            minimumSize: const Size(0, 40),
+                            backgroundColor: AppColors.textOnLight,
+                            foregroundColor: AppColors.running,
+                          ),
+                        ),
+                      ),
+                    ] else if (unit.remaining != null) ...[
+                      Text(
+                        unit.isOvertime ? l10n.timeOver : l10n.timeLeft,
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: unit.needsAttention ? AppColors.alert : AppColors.textOnLightMuted,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      // Two buttons under each other, the same width.
+                      Align(
+                        alignment: AlignmentDirectional.centerStart,
+                        child: IntrinsicWidth(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              FilledButton.icon(
+                                onPressed: onAddTime,
+                                icon: const Icon(Icons.add, size: 18),
+                                label: Text(l10n.addTime),
+                                style: FilledButton.styleFrom(
+                                  minimumSize: const Size(0, 40),
+                                  backgroundColor: AppColors.textOnLight,
+                                  foregroundColor: AppColors.running,
+                                ),
                               ),
-                            ),
+                              const SizedBox(height: 8),
+                              FilledButton.icon(
+                                onPressed: onMakeOpen,
+                                icon: const Icon(Icons.all_inclusive, size: 18),
+                                label: Text(l10n.makeOpenConfirm),
+                                style: FilledButton.styleFrom(
+                                  minimumSize: const Size(0, 40),
+                                  backgroundColor: AppColors.textOnLight,
+                                  foregroundColor: AppColors.running,
+                                ),
+                              ),
+                            ],
                           ),
-                          FilledButton.icon(
-                            onPressed: onAddTime,
-                            icon: const Icon(Icons.add, size: 18),
-                            label: Text(l10n.addTime),
-                            style: FilledButton.styleFrom(
-                              minimumSize: const Size(0, 40),
-                              backgroundColor: AppColors.textOnLight,
-                              foregroundColor: AppColors.running,
-                            ),
+                        ),
+                      ),
+                    ] else
+                      Align(
+                        alignment: AlignmentDirectional.centerStart,
+                        child: FilledButton.icon(
+                          onPressed: onAddTime,
+                          icon: const Icon(Icons.timer_outlined, size: 18),
+                          label: Text(l10n.setTime),
+                          style: FilledButton.styleFrom(
+                            minimumSize: const Size(0, 40),
+                            backgroundColor: AppColors.textOnLight,
+                            foregroundColor: AppColors.running,
                           ),
-                        ],
+                        ),
                       ),
                   ],
                 ),
@@ -237,20 +314,27 @@ class _RunningSession extends StatelessWidget {
 
         const SizedBox(height: 20), // space between the total and the buttons
 
-        // Secondary actions: two per row, the mode switch gets its own full-width row
+        // Secondary actions: two per row. A stopped clock only takes more orders (resume first to move,
+        // switch or stop again).
         Row(
           children: [
             Expanded(child: FilledButton.tonal(onPressed: onAddOrder, child: Text(l10n.addOrder))),
-            const SizedBox(width: 8),
-            Expanded(child: FilledButton.tonal(onPressed: () {}, child: Text(l10n.moveUnit))),
+            if (!stopped) ...[
+              const SizedBox(width: 8),
+              Expanded(child: FilledButton.tonal(onPressed: onMove, child: Text(l10n.moveUnit))),
+            ],
           ],
         ),
-        if (unit.hasMultiMode) ...[
+        if (!stopped && (unit.hasMultiMode || unit.isMulti)) ...[
           const SizedBox(height: 8),
           FilledButton.tonal(
-            onPressed: () {},
+            onPressed: onSwitchMode,
             child: Text(unit.isMulti ? l10n.switchToSingle : l10n.switchToMulti),
           ),
+        ],
+        if (!stopped) ...[
+          const SizedBox(height: 8),
+          FilledButton.tonal(onPressed: onStop, child: Text(l10n.stopClock)),
         ],
         const SizedBox(height: 10),
         // Main action

@@ -84,6 +84,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get typeBilliards => 'بلياردو';
 
   @override
+  String get typePc => 'كمبيوتر';
+
+  @override
   String privateRoomsOf(String type) {
     return 'غرف ال$type المميزة';
   }
@@ -190,7 +193,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get durationCustom => 'مدة تانية';
 
   @override
-  String get customHoursHint => 'عدد الساعات (مثلا 2.5)';
+  String get customHoursHint => 'عدد الساعات (مثلا 2.25)';
+
+  @override
+  String get duration15 => 'ربع ساعة';
+
+  @override
+  String get customHoursNote => '2.25 يعني ساعتين وربع';
 
   @override
   String get timeLeft => 'باقي';
@@ -221,6 +230,15 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get makeOpenConfirm => 'حوّل لمفتوح';
+
+  @override
+  String get setTime => 'حدّد وقت';
+
+  @override
+  String get setTimeConfirm => 'حدّد';
+
+  @override
+  String get fromNowNote => 'المدة بتتحسب من دلوقتي';
 
   @override
   String get addToBill => 'ضيف للحساب';
@@ -334,9 +352,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get productPriceLabel => 'السعر بالجنيه';
 
   @override
-  String get productCostLabel => 'سعر الشراء (اختياري)';
-
-  @override
   String get saveProduct => 'حفظ';
 
   @override
@@ -446,7 +461,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get purchaseTitle => 'اشتريت إيه؟';
 
   @override
-  String get purchaseTotalLabel => 'دفعت كام؟';
+  String get purchaseTotalLabel => 'الإجمالي';
+
+  @override
+  String get purchasePaidHint => 'دفعت كام (إجمالي الصنف ده)';
 
   @override
   String get purchaseConfirm => 'سجّل الشراء';
@@ -465,4 +483,104 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get stockInternalHint => 'زي السكر واللبن ';
+
+  @override
+  String get placesTitle => 'الرومز والأجهزة';
+
+  @override
+  String get newPlace => 'روم جديد';
+
+  @override
+  String get newDevice => 'جهاز جديد';
+
+  @override
+  String get editDevice => 'تعديل الجهاز';
+
+  @override
+  String get placeNameLabel => 'اسم الروم';
+
+  @override
+  String get placeNameHint => 'مثلا: صالة 1، VIP 1';
+
+  @override
+  String get settingsTitle => 'الإعدادات';
+
+  @override
+  String get languageLabel => 'اللغة';
+
+  @override
+  String get deviceNameLabel => 'اسم الجهاز';
+
+  @override
+  String get deviceNameHint => 'مثلا: PS5-1';
+
+  @override
+  String get deviceTypeLabel => 'النوع';
+
+  @override
+  String get singlePriceLabel => 'سعر الساعة فردي بالجنيه';
+
+  @override
+  String get multiPriceLabel => 'سعر الساعة زوجي بالجنيه (اختياري)';
+
+  @override
+  String get save => 'حفظ';
+
+  @override
+  String get deleteDevice => 'امسح الجهاز';
+
+  @override
+  String get deviceBusyHint => 'الجهاز شغال دلوقتي، فتقدر تغيّر الاسم بس.';
+
+  @override
+  String get pricesTitle => 'الأسعار';
+
+  @override
+  String get newPriceCategory => 'سعر جديد';
+
+  @override
+  String get priceNameLabel => 'اسم السعر';
+
+  @override
+  String get priceNameHint => 'مثلا: PS5 عادي، VIP';
+
+  @override
+  String get priceCategoryLabel => 'السعر';
+
+  @override
+  String get noPriceCategoryHint => 'ضيف سعر الأول من الإدارة > الأسعار';
+
+  @override
+  String get deletePriceCategory => 'امسح السعر';
+
+  @override
+  String get priceCategoryInUse => 'السعر ده مستخدم في أجهزة، فمينفعش يتمسح.';
+
+  @override
+  String get quickSaleSell => 'بيع';
+
+  @override
+  String get quickSaleDone => 'تم البيع';
+
+  @override
+  String get moveSessionHint =>
+      'الوقت اللي فات بيتحاسب بسعر الجهاز ده، والباقي بسعر الجهاز الجديد.';
+
+  @override
+  String get moveNoFreeUnits => 'مفيش أجهزة فاضية دلوقتي';
+
+  @override
+  String get stopClock => 'وقّف الوقت';
+
+  @override
+  String get resumeClock => 'كمّل الوقت';
+
+  @override
+  String get clockStopped => 'الوقت واقف · مستني الدفع';
+
+  @override
+  String get stopAll => 'وقف كله';
+
+  @override
+  String get resumeAll => 'كمل كله';
 }

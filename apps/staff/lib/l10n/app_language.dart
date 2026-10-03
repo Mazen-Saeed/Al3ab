@@ -7,7 +7,7 @@ import '../data/preferences_provider.dart';
 
 const _languageKey = 'language';
 
-/// The app's language: Arabic by default. The Manage page flips it, and the choice is saved
+/// The app's language: Arabic by default. Settings changes it, and the choice is saved
 /// on the device, so the app opens in the same language next time.
 class AppLanguageNotifier extends Notifier<Locale> {
   @override

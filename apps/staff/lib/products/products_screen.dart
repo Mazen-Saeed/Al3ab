@@ -25,11 +25,11 @@ class ProductsScreen extends ConsumerWidget {
     final result = await showProductForm(context, product: product);
     if (result == null) return;
     if (product == null) {
-      catalog.addProduct(result.name, result.price, costPrice: result.costPrice);
+      catalog.addProduct(result.name, result.price);
     } else if (result.delete) {
       catalog.deleteProduct(product.id);
     } else {
-      catalog.updateProduct(product.id, name: result.name, price: result.price, costPrice: result.costPrice);
+      catalog.updateProduct(product.id, name: result.name, price: result.price);
     }
   }
 

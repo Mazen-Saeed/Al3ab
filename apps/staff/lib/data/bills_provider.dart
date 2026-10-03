@@ -3,6 +3,8 @@ import 'dart:math' as math;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'bill.dart';
+import 'catalog_provider.dart';
+import 'product.dart';
 import 'orders_provider.dart';
 import 'units_provider.dart';
 
@@ -42,6 +44,25 @@ class BillsNotifier extends Notifier<List<Bill>> {
     state = [...state, bill];
     ref.read(ordersProvider.notifier).clear(unitId);
     ref.read(unitsProvider.notifier).free(unitId);
+    return bill;
+  }
+
+  /// Sells products to someone who is not playing. [quantities]: product id -> how many. The
+  /// bill is saved paid at once, and products counted in stock come off the shelf. Nothing is
+  /// saved for an empty sale.
+  Bill? quickSale(Map<String, int> quantities, {required PaymentMethod method}) {
+    final catalog = ref.read(catalogProvider.notifier);
+    final products = ref.read(catalogProvider).products;
+    final lines = <OrderLine>[];
+    quantities.forEach((productId, quantity) {
+      if (quantity <= 0) return;
+      final product = products.firstWhere((p) => p.id == productId);
+      catalog.sellFromStock(productId, quantity);
+      lines.add(OrderLine(productId: product.id, name: product.name, unitPrice: product.price, quantity: quantity));
+    });
+    if (lines.isEmpty) return null;
+    final bill = Bill.quickSale(at: DateTime.now(), lines: lines, method: method);
+    state = [...state, bill];
     return bill;
   }
 }

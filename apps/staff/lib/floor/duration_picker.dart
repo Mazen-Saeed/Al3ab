@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../app_theme.dart';
 import '../l10n/l10n.dart';
 import '../shell/pill.dart';
 
@@ -12,17 +13,19 @@ class DurationChoice {
   final bool isValid; // false while "other" is chosen but the field is empty or 0
 }
 
-/// Pills: [open] 30 min · 1 hour · 2 hours · other (type hours, like 2.5).
-/// Used by the start form and the add-time sheet (where "open" means: remove the limit).
+/// Pills: open (if [showOpen]) · 15 min · 30 min · 1 hour · 2 hours · other (type hours, like 2.25).
+/// Used by the start form and the add-time sheet (which has no "open").
 class DurationPicker extends StatefulWidget {
   const DurationPicker({
     super.key,
     required this.onChanged,
     this.initialMinutes,
+    this.showOpen = true,
   });
 
   final ValueChanged<DurationChoice> onChanged; // called on every change
   final int? initialMinutes;
+  final bool showOpen; // false: no "open" pill (the add-time sheet has its own button for that)
 
   @override
   State<DurationPicker> createState() => _DurationPickerState();
@@ -30,6 +33,7 @@ class DurationPicker extends StatefulWidget {
 
 class _DurationPickerState extends State<DurationPicker> {
   late int? _minutes = widget.initialMinutes; // chosen preset; null = open time
+  bool get _preset => !_custom; // one of the fixed pills (or open)
   bool _custom = false; // "other" chosen: use what's typed in the field
   final _hours = TextEditingController();
 
@@ -69,15 +73,19 @@ class _DurationPickerState extends State<DurationPicker> {
           spacing: 8, // like Row spacing, but moves to the next line when full
           runSpacing: 8,
           children: [
-            Pill(label: l10n.durationOpen, selected: !_custom && _minutes == null, onTap: () => _choose(null)),
-            Pill(label: l10n.duration30, selected: !_custom && _minutes == 30, onTap: () => _choose(30)),
-            Pill(label: l10n.duration60, selected: !_custom && _minutes == 60, onTap: () => _choose(60)),
-            Pill(label: l10n.duration120, selected: !_custom && _minutes == 120, onTap: () => _choose(120)),
+            if (widget.showOpen)
+              Pill(label: l10n.durationOpen, selected: _preset && _minutes == null, onTap: () => _choose(null)),
+            Pill(label: l10n.duration15, selected: _preset && _minutes == 15, onTap: () => _choose(15)),
+            Pill(label: l10n.duration30, selected: _preset && _minutes == 30, onTap: () => _choose(30)),
+            Pill(label: l10n.duration60, selected: _preset && _minutes == 60, onTap: () => _choose(60)),
+            Pill(label: l10n.duration120, selected: _preset && _minutes == 120, onTap: () => _choose(120)),
             Pill(
               label: l10n.durationCustom,
               selected: _custom,
               onTap: () {
-                setState(() => _custom = true);
+                setState(() {
+                  _custom = true;
+                });
                 _emit();
               },
             ),
@@ -95,6 +103,8 @@ class _DurationPickerState extends State<DurationPicker> {
             },
             decoration: InputDecoration(hintText: l10n.customHoursHint),
           ),
+          const SizedBox(height: 6),
+          Text(l10n.customHoursNote, style: AppText.small), // 2.25 = two hours and a quarter
         ],
       ],
     );

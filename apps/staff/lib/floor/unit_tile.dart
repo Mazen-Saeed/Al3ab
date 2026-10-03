@@ -84,6 +84,7 @@ class UnitTile extends StatelessWidget {
         UnitType.playstation => Icons.sports_esports,
         UnitType.pingPong => Icons.sports_tennis,
         UnitType.billiards => Icons.adjust,
+        UnitType.pc => Icons.computer,
       };
 }
 

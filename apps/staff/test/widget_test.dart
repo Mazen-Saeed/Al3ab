@@ -1,8 +1,11 @@
 import 'package:al3b_staff/data/sample_data.dart';
+import 'package:al3b_staff/data/unit.dart';
+import 'package:al3b_staff/data/units_provider.dart';
 import 'package:al3b_staff/l10n/arb/app_localizations_ar.dart';
 import 'package:al3b_staff/l10n/arb/app_localizations_en.dart';
 import 'package:al3b_staff/shell/pill.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
@@ -15,21 +18,49 @@ void main() {
   _maintenanceTests();
   _productsTests();
   _stockTests();
+  _placesTests();
+  _quickSaleTests();
   _resizeTests();
 
-  testWidgets('the Manage page switches the language to English and back', (tester) async {
+  testWidgets('Settings switches the language to English and back', (tester) async {
     await pumpApp(tester);
     await tester.tap(find.byIcon(Icons.tune_rounded));
+    await tester.pump(const Duration(milliseconds: 300));
+    await tester.tap(find.text(l10n.settingsTitle));
     await tester.pump(const Duration(milliseconds: 300));
 
     await tester.tap(find.text('English'));
     await tester.pump(const Duration(milliseconds: 500));
-    expect(find.text(AppLocalizationsEn().productsTitle), findsOneWidget);
+    expect(find.text(AppLocalizationsEn().settingsTitle), findsOneWidget);
 
     await tester.tap(find.text('العربية'));
     await tester.pump(const Duration(milliseconds: 500));
-    expect(find.text(l10n.productsTitle), findsOneWidget);
+    expect(find.text(l10n.settingsTitle), findsOneWidget);
 
+    await tester.pumpWidget(const SizedBox());
+  });
+
+  testWidgets('start form: a 15 minute choice and the 2.25 note, then start', (tester) async {
+    await pumpApp(tester);
+
+    final tile = find.text('PS5-3'); // free
+    await tester.ensureVisible(tile);
+    await tester.tap(tile);
+    await tester.pump(const Duration(milliseconds: 400));
+
+    expect(find.text(l10n.duration15), findsOneWidget);
+    await tester.tap(find.text(l10n.durationCustom));
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(find.text(l10n.customHoursNote), findsOneWidget); // "2.25 = two hours and a quarter"
+
+    await tester.tap(find.text(l10n.duration15));
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(find.text(l10n.customHoursNote), findsNothing); // "other" closed
+    await tester.ensureVisible(find.text(l10n.startTimer));
+    await tester.tap(find.text(l10n.startTimer));
+    await tester.pump(const Duration(milliseconds: 400));
+
+    expect(find.text(l10n.floorSummary(7, 3)), findsOneWidget); // PS5-3 is running now
     await tester.pumpWidget(const SizedBox());
   });
 
@@ -75,6 +106,39 @@ void main() {
     await tester.tap(find.byIcon(Icons.close));
     await tester.pump(const Duration(milliseconds: 100));
     expect(find.text(l10n.endAndPay), findsNothing);
+
+    await tester.pumpWidget(const SizedBox());
+  });
+
+  testWidgets('an open session gets a time limit, and a fixed one can become open again', (tester) async {
+    tester.view.physicalSize = const Size(1400, 900);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+
+    await pumpApp(tester);
+    final container = ProviderScope.containerOf(tester.element(find.byType(Scaffold).first));
+    Unit unitNow(String id) => container.read(unitsProvider).byId(id);
+
+    // PS5-1 is running with no limit (open time): the panel offers to set one.
+    expect(unitNow('ps5-1').plannedMinutes, isNull);
+    await tester.tap(find.text('PS5-1'));
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(find.text(l10n.makeOpenConfirm), findsNothing); // it is already open
+    await tester.tap(find.text(l10n.setTime));
+    await _letAnimationFinish(tester);
+    expect(find.text(l10n.durationOpen), findsNothing); // no "open" choice when setting a limit
+    expect(find.text(l10n.fromNowNote), findsOneWidget);
+    await tester.tap(find.text(l10n.duration60));
+    await tester.tap(find.text(l10n.setTimeConfirm));
+    await _letAnimationFinish(tester);
+    expect(unitNow('ps5-1').plannedMinutes, isNotNull);
+    expect(find.text(l10n.makeOpenConfirm), findsOneWidget); // now it can go back to open
+
+    // And back: one tap turns it open again.
+    await tester.tap(find.text(l10n.makeOpenConfirm));
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(unitNow('ps5-1').plannedMinutes, isNull);
+    expect(find.text(l10n.setTime), findsOneWidget);
 
     await tester.pumpWidget(const SizedBox());
   });
@@ -212,7 +276,7 @@ void _productsTests() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('a price with piasters and a cost price at $name width', (tester) async {
+    testWidgets('a price with piasters at $name width', (tester) async {
       tester.view.physicalSize = size;
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.reset);
@@ -227,7 +291,6 @@ void _productsTests() {
 
       await tester.enterText(find.byType(TextField).at(0), 'قهوة تركي');
       await tester.enterText(find.byType(TextField).at(1), '7,5'); // 7.50, a comma works too
-      await tester.enterText(find.byType(TextField).at(2), '4.25'); // the optional cost price
       await tester.pump(const Duration(milliseconds: 100));
       await tester.ensureVisible(find.text(l10n.saveProduct));
       await tester.tap(find.text(l10n.saveProduct));
@@ -238,6 +301,159 @@ void _productsTests() {
       expect(tester.takeException(), isNull);
     });
   }
+}
+
+// Manage -> Places and devices: add a device, add a place, open a busy device. (Three sizes.)
+void _placesTests() {
+  final l10n = AppLocalizationsAr();
+  for (final (name, size) in [
+    ('phone', const Size(360, 740)),
+    ('medium', const Size(900, 700)),
+    ('shop PC, 1366x768 at 125%', const Size(1100, 540)),
+    ('wide', const Size(1400, 900)),
+  ]) {
+    Future<void> openPlaces(WidgetTester tester) async {
+      tester.view.physicalSize = size;
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+
+      await pumpApp(tester);
+      await tester.tap(find.byIcon(Icons.tune_rounded)); // the Manage tab
+      await tester.pump(const Duration(milliseconds: 300));
+      await tester.tap(find.text(l10n.placesTitle));
+      await tester.pump(const Duration(milliseconds: 300));
+    }
+
+    testWidgets('tapping Manage in the nav goes back to the Manage list at $name width', (tester) async {
+      await openPlaces(tester);
+      expect(find.text(l10n.newPlace), findsOneWidget); // inside Rooms and devices
+
+      await tester.tap(find.byIcon(Icons.tune_rounded)); // the Manage button in the nav
+      await tester.pump(const Duration(milliseconds: 300));
+
+      expect(find.text(l10n.newPlace), findsNothing);
+      expect(find.text(l10n.placesTitle), findsOneWidget); // the list entry
+      expect(find.text(l10n.productsTitle), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('adding a PC to a room at $name width', (tester) async {
+      await openPlaces(tester);
+      await tester.ensureVisible(find.text(l10n.newDevice).first);
+      await tester.tap(find.text(l10n.newDevice).first);
+      await _letAnimationFinish(tester);
+
+      await tester.enterText(find.byType(TextField).at(0), 'PC-1');
+      await tester.tap(find.text(l10n.typePc));
+      await tester.tap(find.text('PS4')); // the price category: 60 an hour
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.ensureVisible(find.text(l10n.save));
+      await tester.tap(find.text(l10n.save));
+      await _letAnimationFinish(tester);
+
+      expect(find.text('PC-1'), findsOneWidget);
+      expect(find.text('${l10n.typePc} · ${l10n.pricePerHour('60')}'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('the pair price is only offered for kinds that have one at $name width', (tester) async {
+      await openPlaces(tester);
+      await tester.ensureVisible(find.text(l10n.newDevice).first);
+      await tester.tap(find.text(l10n.newDevice).first);
+      await _letAnimationFinish(tester);
+
+      await tester.tap(find.text('PS5 عادي')); // a category with a pair price
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(find.text('${l10n.pricePerHour('50')} · ${l10n.pricePerHour('70')}'), findsOneWidget); // PlayStation: single and pair
+      await tester.tap(find.text(l10n.typeBilliards));
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(find.text(l10n.pricePerHour('50')), findsOneWidget); // billiards: one price only
+      await tester.tap(find.text(l10n.typePingPong));
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(find.text('${l10n.pricePerHour('50')} · ${l10n.pricePerHour('70')}'), findsOneWidget); // ping pong has a pair price too
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('a new place with its first device at $name width', (tester) async {
+      await openPlaces(tester);
+      await tester.tap(find.text(l10n.newPlace));
+      await _letAnimationFinish(tester);
+
+      await tester.enterText(find.byType(TextField).at(0), 'VIP 3');
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.ensureVisible(find.text(l10n.save));
+      await tester.tap(find.text(l10n.save));
+      await _letAnimationFinish(tester);
+
+      // The second form: the first device of the new place.
+      await tester.enterText(find.byType(TextField).at(0), 'PS5-7');
+      await tester.tap(find.text('VIP')); // the price category
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.ensureVisible(find.text(l10n.save));
+      await tester.tap(find.text(l10n.save));
+      await _letAnimationFinish(tester);
+
+      expect(find.text('VIP 3'), findsOneWidget);
+      expect(find.text('PS5-7'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('dragging a room by its grip onto another room puts it there at $name width', (tester) async {
+      await openPlaces(tester);
+      tester.view.physicalSize = Size(size.width, 2400); // tall: both rooms are on screen to drop on
+      await tester.pump(const Duration(milliseconds: 100));
+      final container = ProviderScope.containerOf(tester.element(find.byType(Scaffold).first));
+      String firstRoom() => container.read(unitsProvider).first.roomName;
+      expect(firstRoom(), 'صالة 1');
+
+      // The grip of the first room, dropped on the name of the second room.
+      final grip = find.byIcon(Icons.drag_indicator).first;
+      final target = find.text('صالة 2');
+      await tester.drag(grip, tester.getCenter(target) - tester.getCenter(grip));
+      await _letAnimationFinish(tester);
+
+      expect(container.read(unitsProvider).byRoom.keys.toList().take(2), ['hall-2', 'hall-1']);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('a device with a session can only be renamed at $name width', (tester) async {
+      await openPlaces(tester);
+      await tester.ensureVisible(find.text('PS5-1'));
+      await tester.tap(find.text('PS5-1')); // running in the sample data
+      await _letAnimationFinish(tester);
+
+      expect(find.text(l10n.deviceBusyHint), findsOneWidget);
+      expect(find.text(l10n.deleteDevice), findsNothing);
+      expect(find.text(l10n.priceCategoryLabel), findsNothing); // type and prices are not offered
+      expect(find.text(l10n.typePc), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+  }
+
+  testWidgets('dragging a device onto another room moves it there', (tester) async {
+    tester.view.physicalSize = const Size(1000, 1600); // tall: every room is on screen
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+
+    await pumpApp(tester);
+    await tester.tap(find.byIcon(Icons.tune_rounded));
+    await tester.pump(const Duration(milliseconds: 300));
+    await tester.tap(find.text(l10n.placesTitle));
+    await tester.pump(const Duration(milliseconds: 300));
+    final container = ProviderScope.containerOf(tester.element(find.byType(Scaffold).first));
+    expect(container.read(unitsProvider).byId('ps5-1').roomId, 'hall-1');
+
+    // The grip of the first device on screen (PS5-1, in hall 1), dropped on hall 2's "new device".
+    final grip = find.byIcon(Icons.drag_indicator).at(1); // 0 is hall 1's own grip
+    final target = find.text(l10n.newDevice).at(1);
+    await tester.drag(grip, tester.getCenter(target) - tester.getCenter(grip));
+    await _letAnimationFinish(tester);
+
+    final moved = container.read(unitsProvider).byId('ps5-1');
+    expect(moved.roomId, 'hall-2');
+    expect(moved.roomName, 'صالة 2');
+    expect(tester.takeException(), isNull);
+  });
 }
 
 // Manage -> Products -> the inventory section. (Three sizes, like the others.)
@@ -271,10 +487,11 @@ void _stockTests() {
       await tester.ensureVisible(pepsi);
       await tester.enterText(pepsi, '50'); // typed once, not fifty taps
       await tester.pump(const Duration(milliseconds: 100));
-      final total = find.byKey(const ValueKey('purchase-total'));
-      await tester.ensureVisible(total);
-      await tester.enterText(total, '1200'); // the receipt total
+      final paid = find.byKey(const ValueKey('paid-stock-pepsi')); // opens once a number is typed
+      await tester.ensureVisible(paid);
+      await tester.enterText(paid, '600'); // what that line cost
       await tester.pump(const Duration(milliseconds: 100));
+      expect(find.text(l10n.amountEgp('600')), findsOneWidget); // the total is worked out
       await tester.ensureVisible(find.text(l10n.purchaseConfirm));
       await tester.tap(find.text(l10n.purchaseConfirm));
       await _letAnimationFinish(tester);
@@ -397,4 +614,30 @@ void _resizeTests() {
 Future<void> _letAnimationFinish(WidgetTester tester) async {
   await tester.pump(const Duration(milliseconds: 100));
   await tester.pump(const Duration(milliseconds: 500));
+}
+
+// Quick sale: tap a product, press sell, a paid bill is saved.
+void _quickSaleTests() {
+  final l10n = AppLocalizationsAr();
+  testWidgets('selling a drink from the Quick sale page', (tester) async {
+    tester.view.physicalSize = const Size(1400, 900);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+
+    await pumpApp(tester);
+    await tester.tap(find.byIcon(Icons.local_drink_outlined).first); // the Quick sale tab (first: the nav)
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.text(l10n.quickSaleSell), findsOneWidget); // nothing picked yet
+
+    await tester.tap(find.text('بيبسي').last);
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(find.text('${l10n.quickSaleSell} · ${l10n.amountEgp('15')}'), findsOneWidget);
+
+    await tester.tap(find.text('${l10n.quickSaleSell} · ${l10n.amountEgp('15')}'));
+    await tester.pump(const Duration(milliseconds: 300));
+
+    expect(find.text('${l10n.quickSaleDone} · ${l10n.amountEgp('15')}'), findsOneWidget);
+    expect(find.text(l10n.quickSaleSell), findsOneWidget); // cleared, ready for the next customer
+    expect(tester.takeException(), isNull);
+  });
 }

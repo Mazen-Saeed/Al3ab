@@ -10,7 +10,8 @@ import '../data/money.dart';
 
 /// What staff chose in the form. Returned to the Floor screen when they press start.
 class StartSessionResult {
-  const StartSessionResult({required this.isMulti, this.plannedMinutes, this.customerText}) : wantsMaintenance = false;
+  const StartSessionResult({required this.isMulti, this.plannedMinutes, this.customerText})
+      : wantsMaintenance = false;
 
   /// Staff chose "put it in maintenance" instead of starting. The Floor screen then opens that form.
   const StartSessionResult.maintenance()
@@ -116,7 +117,9 @@ class _StartSessionFormState extends State<_StartSessionForm> {
           // Duration: open time, a preset, or typed minutes
           Text(l10n.durationLabel, style: AppText.label),
           const SizedBox(height: 10),
-          DurationPicker(onChanged: (choice) => setState(() => _duration = choice)),
+          DurationPicker(
+            onChanged: (choice) => setState(() => _duration = choice),
+          ),
           const SizedBox(height: 18),
 
           // Customer (optional)

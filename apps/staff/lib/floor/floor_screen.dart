@@ -36,7 +36,7 @@ class _FloorScreenState extends ConsumerState<FloorScreen> {
     final units = ref.watch(unitsProvider);
     final l10n = context.l10n;
     final isWide = screenSizeOf(context) == ScreenSize.wide;
-    final selected = _selectedId == null ? null : units.byId(_selectedId!);
+    final selected = units.where((u) => u.id == _selectedId).firstOrNull; // null if none, or the unit was removed
     // The panel is for units with something to show. A free unit has nothing: tapping
     // it opens the start form instead.
     final showPanel = isWide && selected != null && selected.status != UnitStatus.free;
@@ -91,6 +91,7 @@ class _FloorScreenState extends ConsumerState<FloorScreen> {
           unitId: selected.id,
           width: 340,
           onClose: () => setState(() => _selectedId = null),
+          onMoved: (newId) => setState(() => _selectedId = newId), // follow the session
         ),
       ],
     );
@@ -130,6 +131,7 @@ class _FloorScreenState extends ConsumerState<FloorScreen> {
           child: SessionPanel(
             unitId: unit.id,
             onClose: () => Navigator.pop(context), // closes the sheet
+            onMoved: (_) => Navigator.pop(context), // the session left this unit: close the sheet
           ),
         ),
       ),

@@ -1,25 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../app_theme.dart';
 import '../floor/floor_screen.dart';
 import '../l10n/l10n.dart';
 import '../manage/manage_screen.dart';
+import '../quick_sale/quick_sale_screen.dart';
 import 'layout.dart';
+import 'nav_provider.dart';
 import 'side_nav.dart';
 
 /// The frame around every page: side nav on tablets and PCs, bottom bar on phones.
 /// A page is just its content; it never builds navigation itself.
 ///
 /// Page order = nav order: Floor, Quick sale, Reservations, Cash box, Manage.
-class AppShell extends StatefulWidget {
+class AppShell extends ConsumerStatefulWidget {
   const AppShell({super.key});
 
   @override
-  State<AppShell> createState() => _AppShellState();
+  ConsumerState<AppShell> createState() => _AppShellState();
 }
 
-class _AppShellState extends State<AppShell> {
-  int _index = 0; // which page is showing
+class _AppShellState extends ConsumerState<AppShell> {
 
   // The pages sit in a different place in the widget tree on a phone (inside a SafeArea, above
   // the bottom bar) than on a PC (next to the side nav). Without a key, resizing the window
@@ -31,23 +33,28 @@ class _AppShellState extends State<AppShell> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final index = ref.watch(navProvider); // which page is showing
 
     // IndexedStack builds all pages but shows one, so each page keeps its own state
     // (the Floor's toggle and selection survive a trip to another page).
     final pages = IndexedStack(
       key: _pagesKey,
-      index: _index,
+      index: index,
       sizing: StackFit.expand,
       children: [
         const FloorScreen(),
-        _ComingSoon(title: l10n.navQuickSale),
+        const QuickSaleScreen(),
         _ComingSoon(title: l10n.navReservations),
         _ComingSoon(title: l10n.navShift),
         const ManageScreen(),
       ],
     );
 
-    void select(int index) => setState(() => _index = index);
+    void select(int page) {
+      // Tapping Manage always shows its list, even from inside one of its areas.
+      if (page == NavPage.manage) ref.read(manageAreaProvider.notifier).close();
+      ref.read(navProvider.notifier).open(page);
+    }
 
     // Phone: bottom navigation bar.
     if (screenSizeOf(context) == ScreenSize.phone) {
@@ -59,7 +66,7 @@ class _AppShellState extends State<AppShell> {
           ),
         ),
         bottomNavigationBar: NavigationBar(
-          selectedIndex: _index,
+          selectedIndex: index,
           onDestinationSelected: select,
           destinations: [
             NavigationDestination(icon: const Icon(Icons.grid_view_rounded), label: l10n.homeTitle),
@@ -80,7 +87,7 @@ class _AppShellState extends State<AppShell> {
           crossAxisAlignment: CrossAxisAlignment.stretch, // nav and page are full height
           children: [
             // TODO: hasNewReservation will come from the store.
-            SideNav(selectedIndex: _index, onSelect: select, hasNewReservation: true),
+            SideNav(selectedIndex: index, onSelect: select, hasNewReservation: true),
             const SizedBox(width: 20),
             Expanded(child: pages),
           ],

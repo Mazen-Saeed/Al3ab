@@ -171,7 +171,7 @@ class _CheckoutFormState extends State<_CheckoutForm> {
                   // The customer scans this to pay (only for methods that have a link)
                   if (widget.paymentAccounts[_method] case final account?) ...[
                     const SizedBox(height: 16),
-                    _PaymentQr(account: account),
+                    PaymentQr(account: account),
                   ],
                 ],
               ),
@@ -203,8 +203,8 @@ class _CheckoutFormState extends State<_CheckoutForm> {
 /// For the customer: a QR code of the payment link on a white card (QR codes need a light
 /// background to scan), then, in case the scan fails, the account to type and the link itself.
 /// The texts are selectable so a cashier on a PC can copy them.
-class _PaymentQr extends StatelessWidget {
-  const _PaymentQr({required this.account});
+class PaymentQr extends StatelessWidget {
+  const PaymentQr({super.key, required this.account});
 
   final PaymentAccount account;
 

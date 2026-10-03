@@ -1,25 +1,22 @@
 /// Something the shop sells at the counter (drink, snack). Prices are piasters
 /// (1500 = 15 EGP), see money.dart. Later it comes from the products table.
 class Product {
-  const Product({required this.id, required this.name, required this.price, this.costPrice, this.stockItemId});
+  const Product({required this.id, required this.name, required this.price, this.stockItemId});
 
   final String id;
   final String name;
   final int price;
 
-  /// What one costs the shop (piasters). Optional: null = not entered. Reports use it for true profit.
-  final int? costPrice;
-
   /// The stock item this product draws from. Null = not tracked.
   final String? stockItemId;
 
-  /// Same product with new name, price and cost price. [costPrice] null clears it.
-  Product withDetails({required String name, required int price, int? costPrice}) =>
-      Product(id: id, name: name, price: price, costPrice: costPrice, stockItemId: stockItemId);
+  /// Same product with a new name and price.
+  Product withDetails({required String name, required int price}) =>
+      Product(id: id, name: name, price: price, stockItemId: stockItemId);
 
   /// Same product, linked to another stock item (null = not tracked).
   Product withStockItem(String? stockItemId) =>
-      Product(id: id, name: name, price: price, costPrice: costPrice, stockItemId: stockItemId);
+      Product(id: id, name: name, price: price, stockItemId: stockItemId);
 }
 
 /// One line on a session's bill: "Pepsi, 2 × 15".

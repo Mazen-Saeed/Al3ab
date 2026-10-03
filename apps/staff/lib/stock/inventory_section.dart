@@ -39,7 +39,7 @@ class InventorySection extends ConsumerWidget {
     final catalog = ref.read(catalogProvider.notifier);
     final result = await showPurchaseForm(context, ref.read(catalogProvider).stockItems);
     if (result == null) return;
-    catalog.recordPurchase(result.quantities, total: result.total);
+    catalog.recordPurchase(result.lines);
   }
 
   Future<void> _open(BuildContext context, WidgetRef ref, StockItem item) async {

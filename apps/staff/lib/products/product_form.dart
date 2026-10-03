@@ -8,18 +8,16 @@ import '../shell/form_surface.dart';
 
 /// What staff did in the product form.
 class ProductFormResult {
-  const ProductFormResult({required this.name, required this.price, this.costPrice}) : delete = false;
+  const ProductFormResult({required this.name, required this.price}) : delete = false;
 
   /// "Delete this product" instead of saving.
   const ProductFormResult.delete()
       : name = '',
         price = 0,
-        costPrice = null,
         delete = true;
 
   final String name;
   final int price; // piasters
-  final int? costPrice; // piasters, null = not entered
   final bool delete;
 }
 
@@ -39,24 +37,17 @@ class _ProductForm extends StatefulWidget {
 class _ProductFormState extends State<_ProductForm> {
   late final _name = TextEditingController(text: widget.product?.name);
   late final _price = TextEditingController(text: widget.product == null ? null : formatMoney(widget.product!.price));
-  late final _cost = TextEditingController(
-    text: widget.product?.costPrice == null ? null : formatMoney(widget.product!.costPrice!),
-  );
 
   @override
   void dispose() {
     _name.dispose();
     _price.dispose();
-    _cost.dispose();
     super.dispose();
   }
 
   int get _priceValue => parseMoney(_price.text) ?? 0;
 
-  /// Empty = no cost price. Something typed must be a real number (a lone "." is not).
-  int? get _costValue => parseMoney(_cost.text);
-  bool get _costOk => _cost.text.trim().isEmpty || _costValue != null;
-  bool get _canSave => _name.text.trim().isNotEmpty && _priceValue > 0 && _costOk;
+  bool get _canSave => _name.text.trim().isNotEmpty && _priceValue > 0;
 
   @override
   Widget build(BuildContext context) {
@@ -85,19 +76,10 @@ class _ProductFormState extends State<_ProductForm> {
             inputFormatters: moneyInputFormatters,
             onChanged: (_) => setState(() {}),
           ),
-          const SizedBox(height: 18),
-          Text(l10n.productCostLabel, style: AppText.label),
-          const SizedBox(height: 10),
-          TextField(
-            controller: _cost,
-            keyboardType: moneyKeyboard,
-            inputFormatters: moneyInputFormatters,
-            onChanged: (_) => setState(() {}),
-          ),
           const SizedBox(height: 22),
           FilledButton(
             onPressed: _canSave
-                ? () => Navigator.pop(context, ProductFormResult(name: _name.text.trim(), price: _priceValue, costPrice: _costValue))
+                ? () => Navigator.pop(context, ProductFormResult(name: _name.text.trim(), price: _priceValue))
                 : null,
             style: FilledButton.styleFrom(minimumSize: const Size(0, 60)),
             child: Text(l10n.saveProduct, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),

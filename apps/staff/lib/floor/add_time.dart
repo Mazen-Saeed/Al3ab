@@ -1,21 +1,16 @@
 import 'package:flutter/material.dart';
 
+import '../app_theme.dart';
+import '../data/unit.dart';
 import '../l10n/l10n.dart';
 import '../shell/form_surface.dart';
 import 'duration_picker.dart';
-import '../data/unit.dart';
 
-/// What staff chose in the add-time form.
-class AddTimeResult {
-  const AddTimeResult(this.minutes);
-
-  final int? minutes; // minutes to add; null = switch the session to open time
-}
-
-/// Asks how much time to add to a running planned session (or to make it open).
-/// Returns null if the form is closed without choosing.
-Future<AddTimeResult?> showAddTime(BuildContext context, Unit unit) =>
-    showFormSurface<AddTimeResult>(context, _AddTimeForm(unit: unit));
+/// Asks for time on a running session: more time on a fixed session, or a time limit (counted from
+/// now) on an open one. Returns the minutes, or null if the form is closed without choosing.
+/// (Turning a fixed session into an open one is its own button in the panel.)
+Future<int?> showAddTime(BuildContext context, Unit unit) =>
+    showFormSurface<int>(context, _AddTimeForm(unit: unit));
 
 class _AddTimeForm extends StatefulWidget {
   const _AddTimeForm({required this.unit});
@@ -29,29 +24,35 @@ class _AddTimeForm extends StatefulWidget {
 class _AddTimeFormState extends State<_AddTimeForm> {
   DurationChoice _choice = const DurationChoice(minutes: 30); // matches initialMinutes below
 
-  bool get _canAdd => _choice.isValid; // "open" (minutes == null) is a valid choice here
-
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final isOpen = widget.unit.plannedMinutes == null; // open session: this sets a limit
     return Padding(
       padding: const EdgeInsetsDirectional.all(24),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          FormHeader(title: l10n.addTime, heading: widget.unit.name),
+          FormHeader(title: isOpen ? l10n.setTime : l10n.addTime, heading: widget.unit.name),
           const SizedBox(height: 18),
           DurationPicker(
-            // The "open" pill here means: stop the countdown, let them play without a limit.
+            showOpen: false,
             initialMinutes: 30,
             onChanged: (choice) => setState(() => _choice = choice),
           ),
+          if (isOpen) ...[
+            const SizedBox(height: 10),
+            Text(l10n.fromNowNote, style: AppText.small), // the limit starts counting now, not at the start
+          ],
           const SizedBox(height: 22),
           FilledButton(
-            onPressed: _canAdd ? () => Navigator.pop(context, AddTimeResult(_choice.minutes)) : null,
+            onPressed: _choice.isValid && _choice.minutes != null ? () => Navigator.pop(context, _choice.minutes) : null,
             style: FilledButton.styleFrom(minimumSize: const Size(0, 60)),
-            child: Text(_choice.minutes == null && _choice.isValid ? l10n.makeOpenConfirm : l10n.addTimeConfirm, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+            child: Text(
+              isOpen ? l10n.setTimeConfirm : l10n.addTimeConfirm,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+            ),
           ),
         ],
       ),

@@ -1,22 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../app_theme.dart';
 import '../data/sample_data.dart';
 import '../data/unit.dart';
+import '../data/units_provider.dart';
 import '../l10n/l10n.dart';
+import '../shell/nav_provider.dart';
 import 'floor_sections.dart';
 import 'unit_tile.dart';
 
 /// Top of the Floor screen: venue name + summary, then status chips and quick sale.
-class FloorHeader extends StatelessWidget {
+class FloorHeader extends ConsumerWidget {
   const FloorHeader({super.key, required this.running, required this.free});
 
   final int running;
   final int free;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
+    final outage = ref.watch(outageProvider).isNotEmpty; // a power cut is being handled
     // Wrap = a Row that moves items to the next line when they don't fit.
     return Wrap(
       spacing: 10, // horizontal gap
@@ -47,8 +51,18 @@ class FloorHeader extends StatelessWidget {
               Text(l10n.statusOffline),
             ],
           ),
+        // Power cut: stop every running clock at once, and start them again when the power is back.
+        if (outage || running > 0)
+          FilledButton.tonalIcon(
+            onPressed: () {
+              final units = ref.read(unitsProvider.notifier);
+              outage ? units.resumeAll() : units.stopAll();
+            },
+            icon: Icon(outage ? Icons.play_arrow_rounded : Icons.pause_rounded, size: 20),
+            label: Text(outage ? l10n.resumeAll : l10n.stopAll),
+          ),
         FilledButton.tonalIcon(
-          onPressed: () {}, // TODO: open quick sale
+          onPressed: () => ref.read(navProvider.notifier).open(NavPage.quickSale),
           icon: const Icon(Icons.add, size: 20),
           label: Text(l10n.navQuickSale),
         ),

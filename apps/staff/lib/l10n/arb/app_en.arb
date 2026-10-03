@@ -115,6 +115,10 @@
   "@typeBilliards": {
     "description": "Unit type name"
   },
+  "typePc": "PC",
+  "@typePc": {
+    "description": "Unit type name: a gaming PC"
+  },
   "privateRoomsOf": "Private {type} rooms",
   "@privateRoomsOf": {
     "description": "Section of private rooms (one unit each) of one type, e.g. Private PlayStation rooms",
@@ -148,7 +152,7 @@
   "@navQuickSale": {
     "description": "Side nav: sell drinks/snacks without a session"
   },
-  "navReservations": "Reservations",
+  "navReservations": "Bookings",
   "@navReservations": {
     "description": "Side nav: bookings"
   },
@@ -274,9 +278,17 @@
   "@durationCustom": {
     "description": "Duration choice that opens a minutes field"
   },
-  "customHoursHint": "Number of hours, e.g. 2.5",
+  "customHoursHint": "Number of hours, e.g. 2.25",
   "@customHoursHint": {
-    "description": "Placeholder of the custom duration field; decimals allowed (2.5 = two and a half hours)"
+    "description": "Placeholder of the custom duration field; decimals allowed (2.25 = two hours and a quarter)"
+  },
+  "duration15": "15 min",
+  "@duration15": {
+    "description": "Duration choice"
+  },
+  "customHoursNote": "2.25 means two hours and a quarter",
+  "@customHoursNote": {
+    "description": "Small note under the custom duration field: how to read the decimals"
   },
   "timeLeft": "Left",
   "timeOver": "Over",
@@ -323,7 +335,19 @@
   },
   "makeOpenConfirm": "Make it open",
   "@makeOpenConfirm": {
-    "description": "Main button of the add-time form when \"open\" is chosen: removes the planned time"
+    "description": "Button in the panel of a fixed-time session: turn it into open time (removes the planned time)"
+  },
+  "setTime": "Set a time limit",
+  "@setTime": {
+    "description": "Button in the panel of an open session and title of its form: turn it into a fixed time"
+  },
+  "setTimeConfirm": "Set",
+  "@setTimeConfirm": {
+    "description": "Main button of the form that gives an open session a time limit"
+  },
+  "fromNowNote": "The time is counted from now",
+  "@fromNowNote": {
+    "description": "Small note in the set-a-time-limit form"
   },
   "addToBill": "Add to bill",
   "@addToBill": {
@@ -478,10 +502,6 @@
   "@productPriceLabel": {
     "description": "Label of the product price field"
   },
-  "productCostLabel": "Cost price (optional)",
-  "@productCostLabel": {
-    "description": "Label of the optional cost price field in the product form (what one costs the shop)"
-  },
   "saveProduct": "Save",
   "@saveProduct": {
     "description": "Main button of the product form"
@@ -626,9 +646,13 @@
   "@purchaseTitle": {
     "description": "Heading of the shopping-trip form"
   },
-  "purchaseTotalLabel": "How much did you pay?",
+  "purchaseTotalLabel": "Total",
   "@purchaseTotalLabel": {
-    "description": "Label of the receipt total in the shopping-trip form"
+    "description": "Label of the worked-out total of the shopping trip"
+  },
+  "purchasePaidHint": "Paid (total for this item, EGP)",
+  "@purchasePaidHint": {
+    "description": "Hint of the cost field under an item picked in the shopping-trip form"
   },
   "purchaseConfirm": "Save purchase",
   "@purchaseConfirm": {
@@ -653,5 +677,137 @@
   "stockInternalHint": "Like sugar, milk and cups",
   "@stockInternalHint": {
     "description": "Hint under the internal item name label"
+  },
+  "placesTitle": "Rooms and devices",
+  "@placesTitle": {
+    "description": "Manage entry and title of the Places page"
+  },
+  "newPlace": "New room",
+  "@newPlace": {
+    "description": "Button and form title: add a room or hall"
+  },
+  "newDevice": "New device",
+  "@newDevice": {
+    "description": "Button and form title: add a unit to a room"
+  },
+  "editDevice": "Edit device",
+  "@editDevice": {
+    "description": "Form title: change a unit"
+  },
+  "placeNameLabel": "Room name",
+  "@placeNameLabel": {
+    "description": "Label of the room name field"
+  },
+  "placeNameHint": "For example Hall 1, VIP 1",
+  "@placeNameHint": {
+    "description": "Hint of the room name field"
+  },
+  "settingsTitle": "Settings",
+  "@settingsTitle": {
+    "description": "Manage entry and title of the Settings page"
+  },
+  "languageLabel": "Language",
+  "@languageLabel": {
+    "description": "Label above the language choices in Settings"
+  },
+  "deviceNameLabel": "Device name",
+  "@deviceNameLabel": {
+    "description": "Label of the unit name field"
+  },
+  "deviceNameHint": "For example PS5-1",
+  "@deviceNameHint": {
+    "description": "Hint of the unit name field"
+  },
+  "deviceTypeLabel": "Type",
+  "@deviceTypeLabel": {
+    "description": "Label above the unit type choices"
+  },
+  "singlePriceLabel": "Price per hour, single (EGP)",
+  "@singlePriceLabel": {
+    "description": "Label of the single hourly price field"
+  },
+  "multiPriceLabel": "Price per hour, pair (EGP, optional)",
+  "@multiPriceLabel": {
+    "description": "Label of the optional multi hourly price field"
+  },
+  "save": "Save",
+  "@save": {
+    "description": "Main button of the Places forms"
+  },
+  "deleteDevice": "Delete device",
+  "@deleteDevice": {
+    "description": "Button that removes a unit"
+  },
+  "deviceBusyHint": "This device has a session now, so only the name can change.",
+  "@deviceBusyHint": {
+    "description": "Shown in the unit form while a session is running"
+  },
+  "pricesTitle": "Prices",
+  "@pricesTitle": {
+    "description": "Manage entry and title of the Prices page"
+  },
+  "newPriceCategory": "New price",
+  "@newPriceCategory": {
+    "description": "Button that adds a price category"
+  },
+  "priceNameLabel": "Price name",
+  "@priceNameLabel": {
+    "description": "Label of the name field in the price form"
+  },
+  "priceNameHint": "For example PS5 regular, VIP",
+  "@priceNameHint": {
+    "description": "Hint of the name field in the price form"
+  },
+  "priceCategoryLabel": "Price",
+  "@priceCategoryLabel": {
+    "description": "Label above the price choices in the device form"
+  },
+  "noPriceCategoryHint": "Add a price first in Manage > Prices",
+  "@noPriceCategoryHint": {
+    "description": "Shown in the device form when no price exists"
+  },
+  "deletePriceCategory": "Delete price",
+  "@deletePriceCategory": {
+    "description": "Delete button of the price form"
+  },
+  "priceCategoryInUse": "This price is used by devices, so it cannot be deleted.",
+  "@priceCategoryInUse": {
+    "description": "Hint in the price form when devices use it"
+  },
+  "quickSaleSell": "Sell",
+  "@quickSaleSell": {
+    "description": "Button that completes a quick sale"
+  },
+  "quickSaleDone": "Sold",
+  "@quickSaleDone": {
+    "description": "Message after a quick sale"
+  },
+  "moveSessionHint": "The time so far is charged at this unit price, the rest at the new unit price.",
+  "@moveSessionHint": {
+    "description": "Hint in the move form"
+  },
+  "moveNoFreeUnits": "No free units right now",
+  "@moveNoFreeUnits": {
+    "description": "Shown in the move form when nothing is free"
+  },
+  "stopClock": "Stop the clock",
+  "@stopClock": {
+    "description": "Button that stops the clock of a session"
+  },
+  "resumeClock": "Resume",
+  "@resumeClock": {
+    "description": "Button that restarts a stopped clock"
+  },
+  "clockStopped": "Clock stopped · waiting for payment",
+  "@clockStopped": {
+    "description": "Shown on the timer card when the clock is stopped"
+  },
+  "stopAll": "Stop all",
+  "@stopAll": {
+    "description": "Floor header button that stops every running clock (power cut)"
+  },
+  "resumeAll": "Resume all",
+  "@resumeAll": {
+    "description": "Floor header button that restarts the clocks stopped by Stop all"
   }
 }

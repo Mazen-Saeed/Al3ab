@@ -2,30 +2,52 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../app_theme.dart';
-import '../l10n/app_language.dart';
 import '../l10n/l10n.dart';
+import '../places/places_screen.dart';
+import '../prices/prices_screen.dart';
 import '../products/products_screen.dart';
+import '../settings/settings_screen.dart';
+
+/// The setup areas that open in place of the Manage list.
+enum ManageArea { products, places, prices, settings }
+
+/// Which area is open (null = the list). It lives in a provider, not inside the page, so the shell
+/// can close it when staff tap the Manage button in the nav.
+class ManageAreaNotifier extends Notifier<ManageArea?> {
+  @override
+  ManageArea? build() => null;
+
+  void open(ManageArea area) => state = area;
+
+  void close() => state = null;
+}
+
+final manageAreaProvider = NotifierProvider<ManageAreaNotifier, ManageArea?>(ManageAreaNotifier.new);
 
 /// The Manage page ("الإدارة"): a list of setup areas. Tapping one shows it in place of the
-/// list (the nav stays visible); its back button returns here. Products (with its stock) is the
-/// first area; places & devices, staff, reports and settings will be added to this list as they
-/// are built.
-class ManageScreen extends ConsumerStatefulWidget {
+/// list (the nav stays visible); its back button, or the Manage button in the nav, returns here.
+/// Products (with its stock), Rooms and devices and Settings are built; staff and reports will be
+/// added to this list.
+class ManageScreen extends ConsumerWidget {
   const ManageScreen({super.key});
 
   @override
-  ConsumerState<ManageScreen> createState() => _ManageScreenState();
-}
-
-class _ManageScreenState extends ConsumerState<ManageScreen> {
-  bool _showProducts = false;
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
+    final area = ref.watch(manageAreaProvider);
+    final areas = ref.read(manageAreaProvider.notifier);
 
-    if (_showProducts) {
-      return ProductsScreen(onBack: () => setState(() => _showProducts = false));
+    switch (area) {
+      case ManageArea.products:
+        return ProductsScreen(onBack: areas.close);
+      case ManageArea.places:
+        return PlacesScreen(onBack: areas.close);
+      case ManageArea.prices:
+        return PricesScreen(onBack: areas.close);
+      case ManageArea.settings:
+        return SettingsScreen(onBack: areas.close);
+      case null:
+        break;
     }
 
     return Column(
@@ -36,14 +58,25 @@ class _ManageScreenState extends ConsumerState<ManageScreen> {
         _ManageEntry(
           icon: Icons.local_drink_outlined,
           title: l10n.productsTitle,
-          onTap: () => setState(() => _showProducts = true),
+          onTap: () => areas.open(ManageArea.products),
         ),
         const SizedBox(height: 12),
-        // Shows the OTHER language's own name: tap it to switch. (Temporary home until Settings exists.)
         _ManageEntry(
-          icon: Icons.language,
-          title: l10n.localeName == 'ar' ? 'English' : 'العربية',
-          onTap: () => ref.read(appLanguageProvider.notifier).set(Locale(l10n.localeName == 'ar' ? 'en' : 'ar')),
+          icon: Icons.meeting_room_outlined,
+          title: l10n.placesTitle,
+          onTap: () => areas.open(ManageArea.places),
+        ),
+        const SizedBox(height: 12),
+        _ManageEntry(
+          icon: Icons.payments_outlined,
+          title: l10n.pricesTitle,
+          onTap: () => areas.open(ManageArea.prices),
+        ),
+        const SizedBox(height: 12),
+        _ManageEntry(
+          icon: Icons.settings_outlined,
+          title: l10n.settingsTitle,
+          onTap: () => areas.open(ManageArea.settings),
         ),
       ],
     );
