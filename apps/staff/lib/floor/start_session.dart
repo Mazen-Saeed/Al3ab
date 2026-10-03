@@ -9,11 +9,19 @@ import 'time_text.dart';
 
 /// What staff chose in the form. Returned to the Floor screen when they press start.
 class StartSessionResult {
-  const StartSessionResult({required this.isMulti, this.plannedMinutes, this.customerText});
+  const StartSessionResult({required this.isMulti, this.plannedMinutes, this.customerText}) : wantsMaintenance = false;
+
+  /// Staff chose "put it in maintenance" instead of starting. The Floor screen then opens that form.
+  const StartSessionResult.maintenance()
+      : isMulti = false,
+        plannedMinutes = null,
+        customerText = null,
+        wantsMaintenance = true;
 
   final bool isMulti;
   final int? plannedMinutes; // null = open time
   final String? customerText; // null = walk-in (field left empty)
+  final bool wantsMaintenance;
 }
 
 /// Opens the start form. Returns null if staff close it without starting.
@@ -134,6 +142,11 @@ class _StartSessionFormState extends State<_StartSessionForm> {
             },
             style: FilledButton.styleFrom(minimumSize: const Size(0, 60)),
             child: Text(l10n.startTimer, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+          ),
+          const SizedBox(height: 8),
+          TextButton(
+            onPressed: () => Navigator.pop(context, const StartSessionResult.maintenance()),
+            child: Text(l10n.maintenanceButton),
           ),
         ],
       ),

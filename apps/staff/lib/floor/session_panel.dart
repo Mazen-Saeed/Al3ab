@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 
 import '../app_theme.dart';
+import '../data/product.dart';
 import '../data/shop_store.dart';
 import '../data/unit.dart';
 import '../l10n/l10n.dart';
+import 'add_order.dart';
 import 'add_time.dart';
+import 'bill_widgets.dart';
+import 'checkout.dart';
 import 'time_text.dart';
 
 /// Details and actions for the selected unit.
@@ -24,6 +28,32 @@ class SessionPanel extends StatelessWidget {
     if (result != null) store.addTime(unit.id, result.minutes);
   }
 
+  Future<void> _addOrder(BuildContext context, Unit unit) async {
+    final quantities = await showAddOrder(context, unit, store.products);
+    if (quantities != null) store.addOrder(unit.id, quantities);
+  }
+
+  Future<void> _checkout(BuildContext context, Unit unit) async {
+    // Freeze the clock now: the form shows, and the bill saves, the amount at this moment.
+    final endedAt = DateTime.now();
+    final result = await showCheckout(
+      context,
+      unit,
+      store.ordersFor(unit.id),
+      endedAt,
+      paymentAccounts: store.paymentAccounts,
+    );
+    if (result == null) return;
+    store.endAndPay(
+      unit.id,
+      endedAt: endedAt,
+      discount: result.discount,
+      discountReason: result.discountReason,
+      method: result.method,
+    );
+    onClose(); // the unit is free now, nothing left to show in the panel
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
@@ -38,8 +68,23 @@ class SessionPanel extends StatelessWidget {
             borderRadius: BorderRadius.circular(28),
           ),
           child: unit.status == UnitStatus.running
-              ? _RunningSession(unit: unit, onAddTime: () => _addTime(context, unit), onClose: onClose)
-              : _NotRunning(unit: unit, onClose: onClose),
+              ? _RunningSession(
+                  unit: unit,
+                  orders: store.ordersFor(unit.id),
+                  onAddTime: () => _addTime(context, unit),
+                  onAddOrder: () => _addOrder(context, unit),
+                  onCheckout: () => _checkout(context, unit),
+                  onRemoveOrder: (productId) => store.removeOrderLine(unit.id, productId),
+                  onClose: onClose,
+                )
+              : _NotRunning(
+                  unit: unit,
+                  onClose: onClose,
+                  onBackToWork: () {
+                    store.clearMaintenance(unit.id);
+                    onClose(); // a free unit has nothing to show here
+                  },
+                ),
         );
       },
     );
@@ -48,17 +93,31 @@ class SessionPanel extends StatelessWidget {
 
 /// Panel content while a session is running.
 class _RunningSession extends StatelessWidget {
-  const _RunningSession({required this.unit, required this.onAddTime, required this.onClose});
+  const _RunningSession({
+    required this.unit,
+    required this.orders,
+    required this.onAddTime,
+    required this.onAddOrder,
+    required this.onCheckout,
+    required this.onRemoveOrder,
+    required this.onClose,
+  });
 
   final Unit unit;
+  final List<OrderLine> orders;
   final VoidCallback onAddTime;
+  final VoidCallback onAddOrder;
+  final VoidCallback onCheckout;
+  final void Function(String productId) onRemoveOrder;
   final VoidCallback onClose;
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final price = unit.isMulti ? unit.multiHourlyPrice! : unit.hourlyPrice;
-    final cost = unit.currentCost;
+    final playCost = unit.currentCost;
+    final ordersSum = orders.fold(0, (sum, line) => sum + line.total);
+    final cost = playCost + ordersSum; // the bill: time played + products
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -76,64 +135,84 @@ class _RunningSession extends StatelessWidget {
         ),
         const SizedBox(height: 14),
 
-        // The timer card (cream, like a running tile)
-        Container(
-          padding: const EdgeInsetsDirectional.symmetric(horizontal: 18, vertical: 16),
-          decoration: BoxDecoration(
-            color: AppColors.running,
-            borderRadius: BorderRadius.circular(22),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                l10n.sessionStarted(friendlyTime(l10n, unit.startedAt!), price),
-                style: const TextStyle(fontSize: 13, color: AppColors.textOnLightMuted),
-              ),
-              Text(
-                timerText(unit.elapsed, unit.remaining),
-                textDirection: TextDirection.ltr,
-                style: TextStyle(
-                  fontSize: 48,
-                  fontWeight: FontWeight.w700,
-                  color: unit.needsAttention ? AppColors.alert : AppColors.textOnLight,
-                  fontFeatures: const [FontFeature.tabularFigures()],
+        // Everything between the header and the total scrolls (timer, bill lines), so a short
+        // window never overflows. The total and the buttons below stay pinned.
+        Expanded(
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+              // The timer card (cream, like a running tile)
+              Container(
+                padding: const EdgeInsetsDirectional.symmetric(horizontal: 18, vertical: 16),
+                decoration: BoxDecoration(
+                  color: AppColors.running,
+                  borderRadius: BorderRadius.circular(22),
                 ),
-              ),
-              if (unit.remaining != null)
-                Row(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
-                      child: Text(
-                        unit.isOvertime ? l10n.timeOver : l10n.timeLeft,
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: unit.needsAttention ? AppColors.alert : AppColors.textOnLightMuted,
-                        ),
+                    Text(
+                      l10n.sessionStarted(friendlyTime(l10n, unit.startedAt!), price),
+                      style: const TextStyle(fontSize: 13, color: AppColors.textOnLightMuted),
+                    ),
+                    Text(
+                      timerText(unit.elapsed, unit.remaining),
+                      textDirection: TextDirection.ltr,
+                      style: TextStyle(
+                        fontSize: 48,
+                        fontWeight: FontWeight.w700,
+                        color: unit.needsAttention ? AppColors.alert : AppColors.textOnLight,
+                        fontFeatures: const [FontFeature.tabularFigures()],
                       ),
                     ),
-                    FilledButton.icon(
-                      onPressed: onAddTime,
-                      icon: const Icon(Icons.add, size: 18),
-                      label: Text(l10n.addTime),
-                      style: FilledButton.styleFrom(
-                        minimumSize: const Size(0, 40),
-                        backgroundColor: AppColors.textOnLight,
-                        foregroundColor: AppColors.running,
+                    if (unit.remaining != null)
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              unit.isOvertime ? l10n.timeOver : l10n.timeLeft,
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: unit.needsAttention ? AppColors.alert : AppColors.textOnLightMuted,
+                              ),
+                            ),
+                          ),
+                          FilledButton.icon(
+                            onPressed: onAddTime,
+                            icon: const Icon(Icons.add, size: 18),
+                            label: Text(l10n.addTime),
+                            style: FilledButton.styleFrom(
+                              minimumSize: const Size(0, 40),
+                              backgroundColor: AppColors.textOnLight,
+                              foregroundColor: AppColors.running,
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
                   ],
                 ),
-            ],
+              ),
+                const SizedBox(height: 18),
+                BillRow(
+                  label: l10n.playTime,
+                  detail: playDetail(l10n, unit.elapsed, pricePerHour: price, isMulti: unit.isMulti),
+                  value: l10n.amountEgp(playCost),
+                ),
+                const SizedBox(height: 18), // clear gap between the two sections
+                if (orders.isEmpty)
+                  Text(l10n.noOrdersYet, style: AppText.small)
+                else ...[
+                  BillRow(label: l10n.ordersTitle, value: l10n.amountEgp(ordersSum), bold: true),
+                  const SizedBox(height: 4),
+                  for (final line in orders)
+                    OrderRow(line: line, onRemove: () => onRemoveOrder(line.productId)),
+                ],
+              ],
+            ),
           ),
         ),
-        const SizedBox(height: 18),
-
-        // Bill lines (orders come later, with the database)
-        _Line(label: l10n.playTime, value: l10n.amountEgp(cost)),
-        const SizedBox(height: 8),
-        Text(l10n.noOrdersYet, style: AppText.small),
         const Padding(
           padding: EdgeInsetsDirectional.symmetric(vertical: 14),
           child: Divider(height: 1, color: AppColors.raised),
@@ -147,29 +226,27 @@ class _RunningSession extends StatelessWidget {
           ],
         ),
 
-        const Spacer(), // pushes the buttons to the bottom of the panel
+        const SizedBox(height: 20), // space between the total and the buttons
 
-        // Secondary actions
+        // Secondary actions: two per row, the mode switch gets its own full-width row
         Row(
           children: [
-            Expanded(child: FilledButton.tonal(onPressed: () {}, child: Text(l10n.addOrder))),
+            Expanded(child: FilledButton.tonal(onPressed: onAddOrder, child: Text(l10n.addOrder))),
             const SizedBox(width: 8),
             Expanded(child: FilledButton.tonal(onPressed: () {}, child: Text(l10n.moveUnit))),
-            if (unit.hasMultiMode) ...[
-              const SizedBox(width: 8),
-              Expanded(
-                child: FilledButton.tonal(
-                  onPressed: () {},
-                  child: Text(unit.isMulti ? l10n.switchToSingle : l10n.switchToMulti),
-                ),
-              ),
-            ],
           ],
         ),
+        if (unit.hasMultiMode) ...[
+          const SizedBox(height: 8),
+          FilledButton.tonal(
+            onPressed: () {},
+            child: Text(unit.isMulti ? l10n.switchToSingle : l10n.switchToMulti),
+          ),
+        ],
         const SizedBox(height: 10),
         // Main action
         FilledButton(
-          onPressed: () {}, // TODO: open checkout
+          onPressed: onCheckout,
           style: FilledButton.styleFrom(minimumSize: const Size(0, 60)),
           child: Text(l10n.endAndPay, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
         ),
@@ -180,10 +257,11 @@ class _RunningSession extends StatelessWidget {
 
 /// Panel content when the selected unit has no running session.
 class _NotRunning extends StatelessWidget {
-  const _NotRunning({required this.unit, required this.onClose});
+  const _NotRunning({required this.unit, required this.onClose, required this.onBackToWork});
 
   final Unit unit;
   final VoidCallback onClose;
+  final VoidCallback onBackToWork; // maintenance -> free
 
   @override
   Widget build(BuildContext context) {
@@ -218,24 +296,18 @@ class _NotRunning extends StatelessWidget {
           const SizedBox(height: 6),
           Text(l10n.unitTapToStart, style: const TextStyle(color: AppColors.textMuted)),
         ],
-      ],
-    );
-  }
-}
-
-/// A label on one side, an amount on the other.
-class _Line extends StatelessWidget {
-  const _Line({required this.label, required this.value});
-
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(child: Text(label, style: const TextStyle(fontSize: 15))),
-        Text(value, style: const TextStyle(fontSize: 15)),
+        if (unit.status == UnitStatus.maintenance) ...[
+          if (unit.note != null) ...[
+            const SizedBox(height: 6),
+            Text(unit.note!, style: const TextStyle(color: AppColors.textMuted)),
+          ],
+          const SizedBox(height: 24),
+          FilledButton(
+            onPressed: onBackToWork,
+            style: FilledButton.styleFrom(minimumSize: const Size(double.infinity, 60)),
+            child: Text(l10n.backToWork, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+          ),
+        ],
       ],
     );
   }

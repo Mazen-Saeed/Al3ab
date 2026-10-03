@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../app_theme.dart';
 import '../l10n/l10n.dart';
+import '../shell/pill.dart';
 
 /// What the picker holds right now.
 class DurationChoice {
@@ -69,11 +69,11 @@ class _DurationPickerState extends State<DurationPicker> {
           spacing: 8, // like Row spacing, but moves to the next line when full
           runSpacing: 8,
           children: [
-            _DurationChip(label: l10n.durationOpen, selected: !_custom && _minutes == null, onTap: () => _choose(null)),
-            _DurationChip(label: l10n.duration30, selected: !_custom && _minutes == 30, onTap: () => _choose(30)),
-            _DurationChip(label: l10n.duration60, selected: !_custom && _minutes == 60, onTap: () => _choose(60)),
-            _DurationChip(label: l10n.duration120, selected: !_custom && _minutes == 120, onTap: () => _choose(120)),
-            _DurationChip(
+            Pill(label: l10n.durationOpen, selected: !_custom && _minutes == null, onTap: () => _choose(null)),
+            Pill(label: l10n.duration30, selected: !_custom && _minutes == 30, onTap: () => _choose(30)),
+            Pill(label: l10n.duration60, selected: !_custom && _minutes == 60, onTap: () => _choose(60)),
+            Pill(label: l10n.duration120, selected: !_custom && _minutes == 120, onTap: () => _choose(120)),
+            Pill(
               label: l10n.durationCustom,
               selected: _custom,
               onTap: () {
@@ -97,40 +97,6 @@ class _DurationPickerState extends State<DurationPicker> {
           ),
         ],
       ],
-    );
-  }
-}
-
-/// A small pill for one duration choice. Cream when selected.
-class _DurationChip extends StatelessWidget {
-  const _DurationChip({required this.label, required this.selected, required this.onTap});
-
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: selected ? AppColors.running : Colors.transparent,
-      shape: StadiumBorder(
-        side: selected ? BorderSide.none : const BorderSide(color: AppColors.raised, width: 1.5),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsetsDirectional.symmetric(horizontal: 18, vertical: 12),
-          child: Text(
-            label,
-            style: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
-              color: selected ? AppColors.textOnLight : AppColors.text,
-            ),
-          ),
-        ),
-      ),
     );
   }
 }

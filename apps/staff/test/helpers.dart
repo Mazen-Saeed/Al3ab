@@ -1,3 +1,4 @@
+import 'package:al3b_staff/data/sample_data.dart';
 import 'package:al3b_staff/data/unit.dart';
 import 'package:al3b_staff/main.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -35,7 +36,7 @@ DateTime ago(Duration d) => DateTime.now().subtract(d);
 /// (pumpAndSettle() can't be used: the store's clock keeps scheduling frames.)
 Future<void> pumpApp(WidgetTester tester) async {
   await tester.pumpWidget(const MyApp());
-  for (var i = 0; i < 20 && find.text('محل التجربة').evaluate().isEmpty; i++) {
+  for (var i = 0; i < 20 && find.text(sampleVenueName).evaluate().isEmpty; i++) {
     await tester.pump(const Duration(milliseconds: 100));
   }
 }

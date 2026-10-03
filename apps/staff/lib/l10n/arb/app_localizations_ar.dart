@@ -221,4 +221,245 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get makeOpenConfirm => 'حوّل لمفتوح';
+
+  @override
+  String get addToBill => 'ضيف للحساب';
+
+  @override
+  String get ordersTitle => 'الطلبات';
+
+  @override
+  String orderLine(String name, int quantity, int price) {
+    return '$name · $quantity × $price';
+  }
+
+  @override
+  String get removeItem => 'شيل';
+
+  @override
+  String get checkoutTitle => 'الحساب';
+
+  @override
+  String get billSubtotal => 'المجموع';
+
+  @override
+  String get discountLabel => 'خصم';
+
+  @override
+  String get discountReasonHint => 'سبب الخصم';
+
+  @override
+  String get paymentMethodLabel => 'طريقة الدفع';
+
+  @override
+  String get payCash => 'كاش';
+
+  @override
+  String get payInstapay => 'إنستاباي';
+
+  @override
+  String get payWallet => 'محفظة';
+
+  @override
+  String get amountDue => 'المطلوب';
+
+  @override
+  String get confirmPayment => 'تأكيد الدفع';
+
+  @override
+  String get maintenanceButton => 'حطه في صيانة';
+
+  @override
+  String get maintenanceNoteLabel => 'سبب الصيانة (اختياري)';
+
+  @override
+  String get maintenanceNoteHint => 'مثلاً: الدراع بايظ';
+
+  @override
+  String get backToWork => 'رجّعه شغال';
+
+  @override
+  String get payManuallyHint => 'لو الكود مش شغال حوّل على';
+
+  @override
+  String get hoursOne => 'ساعة';
+
+  @override
+  String get hoursTwo => 'ساعتين';
+
+  @override
+  String hoursFew(int count) {
+    return '$count ساعات';
+  }
+
+  @override
+  String hoursMany(int count) {
+    return '$count ساعة';
+  }
+
+  @override
+  String get minutesOne => 'دقيقة';
+
+  @override
+  String get minutesTwo => 'دقيقتين';
+
+  @override
+  String minutesFew(int count) {
+    return '$count دقايق';
+  }
+
+  @override
+  String minutesMany(int count) {
+    return '$count دقيقة';
+  }
+
+  @override
+  String hoursAndMinutes(String hours, String minutes) {
+    return '$hours و$minutes';
+  }
+
+  @override
+  String get lessThanMinute => 'أقل من دقيقة';
+
+  @override
+  String get productsTitle => 'المنيو والمخزون';
+
+  @override
+  String get newProduct => 'منتج للمنيو';
+
+  @override
+  String get productNameLabel => 'اسم المنتج';
+
+  @override
+  String get productPriceLabel => 'السعر بالجنيه';
+
+  @override
+  String get saveProduct => 'حفظ';
+
+  @override
+  String get deleteProduct => 'امسح المنتج';
+
+  @override
+  String get stockTitle => 'المخزون';
+
+  @override
+  String stockLeft(int count) {
+    return 'باقي $count';
+  }
+
+  @override
+  String stockShort(int count) {
+    return 'ناقص $count';
+  }
+
+  @override
+  String get stockLow => 'قرب يخلص';
+
+  @override
+  String get stockKindAuto => 'بيتخصم مع كل بيعة';
+
+  @override
+  String get stockKindManual => 'بيتسجّل بإيدك';
+
+  @override
+  String get stockLowLabel => 'نبّهني لما يقل عن (اختياري)';
+
+  @override
+  String get stockCurrentLabel => 'الموجود دلوقتي (اختياري)';
+
+  @override
+  String get stockBought => 'اشتريت';
+
+  @override
+  String get stockOpened => 'فتحت علبة';
+
+  @override
+  String get stockCount => 'تعديل الرقم';
+
+  @override
+  String get stockRecord => 'سجّل';
+
+  @override
+  String get menuTitle => 'المنيو';
+
+  @override
+  String get menuSubtitle => 'اللي بتبيعه للزبون';
+
+  @override
+  String get stockSubtitle => 'اللي عندك في المحل، حتى السكر والأكواب';
+
+  @override
+  String get addToStock => 'صنف جديد';
+
+  @override
+  String get stockPickProduct => 'أنهي منتج؟';
+
+  @override
+  String get stockKindLabel => 'بيتحسب إزاي؟';
+
+  @override
+  String get stockKindAutoHint =>
+      'زي البيبسي والشيبسي: كل ما تبيع واحد بينقص لوحده';
+
+  @override
+  String get stockKindManualHint =>
+      'زي الشاي والقهوة: إنت اللي بتسجّل لما تشتري أو تفتح علبة';
+
+  @override
+  String get stockEdit => 'إعدادات الصنف';
+
+  @override
+  String get saveStockItem => 'حفظ';
+
+  @override
+  String get removeFromStock => 'شيله من المخزون';
+
+  @override
+  String get stockCountedLabel => 'عدّيت كام في المحل؟';
+
+  @override
+  String get stockCountHint => 'عدّ اللي في المحل واكتب العدد الصح';
+
+  @override
+  String stockDiffShort(int count) {
+    return 'ناقص $count عن البرنامج';
+  }
+
+  @override
+  String stockDiffExtra(int count) {
+    return 'زيادة $count عن البرنامج';
+  }
+
+  @override
+  String get stockDiffNone => 'زي بعض';
+
+  @override
+  String get stockNoteLabel => 'السبب (اختياري)';
+
+  @override
+  String get stockNoteHint => 'مثلاً: وقع واتكسر';
+
+  @override
+  String get purchaseTitle => 'اشتريت إيه؟';
+
+  @override
+  String get purchaseTotalLabel => 'دفعت كام؟';
+
+  @override
+  String get purchaseConfirm => 'سجّل الشراء';
+
+  @override
+  String get stockNewWhat => 'هتضيف إيه؟';
+
+  @override
+  String get stockNewProduct => 'منتج من المنيو';
+
+  @override
+  String get stockNewInternal => 'مستلزمات للمحل (حاجة مش بتتباع)';
+
+  @override
+  String get stockInternalName => 'اسم الحاجة';
+
+  @override
+  String get stockInternalHint => 'زي السكر واللبن ';
 }

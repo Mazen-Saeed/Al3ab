@@ -324,5 +324,330 @@
   "makeOpenConfirm": "Make it open",
   "@makeOpenConfirm": {
     "description": "Main button of the add-time form when \"open\" is chosen: removes the planned time"
+  },
+  "addToBill": "Add to bill",
+  "@addToBill": {
+    "description": "Main button of the order form: puts the chosen products on the session's bill"
+  },
+  "ordersTitle": "Orders",
+  "@ordersTitle": {
+    "description": "Heading of the ordered products on a session's bill, next to their sum"
+  },
+  "orderLine": "{name} · {quantity} × {price}",
+  "@orderLine": {
+    "description": "One ordered product on the bill, e.g. Pepsi · 2 × 15",
+    "placeholders": {
+      "name": {"type": "String"},
+      "quantity": {"type": "int"},
+      "price": {"type": "int"}
+    }
+  },
+  "removeItem": "Remove",
+  "@removeItem": {
+    "description": "Tooltip of the small button that takes an order line off the bill"
+  },
+  "checkoutTitle": "Bill",
+  "@checkoutTitle": {
+    "description": "Title of the checkout form (the bill)"
+  },
+  "billSubtotal": "Total",
+  "@billSubtotal": {
+    "description": "Bill sum before the discount"
+  },
+  "discountLabel": "Discount",
+  "@discountLabel": {
+    "description": "Label of the discount field (amount in EGP)"
+  },
+  "discountReasonHint": "Reason for the discount",
+  "@discountReasonHint": {
+    "description": "Hint of the field where staff write why a discount was given"
+  },
+  "paymentMethodLabel": "Payment method",
+  "@paymentMethodLabel": {
+    "description": "Label above the payment method choices"
+  },
+  "payCash": "Cash",
+  "@payCash": {
+    "description": "Payment method: cash"
+  },
+  "payInstapay": "InstaPay",
+  "@payInstapay": {
+    "description": "Payment method: InstaPay"
+  },
+  "payWallet": "Wallet",
+  "@payWallet": {
+    "description": "Payment method: mobile wallet"
+  },
+  "amountDue": "To pay",
+  "@amountDue": {
+    "description": "Amount the customer has to pay, big number at the bottom of checkout"
+  },
+  "confirmPayment": "Confirm payment",
+  "@confirmPayment": {
+    "description": "Main button of checkout: saves the bill and frees the unit"
+  },
+  "maintenanceButton": "Put in maintenance",
+  "@maintenanceButton": {
+    "description": "Button that takes a free unit out of service; also the confirm button of the maintenance form"
+  },
+  "maintenanceNoteLabel": "Reason (optional)",
+  "@maintenanceNoteLabel": {
+    "description": "Label of the optional reason field in the maintenance form"
+  },
+  "maintenanceNoteHint": "e.g. broken controller",
+  "@maintenanceNoteHint": {
+    "description": "Example shown inside the maintenance reason field"
+  },
+  "backToWork": "Back to work",
+  "@backToWork": {
+    "description": "Button in the panel of a unit in maintenance: makes it free again"
+  },
+  "payManuallyHint": "If the code does not work, transfer to",
+  "@payManuallyHint": {
+    "description": "Small line above the account number/handle under the payment QR code"
+  },
+  "hoursOne": "hour",
+  "@hoursOne": {
+    "description": "One hour (exactly)"
+  },
+  "hoursTwo": "2 hours",
+  "@hoursTwo": {
+    "description": "Two hours (Arabic dual)"
+  },
+  "hoursFew": "{count} hours",
+  "@hoursFew": {
+    "description": "3 to 10 hours",
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "hoursMany": "{count} hours",
+  "@hoursMany": {
+    "description": "11 or more hours",
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "minutesOne": "minute",
+  "@minutesOne": {
+    "description": "One minute (exactly)"
+  },
+  "minutesTwo": "2 minutes",
+  "@minutesTwo": {
+    "description": "Two minutes (Arabic dual)"
+  },
+  "minutesFew": "{count} minutes",
+  "@minutesFew": {
+    "description": "3 to 10 minutes",
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "minutesMany": "{count} minutes",
+  "@minutesMany": {
+    "description": "11 or more minutes",
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "hoursAndMinutes": "{hours} and {minutes}",
+  "@hoursAndMinutes": {
+    "description": "Joins hours and minutes: 1 hour and 20 minutes",
+    "placeholders": {
+      "hours": {"type": "String"},
+      "minutes": {"type": "String"}
+    }
+  },
+  "lessThanMinute": "Less than a minute",
+  "@lessThanMinute": {
+    "description": "Time played when under one minute"
+  },
+  "productsTitle": "Menu and stock",
+  "@productsTitle": {
+    "description": "Title of the Products page and the Manage entry for it"
+  },
+  "newProduct": "New menu item",
+  "@newProduct": {
+    "description": "The card/heading for adding a product"
+  },
+  "productNameLabel": "Product name",
+  "@productNameLabel": {
+    "description": "Label of the product name field"
+  },
+  "productPriceLabel": "Price in EGP",
+  "@productPriceLabel": {
+    "description": "Label of the product price field"
+  },
+  "saveProduct": "Save",
+  "@saveProduct": {
+    "description": "Main button of the product form"
+  },
+  "deleteProduct": "Delete product",
+  "@deleteProduct": {
+    "description": "Button in the edit-product form that removes the product"
+  },
+  "stockTitle": "Stock",
+  "@stockTitle": {
+    "description": "Title of the Stock page and the Manage entry for it"
+  },
+  "stockLeft": "{count} left",
+  "@stockLeft": {
+    "description": "How many of a stock item are on the shelf",
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "stockShort": "Short by {count}",
+  "@stockShort": {
+    "description": "Shown when more was sold than the shelf count says (number on hand below 0)",
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "stockLow": "Running low",
+  "@stockLow": {
+    "description": "Warning under the number when a stock item is at or below its low-stock level"
+  },
+  "stockKindAuto": "Subtracts on every sale",
+  "@stockKindAuto": {
+    "description": "Stock item kind: each sale takes one off (cans, bags)"
+  },
+  "stockKindManual": "You record it by hand",
+  "@stockKindManual": {
+    "description": "Stock item kind: sales take nothing off, staff record bought/opened/counted (tea, coffee)"
+  },
+  "stockLowLabel": "Warn me below (optional)",
+  "@stockLowLabel": {
+    "description": "Label of the low-stock level field"
+  },
+  "stockCurrentLabel": "On the shelf now (optional)",
+  "@stockCurrentLabel": {
+    "description": "Label of the starting count when adding a stock item"
+  },
+  "stockBought": "Bought",
+  "@stockBought": {
+    "description": "Action: more of the item arrived"
+  },
+  "stockOpened": "Opened one",
+  "@stockOpened": {
+    "description": "Action: a tin/packet was opened for use (tea, coffee)"
+  },
+  "stockCount": "Edit number",
+  "@stockCount": {
+    "description": "Action: staff counted the shelf"
+  },
+  "stockRecord": "Record",
+  "@stockRecord": {
+    "description": "Main button of the stock action form"
+  },
+  "menuTitle": "Menu",
+  "@menuTitle": {
+    "description": "Heading of the menu section (what customers buy) on the Menu and stock page"
+  },
+  "menuSubtitle": "What you sell to customers",
+  "@menuSubtitle": {
+    "description": "Grey line under the Menu heading"
+  },
+  "stockSubtitle": "What you have in the shop, even sugar and cups",
+  "@stockSubtitle": {
+    "description": "Grey line under the Stock heading"
+  },
+  "addToStock": "New item",
+  "@addToStock": {
+    "description": "Card that starts counting a product in stock"
+  },
+  "stockPickProduct": "Which product?",
+  "@stockPickProduct": {
+    "description": "Label above the choice of which product to start counting"
+  },
+  "stockKindLabel": "How is it counted?",
+  "@stockKindLabel": {
+    "description": "Label above the two choices for how a stock item is counted"
+  },
+  "stockKindAutoHint": "Like Pepsi or chips: every sale takes one off by itself",
+  "@stockKindAutoHint": {
+    "description": "Explains the subtracts-on-every-sale choice"
+  },
+  "stockKindManualHint": "Like tea or coffee: you record it when you buy or open a tin",
+  "@stockKindManualHint": {
+    "description": "Explains the record-by-hand choice"
+  },
+  "stockEdit": "Item settings",
+  "@stockEdit": {
+    "description": "Link in the stock action form that opens the edit form"
+  },
+  "saveStockItem": "Save",
+  "@saveStockItem": {
+    "description": "Main button of the stock item form"
+  },
+  "removeFromStock": "Remove from stock",
+  "@removeFromStock": {
+    "description": "Button in the edit form that stops counting a product"
+  },
+  "stockCountedLabel": "How many are in the shop?",
+  "@stockCountedLabel": {
+    "description": "Label of the number field when staff fix the count"
+  },
+  "stockCountHint": "Count what is in the shop and type the real number",
+  "@stockCountHint": {
+    "description": "Hint under the count field"
+  },
+  "stockDiffShort": "{count} fewer than the app says",
+  "@stockDiffShort": {
+    "description": "Shown while counting: the shelf has less than the app expected",
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "stockDiffExtra": "{count} more than the app says",
+  "@stockDiffExtra": {
+    "description": "Shown while counting: the shelf has more than the app expected",
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "stockDiffNone": "Same as the app",
+  "@stockDiffNone": {
+    "description": "Shown while counting: the shelf matches the app"
+  },
+  "stockNoteLabel": "Reason (optional)",
+  "@stockNoteLabel": {
+    "description": "Label of the optional reason when fixing a count"
+  },
+  "stockNoteHint": "e.g. one fell and broke",
+  "@stockNoteHint": {
+    "description": "Hint inside the reason field"
+  },
+  "purchaseTitle": "What did you buy?",
+  "@purchaseTitle": {
+    "description": "Heading of the shopping-trip form"
+  },
+  "purchaseTotalLabel": "How much did you pay?",
+  "@purchaseTotalLabel": {
+    "description": "Label of the receipt total in the shopping-trip form"
+  },
+  "purchaseConfirm": "Save purchase",
+  "@purchaseConfirm": {
+    "description": "Main button of the shopping-trip form"
+  },
+  "stockNewWhat": "What are you adding?",
+  "@stockNewWhat": {
+    "description": "Label above the choice between a menu product and an internal item"
+  },
+  "stockNewProduct": "A menu product",
+  "@stockNewProduct": {
+    "description": "Choice: count a product that is sold"
+  },
+  "stockNewInternal": "Shop supplies (not sold)",
+  "@stockNewInternal": {
+    "description": "Choice: an item used but not sold (sugar, milk)"
+  },
+  "stockInternalName": "Name",
+  "@stockInternalName": {
+    "description": "Label of the name of an internal item"
+  },
+  "stockInternalHint": "Like sugar, milk and cups",
+  "@stockInternalHint": {
+    "description": "Hint under the internal item name label"
   }
 }

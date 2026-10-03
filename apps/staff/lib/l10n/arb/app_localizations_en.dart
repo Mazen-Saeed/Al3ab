@@ -222,4 +222,246 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get makeOpenConfirm => 'Make it open';
+
+  @override
+  String get addToBill => 'Add to bill';
+
+  @override
+  String get ordersTitle => 'Orders';
+
+  @override
+  String orderLine(String name, int quantity, int price) {
+    return '$name · $quantity × $price';
+  }
+
+  @override
+  String get removeItem => 'Remove';
+
+  @override
+  String get checkoutTitle => 'Bill';
+
+  @override
+  String get billSubtotal => 'Total';
+
+  @override
+  String get discountLabel => 'Discount';
+
+  @override
+  String get discountReasonHint => 'Reason for the discount';
+
+  @override
+  String get paymentMethodLabel => 'Payment method';
+
+  @override
+  String get payCash => 'Cash';
+
+  @override
+  String get payInstapay => 'InstaPay';
+
+  @override
+  String get payWallet => 'Wallet';
+
+  @override
+  String get amountDue => 'To pay';
+
+  @override
+  String get confirmPayment => 'Confirm payment';
+
+  @override
+  String get maintenanceButton => 'Put in maintenance';
+
+  @override
+  String get maintenanceNoteLabel => 'Reason (optional)';
+
+  @override
+  String get maintenanceNoteHint => 'e.g. broken controller';
+
+  @override
+  String get backToWork => 'Back to work';
+
+  @override
+  String get payManuallyHint => 'If the code does not work, transfer to';
+
+  @override
+  String get hoursOne => 'hour';
+
+  @override
+  String get hoursTwo => '2 hours';
+
+  @override
+  String hoursFew(int count) {
+    return '$count hours';
+  }
+
+  @override
+  String hoursMany(int count) {
+    return '$count hours';
+  }
+
+  @override
+  String get minutesOne => 'minute';
+
+  @override
+  String get minutesTwo => '2 minutes';
+
+  @override
+  String minutesFew(int count) {
+    return '$count minutes';
+  }
+
+  @override
+  String minutesMany(int count) {
+    return '$count minutes';
+  }
+
+  @override
+  String hoursAndMinutes(String hours, String minutes) {
+    return '$hours and $minutes';
+  }
+
+  @override
+  String get lessThanMinute => 'Less than a minute';
+
+  @override
+  String get productsTitle => 'Menu and stock';
+
+  @override
+  String get newProduct => 'New menu item';
+
+  @override
+  String get productNameLabel => 'Product name';
+
+  @override
+  String get productPriceLabel => 'Price in EGP';
+
+  @override
+  String get saveProduct => 'Save';
+
+  @override
+  String get deleteProduct => 'Delete product';
+
+  @override
+  String get stockTitle => 'Stock';
+
+  @override
+  String stockLeft(int count) {
+    return '$count left';
+  }
+
+  @override
+  String stockShort(int count) {
+    return 'Short by $count';
+  }
+
+  @override
+  String get stockLow => 'Running low';
+
+  @override
+  String get stockKindAuto => 'Subtracts on every sale';
+
+  @override
+  String get stockKindManual => 'You record it by hand';
+
+  @override
+  String get stockLowLabel => 'Warn me below (optional)';
+
+  @override
+  String get stockCurrentLabel => 'On the shelf now (optional)';
+
+  @override
+  String get stockBought => 'Bought';
+
+  @override
+  String get stockOpened => 'Opened one';
+
+  @override
+  String get stockCount => 'Edit number';
+
+  @override
+  String get stockRecord => 'Record';
+
+  @override
+  String get menuTitle => 'Menu';
+
+  @override
+  String get menuSubtitle => 'What you sell to customers';
+
+  @override
+  String get stockSubtitle => 'What you have in the shop, even sugar and cups';
+
+  @override
+  String get addToStock => 'New item';
+
+  @override
+  String get stockPickProduct => 'Which product?';
+
+  @override
+  String get stockKindLabel => 'How is it counted?';
+
+  @override
+  String get stockKindAutoHint =>
+      'Like Pepsi or chips: every sale takes one off by itself';
+
+  @override
+  String get stockKindManualHint =>
+      'Like tea or coffee: you record it when you buy or open a tin';
+
+  @override
+  String get stockEdit => 'Item settings';
+
+  @override
+  String get saveStockItem => 'Save';
+
+  @override
+  String get removeFromStock => 'Remove from stock';
+
+  @override
+  String get stockCountedLabel => 'How many are in the shop?';
+
+  @override
+  String get stockCountHint =>
+      'Count what is in the shop and type the real number';
+
+  @override
+  String stockDiffShort(int count) {
+    return '$count fewer than the app says';
+  }
+
+  @override
+  String stockDiffExtra(int count) {
+    return '$count more than the app says';
+  }
+
+  @override
+  String get stockDiffNone => 'Same as the app';
+
+  @override
+  String get stockNoteLabel => 'Reason (optional)';
+
+  @override
+  String get stockNoteHint => 'e.g. one fell and broke';
+
+  @override
+  String get purchaseTitle => 'What did you buy?';
+
+  @override
+  String get purchaseTotalLabel => 'How much did you pay?';
+
+  @override
+  String get purchaseConfirm => 'Save purchase';
+
+  @override
+  String get stockNewWhat => 'What are you adding?';
+
+  @override
+  String get stockNewProduct => 'A menu product';
+
+  @override
+  String get stockNewInternal => 'Shop supplies (not sold)';
+
+  @override
+  String get stockInternalName => 'Name';
+
+  @override
+  String get stockInternalHint => 'Like sugar, milk and cups';
 }

@@ -28,3 +28,40 @@ String friendlyTime(AppLocalizations l10n, DateTime time) {
   if (hour24 >= 16 && hour24 <= 17) return l10n.timeAfternoon(hour);
   return l10n.timeNight(hour); // 18:00 - 04:59
 }
+
+/// Time played, the way people say it: "ساعة و20 دقيقة", "ساعتين", "5 دقايق".
+/// The wording changes with the number in Arabic (1, 2, 3-10, 11+), so it is chosen here
+/// (ARB plural syntax can turn the digits into Arabic-Indic ones, and we want 1 2 3).
+String playedText(AppLocalizations l10n, Duration played) {
+  final hours = played.inHours;
+  final minutes = played.inMinutes % 60;
+
+  final hoursText = switch (hours) {
+    0 => '',
+    1 => l10n.hoursOne,
+    2 => l10n.hoursTwo,
+    >= 3 && <= 10 => l10n.hoursFew(hours),
+    _ => l10n.hoursMany(hours),
+  };
+  final minutesText = switch (minutes) {
+    0 => '',
+    1 => l10n.minutesOne,
+    2 => l10n.minutesTwo,
+    >= 3 && <= 10 => l10n.minutesFew(minutes),
+    _ => l10n.minutesMany(minutes),
+  };
+
+  if (hours == 0 && minutes == 0) return l10n.lessThanMinute;
+  if (hours == 0) return minutesText;
+  if (minutes == 0) return hoursText;
+  return l10n.hoursAndMinutes(hoursText, minutesText);
+}
+
+/// The line under "وقت اللعب" on a bill: "ساعة و20 دقيقة · زوجي · 50 جنيه في الساعة".
+String playDetail(AppLocalizations l10n, Duration played, {required int pricePerHour, required bool isMulti}) {
+  return [
+    playedText(l10n, played),
+    if (isMulti) l10n.modeMulti,
+    l10n.pricePerHour(pricePerHour),
+  ].join(' · ');
+}

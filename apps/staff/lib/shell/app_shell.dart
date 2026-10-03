@@ -4,6 +4,7 @@ import '../app_theme.dart';
 import '../data/shop_store.dart';
 import '../floor/floor_screen.dart';
 import '../l10n/l10n.dart';
+import '../manage/manage_screen.dart';
 import 'layout.dart';
 import 'side_nav.dart';
 
@@ -23,6 +24,13 @@ class AppShell extends StatefulWidget {
 class _AppShellState extends State<AppShell> {
   int _index = 0; // which page is showing
 
+  // The pages sit in a different place in the widget tree on a phone (inside a SafeArea, above
+  // the bottom bar) than on a PC (next to the side nav). Without a key, resizing the window
+  // across that line makes Flutter throw the pages away and build new ones, so you lose
+  // whatever you were in (the Products page, a selected unit). A GlobalKey lets Flutter
+  // pick the same pages up and move them to the new place, state included.
+  final _pagesKey = GlobalKey();
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -30,6 +38,7 @@ class _AppShellState extends State<AppShell> {
     // IndexedStack builds all pages but shows one, so each page keeps its own state
     // (the Floor's toggle and selection survive a trip to another page).
     final pages = IndexedStack(
+      key: _pagesKey,
       index: _index,
       sizing: StackFit.expand,
       children: [
@@ -37,7 +46,7 @@ class _AppShellState extends State<AppShell> {
         _ComingSoon(title: l10n.navQuickSale),
         _ComingSoon(title: l10n.navReservations),
         _ComingSoon(title: l10n.navShift),
-        _ComingSoon(title: l10n.navManage),
+        ManageScreen(store: widget.store),
       ],
     );
 

@@ -9,6 +9,7 @@ import '../shell/layout.dart';
 import 'floor_sections.dart';
 import 'floor_widgets.dart';
 import 'session_panel.dart';
+import 'set_maintenance.dart';
 import 'start_session.dart';
 
 /// The Floor screen (home): all units in sections, with the selected unit's panel
@@ -90,7 +91,7 @@ class _FloorScreenState extends State<FloorScreen> {
             const SizedBox(width: 20),
             SessionPanel(
               store: widget.store,
-              unitId: selected!.id,
+              unitId: selected.id,
               width: 340,
               onClose: () => setState(() => _selectedId = null),
             ),
@@ -107,7 +108,11 @@ class _FloorScreenState extends State<FloorScreen> {
       final result = await showStartSession(context, unit);
       // null = closed without starting. `mounted` = this screen still exists after the wait.
       // result.customerText is ignored until the database exists.
-      if (result != null && mounted) {
+      if (result == null || !mounted) return;
+      if (result.wantsMaintenance) {
+        final maintenance = await showSetMaintenance(context, unit);
+        if (maintenance != null) widget.store.setMaintenance(unit.id, note: maintenance.note);
+      } else {
         widget.store.startSession(unit.id, isMulti: result.isMulti, plannedMinutes: result.plannedMinutes);
       }
       return;

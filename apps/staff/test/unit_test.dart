@@ -7,6 +7,13 @@ import 'helpers.dart';
 
 void main() {
   group('cost (what the customer pays)', () {
+    test('costAt counts until the given moment, not until now', () {
+      final start = DateTime(2026, 1, 1, 10);
+      final unit = testUnit(status: UnitStatus.running, startedAt: start); // 50 per hour
+      expect(unit.costAt(start.add(const Duration(minutes: 30))), 25);
+      expect(unit.costAt(start.add(const Duration(hours: 2))), 100);
+    });
+
     test('open single: 1 hour at 50 is 50', () {
       final unit = testUnit(status: UnitStatus.running, startedAt: ago(const Duration(hours: 1, seconds: 5)));
       expect(unit.currentCost, 50);
@@ -127,5 +134,27 @@ void main() {
     test('5 am is the first morning hour', () => expect(say(5), '5 الصبح'));
     test('4:59 am is still night', () => expect(say(4, 59), '4:59 بليل'));
     test('midnight is 12 at night', () => expect(say(0), '12 بليل'));
+  });
+
+  group('playedText (time played, in words)', () {
+    final l10n = AppLocalizationsAr();
+    String played(Duration d) => playedText(l10n, d);
+
+    test('under a minute', () => expect(played(const Duration(seconds: 30)), 'أقل من دقيقة'));
+    test('only minutes', () {
+      expect(played(const Duration(minutes: 1)), 'دقيقة');
+      expect(played(const Duration(minutes: 2)), 'دقيقتين');
+      expect(played(const Duration(minutes: 5)), '5 دقايق');
+      expect(played(const Duration(minutes: 20)), '20 دقيقة');
+    });
+    test('only hours', () {
+      expect(played(const Duration(hours: 1)), 'ساعة');
+      expect(played(const Duration(hours: 2)), 'ساعتين');
+      expect(played(const Duration(hours: 4)), '4 ساعات');
+    });
+    test('hours and minutes', () {
+      expect(played(const Duration(hours: 1, minutes: 20)), 'ساعة و20 دقيقة');
+      expect(played(const Duration(hours: 2, minutes: 5)), 'ساعتين و5 دقايق');
+    });
   });
 }

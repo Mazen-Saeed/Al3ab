@@ -73,9 +73,11 @@ class Unit {
         amountDue: amountDue,
       );
 
-  /// Time played so far (zero if not running).
-  Duration get elapsed =>
-      startedAt == null ? Duration.zero : DateTime.now().difference(startedAt!);
+  /// Time played until [now] (zero if not running).
+  Duration elapsedAt(DateTime now) => startedAt == null ? Duration.zero : now.difference(startedAt!);
+
+  /// Time played so far.
+  Duration get elapsed => elapsedAt(DateTime.now());
 
   /// Planned time minus played time. Null = open time. Negative = over the planned time.
   Duration? get remaining =>
@@ -97,9 +99,45 @@ class Unit {
     return base + extra;
   }
 
-  /// Play-time cost so far, rounded down to whole EGP.
-  int get currentCost {
+  /// Play-time cost until [now], rounded down to whole EGP. Checkout freezes [now] when it
+  /// opens, so the amount on screen is exactly the amount saved in the bill.
+  int costAt(DateTime now) {
     final price = isMulti ? multiHourlyPrice! : hourlyPrice;
-    return (elapsed.inSeconds * price / 3600).floor();
+    return (elapsedAt(now).inSeconds * price / 3600).floor();
   }
+
+  /// Play-time cost so far.
+  int get currentCost => costAt(DateTime.now());
+
+  /// This unit after its session is paid: free again, nothing running.
+  /// (copyWith can't clear startedAt, so this builds the free version directly.)
+  Unit asFree() => Unit(
+        id: id,
+        name: name,
+        type: type,
+        roomId: roomId,
+        roomName: roomName,
+        groupId: groupId,
+        groupName: groupName,
+        status: UnitStatus.free,
+        hourlyPrice: hourlyPrice,
+        multiHourlyPrice: multiHourlyPrice,
+        nextReservationAt: nextReservationAt,
+      );
+
+  /// This unit taken out of service, with an optional reason ("الدراع بايظ").
+  Unit asInMaintenance(String? note) => Unit(
+        id: id,
+        name: name,
+        type: type,
+        roomId: roomId,
+        roomName: roomName,
+        groupId: groupId,
+        groupName: groupName,
+        status: UnitStatus.maintenance,
+        hourlyPrice: hourlyPrice,
+        multiHourlyPrice: multiHourlyPrice,
+        nextReservationAt: nextReservationAt,
+        note: note,
+      );
 }

@@ -9,6 +9,11 @@ Table venues {
   closes_at time
   last_synced_at timestamptz [note: 'set by backend on every sync call from the shop device, even empty ones']
   shop_device_id uuid [unique, note: 'the one device allowed to run this shop offline; backend accepts sync only from it']
+  instapay_link varchar [note: 'owner-pasted payment link; checkout draws a QR from it']
+  instapay_handle varchar [note: 'InstaPay handle shown under the QR, e.g. name@instapay']
+  instapay_phone varchar [note: 'phone number that also receives InstaPay transfers']
+  wallet_link varchar [note: 'same, for the mobile wallet']
+  wallet_phone varchar [note: 'wallet phone number shown under the QR']
   created_at timestamptz [not null]
   updated_at timestamptz [not null]
   updated_by_staff_id uuid [note: 'who made the last change, incl. soft delete']
@@ -47,6 +52,7 @@ Table units {
   room_id uuid [not null]
   name varchar [not null]
   status varchar [not null, default: 'Active', note: 'Active | Maintenance | Disabled']
+  maintenance_note varchar [note: 'why it is in maintenance; only meaningful while status = Maintenance']
   unit_type_id uuid [not null]
   price_category_id uuid [not null]
   updated_at timestamptz [not null]
@@ -121,6 +127,7 @@ Table reservations {
 
 Table reservations_units {
   id uuid [pk]
+  venue_id uuid [not null, note: 'same as the parent row; lets sync query by venue without joins']
   reservation_id uuid [not null]
   unit_id uuid [not null]
   updated_at timestamptz [not null]
@@ -133,10 +140,66 @@ Table products {
   venue_id uuid [not null]
   name varchar [not null]
   price numeric(10,2) [not null]
-  stock_quantity integer [not null, default: 0, note: 'changed on the shop PC only (sales, restock); owner app shows it read-only']
+  stock_item_id uuid [note: 'what this product draws from; null = not tracked']
   updated_at timestamptz [not null]
   updated_by_staff_id uuid [note: 'who made the last change, incl. soft delete']
   deleted_at timestamptz
+}
+
+Table stock_items {
+  // What is bought and counted (coffee tin, tea packet, a can of Pepsi). A product is what is sold.
+  id uuid [pk]
+  venue_id uuid [not null]
+  name varchar [not null]
+  deducts_on_sale boolean [not null, note: 'true: each sale subtracts its quantity (Pepsi). false: staff record bought/opened/counted by hand (tea, coffee)']
+  on_hand integer [not null, default: 0, note: 'changed on the shop PC only, in the same transaction as the action; may go below 0 (no check: an offline sale is never rejected)']
+  low_stock_at integer [note: 'warn at or below this; null = no warning']
+  updated_at timestamptz [not null]
+  updated_by_staff_id uuid [note: 'who made the last change, incl. soft delete']
+  deleted_at timestamptz
+
+  indexes {
+    (venue_id, updated_at)
+  }
+}
+
+Table purchases {
+  // One shopping trip: the receipt. The stock it bought is in stock_movements (kind = Purchase).
+  id uuid [pk]
+  venue_id uuid [not null]
+  staff_id uuid [not null, note: 'who recorded it']
+  total numeric(10,2) [not null, note: 'what was paid in total, from the receipt']
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+  updated_by_staff_id uuid [note: 'who made the last change, incl. soft delete']
+  deleted_at timestamptz
+
+  indexes {
+    (venue_id, updated_at)
+  }
+}
+
+Table stock_movements {
+  // Hand-made entries only. Sales are not copied here: they already exist as sessions_products / bill_items.
+  id uuid [pk]
+  venue_id uuid [not null]
+  stock_item_id uuid [not null]
+  kind varchar [not null, note: 'Purchase | Opened | Count (shown as "edit number" in the app)']
+  purchase_id uuid [note: 'Purchase only: the shopping trip it belongs to']
+  expected_quantity integer [note: 'Count only: what the app expected on the shelf; quantity - expected_quantity = found missing/extra']
+  quantity integer [not null, note: 'Purchase/Opened: how many (> 0). Count: what was counted (>= 0), resets on_hand']
+  staff_id uuid [not null]
+  note varchar
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+  updated_by_staff_id uuid [note: 'who made the last change, incl. soft delete']
+  deleted_at timestamptz
+  Note: 'Never overwritten. A mistake is soft-deleted and re-entered. Used for the cups-per-tin report.'
+
+  indexes {
+    (venue_id, updated_at)
+    (stock_item_id, created_at)
+  }
 }
 
 Table sessions {
@@ -155,6 +218,7 @@ Table sessions {
 
 Table sessions_units {
   id uuid [pk]
+  venue_id uuid [not null, note: 'same as the parent row; lets sync query by venue without joins']
   session_id uuid [not null]
   unit_id uuid [not null]
   started_at timestamptz [not null]
@@ -169,6 +233,7 @@ Table sessions_units {
 
 Table sessions_products {
   id uuid [pk]
+  venue_id uuid [not null, note: 'same as the parent row; lets sync query by venue without joins']
   session_id uuid [not null]
   product_id uuid [not null]
   quantity integer [not null, default: 1]
@@ -182,11 +247,11 @@ Table sessions_products {
 Table bills {
   id uuid [pk]
   venue_id uuid [not null]
-  session_id uuid [note: 'null for a quick sale (no session)']
+  session_id uuid [unique, note: 'null for a quick sale (no session); one bill per session']
   subtotal numeric(10,2) [not null, note: 'before discount']
   discount numeric(10,2) [not null, default: 0]
   total numeric(10,2) [not null, note: 'after discount = amount actually paid']
-  paid_at timestamptz
+  paid_at timestamptz [not null, note: 'a bill is only created when it is paid']
   staff_id uuid [not null]
   discount_note varchar
   shift_id uuid [not null]
@@ -210,6 +275,10 @@ Table shifts {
   updated_at timestamptz [not null]
   updated_by_staff_id uuid [note: 'who made the last change, incl. soft delete']
   deleted_at timestamptz
+
+  indexes {
+    venue_id [unique, note: 'only where closed_at is null: one open shift per venue']
+  }
 }
 
 Table cash_movements {
@@ -260,6 +329,7 @@ Table devices {
 
 Table bill_items {
   id uuid [pk]
+  venue_id uuid [not null, note: 'same as the parent row; lets sync query by venue without joins']
   bill_id uuid [not null]
   product_id uuid [note: 'null for play time']
   description varchar [not null, note: 'text on the receipt, e.g. Play time PS5-2']
@@ -326,4 +396,16 @@ Ref: venues.shop_device_id > devices.id
 Ref: bill_items.bill_id > bills.id
 Ref: bill_items.product_id > products.id
 Ref: rooms.room_group_id > room_groups.id
+Ref: products.stock_item_id > stock_items.id
+Ref: stock_items.venue_id > venues.id
+Ref: stock_movements.venue_id > venues.id
+Ref: stock_movements.stock_item_id > stock_items.id
+Ref: stock_movements.staff_id > staff.id
+Ref: stock_movements.purchase_id > purchases.id
+Ref: purchases.venue_id > venues.id
+Ref: purchases.staff_id > staff.id
+Ref: sessions_units.venue_id > venues.id
+Ref: sessions_products.venue_id > venues.id
+Ref: bill_items.venue_id > venues.id
+Ref: reservations_units.venue_id > venues.id
 Ref: room_groups.venue_id > venues.id

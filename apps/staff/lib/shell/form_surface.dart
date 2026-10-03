@@ -5,7 +5,10 @@ import 'layout.dart';
 
 /// Shows a small form: a centered dialog on bigger screens, a bottom sheet on phones.
 /// Returns whatever the form passes to `Navigator.pop(context, value)` (null if closed).
-Future<T?> showFormSurface<T>(BuildContext context, Widget form) {
+/// [scrolls]: by default the whole form scrolls if it is taller than the screen. A form that
+/// keeps its main button pinned (Checkout) passes false and scrolls its own middle part.
+Future<T?> showFormSurface<T>(BuildContext context, Widget form, {bool scrolls = true}) {
+  final body = scrolls ? SingleChildScrollView(child: form) : form;
   if (screenSizeOf(context) != ScreenSize.phone) {
     return showDialog<T>(
       context: context,
@@ -14,7 +17,7 @@ Future<T?> showFormSurface<T>(BuildContext context, Widget form) {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 520), // never wider than 520
-          child: SingleChildScrollView(child: form),
+          child: body,
         ),
       ),
     );
@@ -34,7 +37,7 @@ Future<T?> showFormSurface<T>(BuildContext context, Widget form) {
             color: AppColors.surface,
             borderRadius: BorderRadius.circular(32),
           ),
-          child: SingleChildScrollView(child: form),
+          child: body,
         ),
       ),
     ),
