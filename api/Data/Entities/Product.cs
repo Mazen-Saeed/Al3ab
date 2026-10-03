@@ -1,6 +1,6 @@
 namespace Al3b.Api.Data.Entities;
 
-// Drinks/snacks.
+// Drinks/snacks: what is sold. What is counted lives in StockItem.
 public class Product : SyncedEntity
 {
     public Guid VenueId { get; set; }
@@ -9,6 +9,7 @@ public class Product : SyncedEntity
     public required string Name { get; set; }
     public decimal Price { get; set; }
 
-    // Changed on the shop PC only (sales, restock). Owner app shows it read-only.
-    public int StockQuantity { get; set; }
+    // The stock item this product draws from. Null = not tracked (e.g. a service or a free item).
+    public Guid? StockItemId { get; set; }
+    public StockItem? StockItem { get; set; }
 }

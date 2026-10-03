@@ -3,6 +3,7 @@ using System;
 using Al3b.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Al3b.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20261002204547_AddPurchases")]
+    partial class AddPurchases
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1473,10 +1476,6 @@ namespace Al3b.Api.Migrations
                     b.Property<TimeOnly?>("OpensAt")
                         .HasColumnType("time without time zone")
                         .HasColumnName("opens_at");
-
-                    b.Property<DateOnly?>("PaidUntil")
-                        .HasColumnType("date")
-                        .HasColumnName("paid_until");
 
                     b.Property<string>("Phone")
                         .IsRequired()

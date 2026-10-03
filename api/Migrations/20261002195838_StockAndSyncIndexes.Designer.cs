@@ -3,6 +3,7 @@ using System;
 using Al3b.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Al3b.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20261002195838_StockAndSyncIndexes")]
+    partial class StockAndSyncIndexes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -466,57 +469,6 @@ namespace Al3b.Api.Migrations
                     b.ToTable("products", null, t =>
                         {
                             t.HasCheckConstraint("ck_products_price", "price >= 0");
-                        });
-                });
-
-            modelBuilder.Entity("Al3b.Api.Data.Entities.Purchase", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("deleted_at");
-
-                    b.Property<Guid>("StaffId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("staff_id");
-
-                    b.Property<decimal>("Total")
-                        .HasPrecision(10, 2)
-                        .HasColumnType("numeric(10,2)")
-                        .HasColumnName("total");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
-
-                    b.Property<Guid?>("UpdatedByStaffId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("updated_by_staff_id");
-
-                    b.Property<Guid>("VenueId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("venue_id");
-
-                    b.HasKey("Id")
-                        .HasName("pk_purchases");
-
-                    b.HasIndex("StaffId")
-                        .HasDatabaseName("ix_purchases_staff_id");
-
-                    b.HasIndex("VenueId", "UpdatedAt")
-                        .HasDatabaseName("ix_purchases_venue_id_updated_at");
-
-                    b.ToTable("purchases", null, t =>
-                        {
-                            t.HasCheckConstraint("ck_purchases_total", "total >= 0");
                         });
                 });
 
@@ -1265,10 +1217,6 @@ namespace Al3b.Api.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("deleted_at");
 
-                    b.Property<int?>("ExpectedQuantity")
-                        .HasColumnType("integer")
-                        .HasColumnName("expected_quantity");
-
                     b.Property<string>("Kind")
                         .IsRequired()
                         .HasColumnType("text")
@@ -1277,10 +1225,6 @@ namespace Al3b.Api.Migrations
                     b.Property<string>("Note")
                         .HasColumnType("text")
                         .HasColumnName("note");
-
-                    b.Property<Guid?>("PurchaseId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("purchase_id");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("integer")
@@ -1309,9 +1253,6 @@ namespace Al3b.Api.Migrations
                     b.HasKey("Id")
                         .HasName("pk_stock_movements");
 
-                    b.HasIndex("PurchaseId")
-                        .HasDatabaseName("ix_stock_movements_purchase_id");
-
                     b.HasIndex("StaffId")
                         .HasDatabaseName("ix_stock_movements_staff_id");
 
@@ -1323,10 +1264,6 @@ namespace Al3b.Api.Migrations
 
                     b.ToTable("stock_movements", null, t =>
                         {
-                            t.HasCheckConstraint("ck_stock_movements_expected", "expected_quantity IS NULL OR kind = 'Count'");
-
-                            t.HasCheckConstraint("ck_stock_movements_purchase", "purchase_id IS NULL OR kind = 'Purchase'");
-
                             t.HasCheckConstraint("ck_stock_movements_quantity", "(kind = 'Count' AND quantity >= 0) OR (kind <> 'Count' AND quantity > 0)");
                         });
                 });
@@ -1473,10 +1410,6 @@ namespace Al3b.Api.Migrations
                     b.Property<TimeOnly?>("OpensAt")
                         .HasColumnType("time without time zone")
                         .HasColumnName("opens_at");
-
-                    b.Property<DateOnly?>("PaidUntil")
-                        .HasColumnType("date")
-                        .HasColumnName("paid_until");
 
                     b.Property<string>("Phone")
                         .IsRequired()
@@ -1703,27 +1636,6 @@ namespace Al3b.Api.Migrations
                         .HasConstraintName("fk_products_venues_venue_id");
 
                     b.Navigation("StockItem");
-
-                    b.Navigation("Venue");
-                });
-
-            modelBuilder.Entity("Al3b.Api.Data.Entities.Purchase", b =>
-                {
-                    b.HasOne("Al3b.Api.Data.Entities.Staff", "Staff")
-                        .WithMany()
-                        .HasForeignKey("StaffId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_purchases_staff_staff_id");
-
-                    b.HasOne("Al3b.Api.Data.Entities.Venue", "Venue")
-                        .WithMany()
-                        .HasForeignKey("VenueId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_purchases_venues_venue_id");
-
-                    b.Navigation("Staff");
 
                     b.Navigation("Venue");
                 });
@@ -2025,12 +1937,6 @@ namespace Al3b.Api.Migrations
 
             modelBuilder.Entity("Al3b.Api.Data.Entities.StockMovement", b =>
                 {
-                    b.HasOne("Al3b.Api.Data.Entities.Purchase", "Purchase")
-                        .WithMany()
-                        .HasForeignKey("PurchaseId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .HasConstraintName("fk_stock_movements_purchases_purchase_id");
-
                     b.HasOne("Al3b.Api.Data.Entities.Staff", "Staff")
                         .WithMany()
                         .HasForeignKey("StaffId")
@@ -2051,8 +1957,6 @@ namespace Al3b.Api.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_stock_movements_venues_venue_id");
-
-                    b.Navigation("Purchase");
 
                     b.Navigation("Staff");
 

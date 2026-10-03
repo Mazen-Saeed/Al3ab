@@ -2,6 +2,10 @@ namespace Al3b.Api.Data.Entities;
 
 public class SessionProduct : SyncedEntity
 {
+    // Same venue as the parent row. Repeated here so sync can ask every table "this venue, changed since T" without joins.
+    public Guid VenueId { get; set; }
+    public Venue Venue { get; set; } = null!;
+
     public Guid SessionId { get; set; }
     public Session Session { get; set; } = null!;
 

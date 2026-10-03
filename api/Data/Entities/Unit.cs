@@ -19,4 +19,7 @@ public class Unit : SyncedEntity
 
     public required string Name { get; set; }
     public UnitStatus Status { get; set; } = UnitStatus.Active;
+
+    // Why it is in maintenance ("the controller is broken"). Only meaningful while Status = Maintenance.
+    public string? MaintenanceNote { get; set; }
 }

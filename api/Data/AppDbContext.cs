@@ -21,6 +21,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Reservation> Reservations => Set<Reservation>();
     public DbSet<ReservationUnit> ReservationsUnits => Set<ReservationUnit>();
     public DbSet<Product> Products => Set<Product>();
+    public DbSet<StockItem> StockItems => Set<StockItem>();
+    public DbSet<StockMovement> StockMovements => Set<StockMovement>();
+    public DbSet<Purchase> Purchases => Set<Purchase>();
     public DbSet<Session> Sessions => Set<Session>();
     public DbSet<SessionUnit> SessionsUnits => Set<SessionUnit>();
     public DbSet<SessionProduct> SessionsProducts => Set<SessionProduct>();
@@ -46,6 +49,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         configurationBuilder.Properties<CashMovementType>().HaveConversion<string>();
         configurationBuilder.Properties<RemoteCommandStatus>().HaveConversion<string>();
         configurationBuilder.Properties<DevicePlatform>().HaveConversion<string>();
+        configurationBuilder.Properties<StockMovementKind>().HaveConversion<string>();
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -67,6 +71,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                     Expression.Property(e, nameof(SyncedEntity.DeletedAt)),
                     Expression.Constant(null, typeof(DateTime?)));
                 modelBuilder.Entity(entityType.ClrType).HasQueryFilter(Expression.Lambda(notDeleted, e));
+
+                // Sync asks "rows of this venue changed since T". One index per table answers that.
+                if (entityType.FindProperty("VenueId") is not null)
+                    modelBuilder.Entity(entityType.ClrType).HasIndex("VenueId", nameof(SyncedEntity.UpdatedAt));
             }
         }
     }

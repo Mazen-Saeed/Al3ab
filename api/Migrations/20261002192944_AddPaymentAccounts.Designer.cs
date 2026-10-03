@@ -3,6 +3,7 @@ using System;
 using Al3b.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Al3b.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20261002192944_AddPaymentAccounts")]
+    partial class AddPaymentAccounts
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -42,7 +45,7 @@ namespace Al3b.Api.Migrations
                         .HasColumnType("text")
                         .HasColumnName("discount_note");
 
-                    b.Property<DateTime>("PaidAt")
+                    b.Property<DateTime?>("PaidAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("paid_at");
 
@@ -89,9 +92,7 @@ namespace Al3b.Api.Migrations
                         .HasName("pk_bills");
 
                     b.HasIndex("SessionId")
-                        .IsUnique()
-                        .HasDatabaseName("ix_bills_session_id")
-                        .HasFilter("deleted_at IS NULL");
+                        .HasDatabaseName("ix_bills_session_id");
 
                     b.HasIndex("ShiftId")
                         .HasDatabaseName("ix_bills_shift_id");
@@ -99,8 +100,8 @@ namespace Al3b.Api.Migrations
                     b.HasIndex("StaffId")
                         .HasDatabaseName("ix_bills_staff_id");
 
-                    b.HasIndex("VenueId", "UpdatedAt")
-                        .HasDatabaseName("ix_bills_venue_id_updated_at");
+                    b.HasIndex("VenueId")
+                        .HasDatabaseName("ix_bills_venue_id");
 
                     b.ToTable("bills", null, t =>
                         {
@@ -158,10 +159,6 @@ namespace Al3b.Api.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("updated_by_staff_id");
 
-                    b.Property<Guid>("VenueId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("venue_id");
-
                     b.HasKey("Id")
                         .HasName("pk_bill_items");
 
@@ -170,9 +167,6 @@ namespace Al3b.Api.Migrations
 
                     b.HasIndex("ProductId")
                         .HasDatabaseName("ix_bill_items_product_id");
-
-                    b.HasIndex("VenueId", "UpdatedAt")
-                        .HasDatabaseName("ix_bill_items_venue_id_updated_at");
 
                     b.ToTable("bill_items", null, t =>
                         {
@@ -242,8 +236,8 @@ namespace Al3b.Api.Migrations
                     b.HasIndex("StaffId")
                         .HasDatabaseName("ix_cash_movements_staff_id");
 
-                    b.HasIndex("VenueId", "UpdatedAt")
-                        .HasDatabaseName("ix_cash_movements_venue_id_updated_at");
+                    b.HasIndex("VenueId")
+                        .HasDatabaseName("ix_cash_movements_venue_id");
 
                     b.ToTable("cash_movements", null, t =>
                         {
@@ -359,8 +353,8 @@ namespace Al3b.Api.Migrations
                     b.HasIndex("StaffId")
                         .HasDatabaseName("ix_devices_staff_id");
 
-                    b.HasIndex("VenueId", "UpdatedAt")
-                        .HasDatabaseName("ix_devices_venue_id_updated_at");
+                    b.HasIndex("VenueId")
+                        .HasDatabaseName("ix_devices_venue_id");
 
                     b.ToTable("devices", (string)null);
                 });
@@ -406,8 +400,8 @@ namespace Al3b.Api.Migrations
                     b.HasKey("Id")
                         .HasName("pk_price_categories");
 
-                    b.HasIndex("VenueId", "UpdatedAt")
-                        .HasDatabaseName("ix_price_categories_venue_id_updated_at");
+                    b.HasIndex("VenueId")
+                        .HasDatabaseName("ix_price_categories_venue_id");
 
                     b.ToTable("price_categories", null, t =>
                         {
@@ -438,9 +432,9 @@ namespace Al3b.Api.Migrations
                         .HasColumnType("numeric(10,2)")
                         .HasColumnName("price");
 
-                    b.Property<Guid?>("StockItemId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("stock_item_id");
+                    b.Property<int>("StockQuantity")
+                        .HasColumnType("integer")
+                        .HasColumnName("stock_quantity");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -457,66 +451,12 @@ namespace Al3b.Api.Migrations
                     b.HasKey("Id")
                         .HasName("pk_products");
 
-                    b.HasIndex("StockItemId")
-                        .HasDatabaseName("ix_products_stock_item_id");
-
-                    b.HasIndex("VenueId", "UpdatedAt")
-                        .HasDatabaseName("ix_products_venue_id_updated_at");
+                    b.HasIndex("VenueId")
+                        .HasDatabaseName("ix_products_venue_id");
 
                     b.ToTable("products", null, t =>
                         {
                             t.HasCheckConstraint("ck_products_price", "price >= 0");
-                        });
-                });
-
-            modelBuilder.Entity("Al3b.Api.Data.Entities.Purchase", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("deleted_at");
-
-                    b.Property<Guid>("StaffId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("staff_id");
-
-                    b.Property<decimal>("Total")
-                        .HasPrecision(10, 2)
-                        .HasColumnType("numeric(10,2)")
-                        .HasColumnName("total");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
-
-                    b.Property<Guid?>("UpdatedByStaffId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("updated_by_staff_id");
-
-                    b.Property<Guid>("VenueId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("venue_id");
-
-                    b.HasKey("Id")
-                        .HasName("pk_purchases");
-
-                    b.HasIndex("StaffId")
-                        .HasDatabaseName("ix_purchases_staff_id");
-
-                    b.HasIndex("VenueId", "UpdatedAt")
-                        .HasDatabaseName("ix_purchases_venue_id_updated_at");
-
-                    b.ToTable("purchases", null, t =>
-                        {
-                            t.HasCheckConstraint("ck_purchases_total", "total >= 0");
                         });
                 });
 
@@ -587,8 +527,8 @@ namespace Al3b.Api.Migrations
                     b.HasIndex("StaffId")
                         .HasDatabaseName("ix_remote_commands_staff_id");
 
-                    b.HasIndex("VenueId", "UpdatedAt")
-                        .HasDatabaseName("ix_remote_commands_venue_id_updated_at");
+                    b.HasIndex("VenueId")
+                        .HasDatabaseName("ix_remote_commands_venue_id");
 
                     b.ToTable("remote_commands", (string)null);
                 });
@@ -658,11 +598,11 @@ namespace Al3b.Api.Migrations
                     b.HasIndex("StaffId")
                         .HasDatabaseName("ix_reservations_staff_id");
 
+                    b.HasIndex("VenueId")
+                        .HasDatabaseName("ix_reservations_venue_id");
+
                     b.HasIndex("WalkInCustomerId")
                         .HasDatabaseName("ix_reservations_walk_in_customer_id");
-
-                    b.HasIndex("VenueId", "UpdatedAt")
-                        .HasDatabaseName("ix_reservations_venue_id_updated_at");
 
                     b.ToTable("reservations", null, t =>
                         {
@@ -699,10 +639,6 @@ namespace Al3b.Api.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("updated_by_staff_id");
 
-                    b.Property<Guid>("VenueId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("venue_id");
-
                     b.HasKey("Id")
                         .HasName("pk_reservations_units");
 
@@ -711,9 +647,6 @@ namespace Al3b.Api.Migrations
 
                     b.HasIndex("UnitId")
                         .HasDatabaseName("ix_reservations_units_unit_id");
-
-                    b.HasIndex("VenueId", "UpdatedAt")
-                        .HasDatabaseName("ix_reservations_units_venue_id_updated_at");
 
                     b.ToTable("reservations_units", (string)null);
                 });
@@ -756,8 +689,8 @@ namespace Al3b.Api.Migrations
                     b.HasIndex("RoomGroupId")
                         .HasDatabaseName("ix_rooms_room_group_id");
 
-                    b.HasIndex("VenueId", "UpdatedAt")
-                        .HasDatabaseName("ix_rooms_venue_id_updated_at");
+                    b.HasIndex("VenueId")
+                        .HasDatabaseName("ix_rooms_venue_id");
 
                     b.ToTable("rooms", (string)null);
                 });
@@ -797,8 +730,8 @@ namespace Al3b.Api.Migrations
                     b.HasKey("Id")
                         .HasName("pk_room_groups");
 
-                    b.HasIndex("VenueId", "UpdatedAt")
-                        .HasDatabaseName("ix_room_groups_venue_id_updated_at");
+                    b.HasIndex("VenueId")
+                        .HasDatabaseName("ix_room_groups_venue_id");
 
                     b.ToTable("room_groups", (string)null);
                 });
@@ -865,11 +798,11 @@ namespace Al3b.Api.Migrations
                     b.HasIndex("StaffId")
                         .HasDatabaseName("ix_sessions_staff_id");
 
+                    b.HasIndex("VenueId")
+                        .HasDatabaseName("ix_sessions_venue_id");
+
                     b.HasIndex("WalkInCustomerId")
                         .HasDatabaseName("ix_sessions_walk_in_customer_id");
-
-                    b.HasIndex("VenueId", "UpdatedAt")
-                        .HasDatabaseName("ix_sessions_venue_id_updated_at");
 
                     b.ToTable("sessions", null, t =>
                         {
@@ -917,10 +850,6 @@ namespace Al3b.Api.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("updated_by_staff_id");
 
-                    b.Property<Guid>("VenueId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("venue_id");
-
                     b.HasKey("Id")
                         .HasName("pk_sessions_products");
 
@@ -929,9 +858,6 @@ namespace Al3b.Api.Migrations
 
                     b.HasIndex("SessionId")
                         .HasDatabaseName("ix_sessions_products_session_id");
-
-                    b.HasIndex("VenueId", "UpdatedAt")
-                        .HasDatabaseName("ix_sessions_products_venue_id_updated_at");
 
                     b.ToTable("sessions_products", null, t =>
                         {
@@ -990,10 +916,6 @@ namespace Al3b.Api.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("updated_by_staff_id");
 
-                    b.Property<Guid>("VenueId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("venue_id");
-
                     b.HasKey("Id")
                         .HasName("pk_sessions_units");
 
@@ -1002,9 +924,6 @@ namespace Al3b.Api.Migrations
 
                     b.HasIndex("UnitId")
                         .HasDatabaseName("ix_sessions_units_unit_id");
-
-                    b.HasIndex("VenueId", "UpdatedAt")
-                        .HasDatabaseName("ix_sessions_units_venue_id_updated_at");
 
                     b.ToTable("sessions_units", null, t =>
                         {
@@ -1084,12 +1003,7 @@ namespace Al3b.Api.Migrations
                         .HasDatabaseName("ix_shifts_opened_by_staff_id");
 
                     b.HasIndex("VenueId")
-                        .IsUnique()
-                        .HasDatabaseName("ix_shifts_venue_id")
-                        .HasFilter("closed_at IS NULL AND deleted_at IS NULL");
-
-                    b.HasIndex("VenueId", "UpdatedAt")
-                        .HasDatabaseName("ix_shifts_venue_id_updated_at");
+                        .HasDatabaseName("ix_shifts_venue_id");
 
                     b.ToTable("shifts", null, t =>
                         {
@@ -1187,148 +1101,15 @@ namespace Al3b.Api.Migrations
                     b.HasKey("Id")
                         .HasName("pk_staff_venues");
 
+                    b.HasIndex("VenueId")
+                        .HasDatabaseName("ix_staff_venues_venue_id");
+
                     b.HasIndex("StaffId", "VenueId")
                         .IsUnique()
                         .HasDatabaseName("ix_staff_venues_staff_id_venue_id")
                         .HasFilter("deleted_at IS NULL");
 
-                    b.HasIndex("VenueId", "UpdatedAt")
-                        .HasDatabaseName("ix_staff_venues_venue_id_updated_at");
-
                     b.ToTable("staff_venues", (string)null);
-                });
-
-            modelBuilder.Entity("Al3b.Api.Data.Entities.StockItem", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<bool>("DeductsOnSale")
-                        .HasColumnType("boolean")
-                        .HasColumnName("deducts_on_sale");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("deleted_at");
-
-                    b.Property<int?>("LowStockAt")
-                        .HasColumnType("integer")
-                        .HasColumnName("low_stock_at");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("name");
-
-                    b.Property<int>("OnHand")
-                        .HasColumnType("integer")
-                        .HasColumnName("on_hand");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
-
-                    b.Property<Guid?>("UpdatedByStaffId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("updated_by_staff_id");
-
-                    b.Property<Guid>("VenueId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("venue_id");
-
-                    b.HasKey("Id")
-                        .HasName("pk_stock_items");
-
-                    b.HasIndex("VenueId", "UpdatedAt")
-                        .HasDatabaseName("ix_stock_items_venue_id_updated_at");
-
-                    b.ToTable("stock_items", null, t =>
-                        {
-                            t.HasCheckConstraint("ck_stock_items_low_stock_at", "low_stock_at IS NULL OR low_stock_at >= 0");
-                        });
-                });
-
-            modelBuilder.Entity("Al3b.Api.Data.Entities.StockMovement", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("deleted_at");
-
-                    b.Property<int?>("ExpectedQuantity")
-                        .HasColumnType("integer")
-                        .HasColumnName("expected_quantity");
-
-                    b.Property<string>("Kind")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("kind");
-
-                    b.Property<string>("Note")
-                        .HasColumnType("text")
-                        .HasColumnName("note");
-
-                    b.Property<Guid?>("PurchaseId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("purchase_id");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("integer")
-                        .HasColumnName("quantity");
-
-                    b.Property<Guid>("StaffId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("staff_id");
-
-                    b.Property<Guid>("StockItemId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("stock_item_id");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
-
-                    b.Property<Guid?>("UpdatedByStaffId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("updated_by_staff_id");
-
-                    b.Property<Guid>("VenueId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("venue_id");
-
-                    b.HasKey("Id")
-                        .HasName("pk_stock_movements");
-
-                    b.HasIndex("PurchaseId")
-                        .HasDatabaseName("ix_stock_movements_purchase_id");
-
-                    b.HasIndex("StaffId")
-                        .HasDatabaseName("ix_stock_movements_staff_id");
-
-                    b.HasIndex("StockItemId")
-                        .HasDatabaseName("ix_stock_movements_stock_item_id");
-
-                    b.HasIndex("VenueId", "UpdatedAt")
-                        .HasDatabaseName("ix_stock_movements_venue_id_updated_at");
-
-                    b.ToTable("stock_movements", null, t =>
-                        {
-                            t.HasCheckConstraint("ck_stock_movements_expected", "expected_quantity IS NULL OR kind = 'Count'");
-
-                            t.HasCheckConstraint("ck_stock_movements_purchase", "purchase_id IS NULL OR kind = 'Purchase'");
-
-                            t.HasCheckConstraint("ck_stock_movements_quantity", "(kind = 'Count' AND quantity >= 0) OR (kind <> 'Count' AND quantity > 0)");
-                        });
                 });
 
             modelBuilder.Entity("Al3b.Api.Data.Entities.Unit", b =>
@@ -1341,10 +1122,6 @@ namespace Al3b.Api.Migrations
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("deleted_at");
-
-                    b.Property<string>("MaintenanceNote")
-                        .HasColumnType("text")
-                        .HasColumnName("maintenance_note");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -1392,8 +1169,8 @@ namespace Al3b.Api.Migrations
                     b.HasIndex("UnitTypeId")
                         .HasDatabaseName("ix_units_unit_type_id");
 
-                    b.HasIndex("VenueId", "UpdatedAt")
-                        .HasDatabaseName("ix_units_venue_id_updated_at");
+                    b.HasIndex("VenueId")
+                        .HasDatabaseName("ix_units_venue_id");
 
                     b.ToTable("units", (string)null);
                 });
@@ -1474,10 +1251,6 @@ namespace Al3b.Api.Migrations
                         .HasColumnType("time without time zone")
                         .HasColumnName("opens_at");
 
-                    b.Property<DateOnly?>("PaidUntil")
-                        .HasColumnType("date")
-                        .HasColumnName("paid_until");
-
                     b.Property<string>("Phone")
                         .IsRequired()
                         .HasColumnType("text")
@@ -1552,8 +1325,8 @@ namespace Al3b.Api.Migrations
                     b.HasKey("Id")
                         .HasName("pk_walk_in_customers");
 
-                    b.HasIndex("VenueId", "UpdatedAt")
-                        .HasDatabaseName("ix_walk_in_customers_venue_id_updated_at");
+                    b.HasIndex("VenueId")
+                        .HasDatabaseName("ix_walk_in_customers_venue_id");
 
                     b.ToTable("walk_in_customers", (string)null);
                 });
@@ -1611,18 +1384,9 @@ namespace Al3b.Api.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("fk_bill_items_products_product_id");
 
-                    b.HasOne("Al3b.Api.Data.Entities.Venue", "Venue")
-                        .WithMany()
-                        .HasForeignKey("VenueId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_bill_items_venues_venue_id");
-
                     b.Navigation("Bill");
 
                     b.Navigation("Product");
-
-                    b.Navigation("Venue");
                 });
 
             modelBuilder.Entity("Al3b.Api.Data.Entities.CashMovement", b =>
@@ -1689,41 +1453,12 @@ namespace Al3b.Api.Migrations
 
             modelBuilder.Entity("Al3b.Api.Data.Entities.Product", b =>
                 {
-                    b.HasOne("Al3b.Api.Data.Entities.StockItem", "StockItem")
-                        .WithMany()
-                        .HasForeignKey("StockItemId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .HasConstraintName("fk_products_stock_items_stock_item_id");
-
                     b.HasOne("Al3b.Api.Data.Entities.Venue", "Venue")
                         .WithMany()
                         .HasForeignKey("VenueId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_products_venues_venue_id");
-
-                    b.Navigation("StockItem");
-
-                    b.Navigation("Venue");
-                });
-
-            modelBuilder.Entity("Al3b.Api.Data.Entities.Purchase", b =>
-                {
-                    b.HasOne("Al3b.Api.Data.Entities.Staff", "Staff")
-                        .WithMany()
-                        .HasForeignKey("StaffId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_purchases_staff_staff_id");
-
-                    b.HasOne("Al3b.Api.Data.Entities.Venue", "Venue")
-                        .WithMany()
-                        .HasForeignKey("VenueId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_purchases_venues_venue_id");
-
-                    b.Navigation("Staff");
 
                     b.Navigation("Venue");
                 });
@@ -1810,18 +1545,9 @@ namespace Al3b.Api.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_reservations_units_units_unit_id");
 
-                    b.HasOne("Al3b.Api.Data.Entities.Venue", "Venue")
-                        .WithMany()
-                        .HasForeignKey("VenueId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_reservations_units_venues_venue_id");
-
                     b.Navigation("Reservation");
 
                     b.Navigation("Unit");
-
-                    b.Navigation("Venue");
                 });
 
             modelBuilder.Entity("Al3b.Api.Data.Entities.Room", b =>
@@ -1917,18 +1643,9 @@ namespace Al3b.Api.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_sessions_products_sessions_session_id");
 
-                    b.HasOne("Al3b.Api.Data.Entities.Venue", "Venue")
-                        .WithMany()
-                        .HasForeignKey("VenueId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_sessions_products_venues_venue_id");
-
                     b.Navigation("Product");
 
                     b.Navigation("Session");
-
-                    b.Navigation("Venue");
                 });
 
             modelBuilder.Entity("Al3b.Api.Data.Entities.SessionUnit", b =>
@@ -1947,18 +1664,9 @@ namespace Al3b.Api.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_sessions_units_units_unit_id");
 
-                    b.HasOne("Al3b.Api.Data.Entities.Venue", "Venue")
-                        .WithMany()
-                        .HasForeignKey("VenueId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_sessions_units_venues_venue_id");
-
                     b.Navigation("Session");
 
                     b.Navigation("Unit");
-
-                    b.Navigation("Venue");
                 });
 
             modelBuilder.Entity("Al3b.Api.Data.Entities.Shift", b =>
@@ -2007,56 +1715,6 @@ namespace Al3b.Api.Migrations
                         .HasConstraintName("fk_staff_venues_venues_venue_id");
 
                     b.Navigation("Staff");
-
-                    b.Navigation("Venue");
-                });
-
-            modelBuilder.Entity("Al3b.Api.Data.Entities.StockItem", b =>
-                {
-                    b.HasOne("Al3b.Api.Data.Entities.Venue", "Venue")
-                        .WithMany()
-                        .HasForeignKey("VenueId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_stock_items_venues_venue_id");
-
-                    b.Navigation("Venue");
-                });
-
-            modelBuilder.Entity("Al3b.Api.Data.Entities.StockMovement", b =>
-                {
-                    b.HasOne("Al3b.Api.Data.Entities.Purchase", "Purchase")
-                        .WithMany()
-                        .HasForeignKey("PurchaseId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .HasConstraintName("fk_stock_movements_purchases_purchase_id");
-
-                    b.HasOne("Al3b.Api.Data.Entities.Staff", "Staff")
-                        .WithMany()
-                        .HasForeignKey("StaffId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_stock_movements_staff_staff_id");
-
-                    b.HasOne("Al3b.Api.Data.Entities.StockItem", "StockItem")
-                        .WithMany()
-                        .HasForeignKey("StockItemId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_stock_movements_stock_items_stock_item_id");
-
-                    b.HasOne("Al3b.Api.Data.Entities.Venue", "Venue")
-                        .WithMany()
-                        .HasForeignKey("VenueId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_stock_movements_venues_venue_id");
-
-                    b.Navigation("Purchase");
-
-                    b.Navigation("Staff");
-
-                    b.Navigation("StockItem");
 
                     b.Navigation("Venue");
                 });

@@ -4,6 +4,10 @@ namespace Al3b.Api.Data.Entities;
 // Play time and drinks from a session are copied here; a quick sale writes its lines directly.
 public class BillItem : SyncedEntity
 {
+    // Same venue as the parent row. Repeated here so sync can ask every table "this venue, changed since T" without joins.
+    public Guid VenueId { get; set; }
+    public Venue Venue { get; set; } = null!;
+
     public Guid BillId { get; set; }
     public Bill Bill { get; set; } = null!;
 

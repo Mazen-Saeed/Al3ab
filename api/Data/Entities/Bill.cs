@@ -25,5 +25,6 @@ public class Bill : SyncedEntity
     public string? DiscountNote { get; set; }
 
     public PaymentMethod PaymentMethod { get; set; }
-    public DateTime? PaidAt { get; set; }
+    // A bill is only created when it is paid.
+    public DateTime PaidAt { get; set; }
 }
